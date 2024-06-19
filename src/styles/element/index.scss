@@ -1,0 +1,23 @@
+//修改elementUI配色主題
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+  $colors: (
+    "primary": (
+      "base": #f7c411,
+    ),
+    "success": (
+      "base": #1dc779,
+    ),
+    "warning": (
+      "base": #ffb302,
+    ),
+    "danger": (
+      "base": #e26237,
+    ),
+    "error": (
+      "base": #e26237,
+    ),
+    "info": (
+      "base": #54607e,
+    ),
+  )
+);
