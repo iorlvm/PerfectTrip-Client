@@ -24,7 +24,7 @@ const routeToProduct = (id) => {
     <div class="info">
       <div class="row">
         <div class="col title">
-          <h3>最長能接受十四個字的旅館名稱</h3>
+          <h3>這家旅館名字超級長居然有一共二十六個中文字的旅館名稱</h3>
           <p><el-rate v-model="convertedScore" disabled></el-rate></p>
           <p>
             <span>國家, 地點</span>
@@ -161,8 +161,9 @@ const routeToProduct = (id) => {
     }
 
     .details-info {
+      transform: translate(0, 5px);
       max-height: 105px;
-      overflow: hidden;
+      // overflow: hidden;
       border-left: 2px solid #cdcdcd;
       margin-left: 8px;
       padding-left: 12px;

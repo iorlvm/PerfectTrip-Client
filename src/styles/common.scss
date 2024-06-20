@@ -49,6 +49,7 @@ input[type="checkbox"] {
 img {
   width: calc(100% + 2px);
   height: calc(100% + 2px);
+  object-fit: cover;
   transform: translate(-1px, -1px);
   vertical-align: middle;
   background: #ffffff url("@/assets/images/200.png") no-repeat center / cover;

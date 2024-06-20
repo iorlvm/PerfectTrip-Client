@@ -6,6 +6,8 @@ import { useSearchStore } from "@/stores/search";
 const searchStore = useSearchStore();
 const searchQuery = ref({});
 
+const placeholderValue = ref(null);
+
 const adultCount = ref(2);
 const childCount = ref(0);
 const roomCount = ref(1);
@@ -26,6 +28,7 @@ const setGuestCount = () => {
   searchQuery.value.adultCount = adultCount.value;
   searchQuery.value.childCount = childCount.value;
   searchQuery.value.roomCount = roomCount.value;
+  placeholderValue.value = null;
 };
 
 const clearDestination = () => {
@@ -41,9 +44,9 @@ const locations = ref([]);
 const querySearchAsync = (queryString, cb) => {
   const results = queryString
     ? locations.value.filter(
-        (item) =>
-          item.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-      )
+      (item) =>
+        item.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+    )
     : locations.value;
   cb(results);
 };
@@ -73,38 +76,27 @@ onMounted(() => {
         <el-row :gutter="3">
           <el-col :span="9">
             <div class="flex">
-              <el-autocomplete
-                v-model="searchQuery.destination"
-                :fetch-suggestions="querySearchAsync"
-                placeholder="選擇地點"
-              >
+              <el-autocomplete v-model="searchQuery.destination" :fetch-suggestions="querySearchAsync"
+                placeholder="選擇地點">
                 <template #prefix>
                   <i class="bi bi-geo-alt icon"></i>
                 </template>
                 <template #suffix>
-                  <i
-                    v-if="searchQuery.destination"
-                    class="bi bi-x icon"
-                    @click="clearDestination"
-                    style="cursor: pointer; color: #909399"
-                  ></i>
+                  <i v-if="searchQuery.destination" class="bi bi-x icon" @click="clearDestination"
+                    style="cursor: pointer; color: #909399"></i>
                 </template>
               </el-autocomplete>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="flex">
-              <el-date-picker
-                v-model="searchQuery.dateRange"
-                type="daterange"
-                start-placeholder="入住日期"
-                end-placeholder="退房日期"
-              />
+              <el-date-picker v-model="searchQuery.dateRange" type="daterange" start-placeholder="入住日期"
+                end-placeholder="退房日期" />
             </div>
           </el-col>
           <el-col :span="6">
             <div class="flex">
-              <el-select class="guestCount" @focus="loadGuestCount">
+              <el-select v-model="placeholderValue" class="guestCount" @visible-change="loadGuestCount">
                 <template #prefix>
                   <div class="guest-count-info">
                     {{ searchQuery.adultCount }} 位成人 -
@@ -118,12 +110,7 @@ onMounted(() => {
                       <span>成人</span>
                     </div>
                     <div class="value">
-                      <el-input-number
-                        class="num"
-                        v-model="adultCount"
-                        :min="1"
-                        :max="10"
-                      />
+                      <el-input-number class="num" v-model="adultCount" :min="1" :max="10" />
                     </div>
                   </div>
                   <div class="option">
@@ -131,12 +118,7 @@ onMounted(() => {
                       <span>孩童</span>
                     </div>
                     <div class="value">
-                      <el-input-number
-                        class="num"
-                        v-model="childCount"
-                        :min="0"
-                        :max="10"
-                      />
+                      <el-input-number class="num" v-model="childCount" :min="0" :max="10" />
                     </div>
                   </div>
                   <div class="option">
@@ -144,16 +126,11 @@ onMounted(() => {
                       <span>客房</span>
                     </div>
                     <div class="value">
-                      <el-input-number
-                        class="num"
-                        v-model="roomCount"
-                        :min="1"
-                        :max="10"
-                      />
+                      <el-input-number class="num" v-model="roomCount" :min="1" :max="10" />
                     </div>
                   </div>
                 </template>
-                <el-option class="fin-button" @click="setGuestCount">
+                <el-option value="placehoder" class="fin-button" @click="setGuestCount">
                   <span>完成</span>
                 </el-option>
               </el-select>
@@ -208,6 +185,7 @@ onMounted(() => {
       white-space: nowrap;
       overflow: hidden;
     }
+
     .guest-count-info {
       margin: 0 auto;
       font-size: 0.95em;
@@ -217,6 +195,7 @@ onMounted(() => {
     .el-select__suffix {
       display: none;
     }
+
     .el-select__selected-item {
       display: none;
     }
@@ -228,6 +207,7 @@ onMounted(() => {
     font-size: 1.2em;
   }
 }
+
 .option {
   display: flex;
   justify-content: space-between;
@@ -238,12 +218,14 @@ onMounted(() => {
     font-size: 1.15em;
     margin-left: 5px;
   }
+
   .value {
     margin-right: 3px;
     width: 50%;
     max-width: 120px;
     min-width: 100px;
   }
+
   .el-input-number {
     width: 100%;
   }
@@ -251,6 +233,7 @@ onMounted(() => {
 
 .fin-button {
   text-align: center;
+
   span {
     font-size: 1.1em;
     font-weight: 550;
