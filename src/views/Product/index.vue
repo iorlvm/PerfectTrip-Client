@@ -4,6 +4,7 @@ import ProductOverview from "./components/ProductOverview.vue";
 import ProductRoomList from "./components/ProductRoomList.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
+import HomeFacility from '@/views/Product/components/HomeFacility.vue'
 
 const router = useRoute();
 
@@ -43,7 +44,8 @@ onMounted(() => {
       <el-divider class="divider" />
       <ProductRoomList id="price-info" />
       <el-divider class="divider" />
-      <div class="temp" id="facility">設施</div>
+      <!-- <div class="temp" id="facility">設施</div> -->
+      <HomeFacility/>
       <el-divider class="divider" />
       <div class="temp" id="rules">住宿規定</div>
       <el-divider class="divider" />
