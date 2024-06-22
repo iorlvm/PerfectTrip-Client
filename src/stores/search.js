@@ -7,6 +7,7 @@ export const useSearchStore = defineStore('Search', () => {
      * dateRange : (陣列)開始時間跟結束時間
      * adultCount : 成人數量
      * childCount : 兒童數量
+     * roomCount : 房間數量
      */
     const searchQuery = ref({
         destination: '',

@@ -2,6 +2,7 @@
 import SearchBar from "@/components/SearchBar.vue";
 import ProductOverview from "./components/ProductOverview.vue";
 import ProductRoomList from "./components/ProductRoomList.vue";
+import HotelFacility from "./components/HotelFacility.vue";
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 
@@ -43,7 +44,7 @@ onMounted(() => {
       <el-divider class="divider" />
       <ProductRoomList id="price-info" />
       <el-divider class="divider" />
-      <div class="temp" id="facility">設施</div>
+      <HotelFacility />
       <el-divider class="divider" />
       <div class="temp" id="rules">住宿規定</div>
       <el-divider class="divider" />

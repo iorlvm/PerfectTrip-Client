@@ -1,5 +1,19 @@
 <script setup>
 import RoomCard from './RoomCard.vue';
+import router from "@/router";
+
+const createOrder = () => {
+    // TODO:
+    // 先傳給伺服器訂單內容  由伺服器創造一個臨時的訂單編號
+    // 臨時訂單與編號使用redis完成 不進SQL
+    // 接收回傳的訂單編號
+    const orderId = 1; // 假資料  還沒做功能沒法寫真的
+    // 導去對應編號的頁面
+    router.push(
+        `/order/${orderId}`
+    )
+}
+
 </script>
 
 
@@ -14,14 +28,11 @@ import RoomCard from './RoomCard.vue';
             <el-col :xs="24" :sm="24" :md="20" class="roomCard-list">
                 <RoomCard />
                 <RoomCard />
-                <RoomCard />
-                <RoomCard />
-                <RoomCard />
             </el-col>
             <el-col :xs="0" :sm="0" :md="4">
                 <div class="order-title"></div>
                 <div class="order-block">
-                    <el-button class="order-button" type="primary" size="large">現在就預定</el-button>
+                    <el-button class="order-button" type="primary" size="large" @click="createOrder">現在就預定</el-button>
                     <div>
                         <p><i class="bi bi-dot"></i>資訊</p>
                         <p><i class="bi bi-dot"></i>資訊</p>
@@ -40,9 +51,6 @@ import RoomCard from './RoomCard.vue';
     width: 95%;
     margin: 0 auto;
 
-    // .roomCard-list {
-    //     border-right: 1px solid $headerFooter;
-    // }
     .order-title {
         position: sticky;
         top: 0;
