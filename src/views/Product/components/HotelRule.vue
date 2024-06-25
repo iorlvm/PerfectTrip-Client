@@ -25,12 +25,28 @@
                 <div class="label">孩童加床選項</div>
                 <div class="info">
                     <h3>孩童政策</h3>
-                    <p>歡迎任何年齡的孩童入住<br>在此住宿，6 歲（含）以上的孩童將依成人價格收費。<br>搜尋時請加入同行孩童人數及年齡，以查看正確的房價及入住資訊。</p>
+                    <p>歡迎任何年齡的孩童入住</p>
+                    <p>在此住宿，6 歲（含）以上的孩童將依成人價格收費。</p>
+                    <p>搜尋時請加入同行孩童人數及年齡，以查看正確的房價及入住資訊。</p>
+
                     <h3>嬰兒床與加床政策</h3>
-                    <div>0－1 歲<br>可要求加嬰兒床
-                        免費</div>
-                    <p>嬰兒床和加床的費用不會計入總價中，您需在入住時另行支付。<br>允許的嬰兒床和加床數量需視您的選項而定，請查看您的選項以了解更多資訊。<br>
-                        嬰兒床與加床需視實際情況供應。</p>
+                    <div class="baby-bed">
+
+                        <div class="baby-row">0－1 歲</div>
+
+                        <div class="flex">
+                            <div class="col">
+                                可要求加嬰兒床
+                            </div>
+                            <div class="col">
+                                免費
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>嬰兒床和加床的費用不會計入總價中，您需在入住時另行支付。</p>
+                    <p>允許的嬰兒床和加床數量需視您的選項而定，請查看您的選項以了解更多資訊。</p>
+                    <p>嬰兒床與加床需視實際情況供應。</p>
                 </div>
             </div>
             <div class="row">
@@ -73,6 +89,31 @@
         .info {
             max-width: 78%;
         }
+
+        &:last-child {
+            border: none;
+        }
     }
+}
+
+.baby-bed {
+    border: 1px solid #0000002a;
+
+    .flex {
+        display: flex;
+
+
+
+        .col {
+            width: 50%;
+            padding-left: 10px;
+        }
+    }
+
+    .baby-row {
+        border-bottom: 1px solid #0000002a;
+        padding-left: 10px;
+    }
+
 }
 </style>
