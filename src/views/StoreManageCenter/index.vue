@@ -3,42 +3,41 @@ import { ref } from 'vue'
 import { Menu as IconMenu, Message, Setting, List } from '@element-plus/icons-vue'
 
 const defaultOpeneds = ref(['0', '1']);
-const defaultActive = ref('1-1');
+const defaultActive = ref('');
 
 const navigators = [
     {
         icon: Message,
         title: '訊息',
         items: [
-            { text: '重要通知', src: '' },
-            { text: '客戶訊息', src: '' },
-            { text: '聯絡平台', src: '' },
+            { text: '重要通知', src: '/store/manage/message/important' },
+            { text: '客戶訊息', src: '/store/manage/message/customer' },
+            { text: '聯絡平台', src: '/store/manage/message/contactus' },
         ]
     },
     {
         icon: List,
         title: '訂單管理',
         items: [
-            { text: '訂單列表', src: '' },
-            { text: '行事曆', src: '' },
+            { text: '訂單列表', src: '/store/manage/order/list' },
+            { text: '行事曆', src: '/store/manage/order/calendar' },
         ]
     },
     {
         icon: IconMenu,
         title: '房型管理',
         items: [
-            { text: '房間列表', src: '' },
-            { text: '折扣設定', src: '' },
-            { text: '庫存管理', src: '' },
+            { text: '房間列表', src: '/store/manage/room/list' },
+            { text: '折扣設定', src: '/store/manage/room/discount' },
+            { text: '庫存管理', src: '/store/manage/room/inventory' },
         ]
     },
     {
         icon: Setting,
         title: '設置',
         items: [
-            { text: '旅館資訊', src: '' },
-            { text: '帳號管理', src: '' },
-            { text: '優惠券', src: '' },
+            { text: '旅館資訊', src: '/store/manage/setting/info' },
+            { text: '帳號管理', src: '/store/manage/setting/account' },
         ]
     }
 ]

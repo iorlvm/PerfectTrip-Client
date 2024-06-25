@@ -20,6 +20,18 @@ import StoreIndex from '@/views/StorePage/index.vue'
 import StoreLogin from '@/views/StorePage/components/StoreLogin.vue'
 import StoreWelcome from '@/views/StorePage/components/StoreWelcome.vue'
 import StoreManageCenter from '@/views/StoreManageCenter/index.vue'
+import InfoOverview from '@/views/StoreManageCenter/components/InfoOverview.vue'
+import ImportantMessage from '@/views/StoreManageCenter/components/ImportantMessage.vue'
+import CustomerMessage from '@/views/StoreManageCenter/components/CustomerMessage.vue'
+import ContactUs from '@/views/StoreManageCenter/components/ContactUs.vue'
+import OrderList from '@/views/StoreManageCenter/components/OrderList.vue'
+import OrderCalendar from '@/views/StoreManageCenter/components/OrderCalendar.vue'
+import RoomList from '@/views/StoreManageCenter/components/RoomList.vue'
+import RoomDiscount from '@/views/StoreManageCenter/components/RoomDiscount.vue'
+import RoomInventory from '@/views/StoreManageCenter/components/RoomInventory.vue'
+import HotelInfo from '@/views/StoreManageCenter/components/HotelInfo.vue'
+import StoreAccount from '@/views/StoreManageCenter/components/StoreAccount.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -120,10 +132,56 @@ const router = createRouter({
 
       ]
     },
-            {
-          path: '/store/manage',
-          component: StoreManageCenter,
+    {
+      path: '/store/manage',
+      component: StoreManageCenter,
+      children: [
+        {
+          path: '',
+          component: InfoOverview,
         },
+        {
+          path: 'message/important',
+          component: ImportantMessage,
+        },
+        {
+          path: 'message/customer',
+          component: CustomerMessage,
+        },
+        {
+          path: 'message/contactus',
+          component: ContactUs,
+        },
+        {
+          path: 'order/list',
+          component: OrderList,
+        },
+        {
+          path: 'order/calendar',
+          component: OrderCalendar,
+        },
+        {
+          path: 'room/list',
+          component: RoomList,
+        },
+        {
+          path: 'room/discount',
+          component: RoomDiscount,
+        },
+        {
+          path: 'room/inventory',
+          component: RoomInventory,
+        },
+        {
+          path: 'setting/info',
+          component: HotelInfo,
+        },
+        {
+          path: 'setting/account',
+          component: StoreAccount,
+        },
+      ]
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     // 如果有儲存的位置，則滾動到儲存的位置（例如:上一頁）
