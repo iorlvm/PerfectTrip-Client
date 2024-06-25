@@ -9,7 +9,6 @@
             <div>查看客房狀態</div>
         </div>
         <div class="ruleCard">
-
             <div class="row">
                 <div class="label">入住時間</div>
                 <div class="info">11:00 以後</div>
@@ -42,47 +41,21 @@
                 <div class="label">寵物</div>
                 <div class="info">不允許攜帶寵物入住。</div>
             </div>
-            <div class="row">
-                <div class="label">團體</div>
-                <div class="info">當預訂超過 3 間房，將適用不同的政策和額外的規範。</div>
-            </div>
-            <div class="row">
-                <div class="label"> 孩童加床選項 </div>
-                <div class="info"> 16:00 後
-                    住客在入住時須出示有相片的身分證明及信用卡 </div>
-            </div>
-            <div class="row">
-                <div class="label"> 年齡限制
-                </div>
-                <div class="info"> 16:00 後
-                    住客在入住時須出示有相片的身分證明及信用卡 </div>
-            </div>
-            <div class="row">
-                <div class="label"> 寵物 </div>
-                <div class="info"> 16:00 後
-                    住客在入住時須出示有相片的身分證明及信用卡 </div>
-            </div>
-
         </div>
-
-
     </div>
-
 </template>
 
 
 
->>>>>>> Alice
 <style lang="scss" scoped>
 .title {
     display: flex;
     justify-content: space-between;
-    <<<<<<< HEAD=======>>>>>>>Alice
 }
 
 .ruleCard {
     padding: 20px;
-    <<<<<<< HEAD border: 1px solid #0000002a;
+    border: 1px solid #0000002a;
     border-radius: 8px;
 
     .row {
@@ -100,30 +73,6 @@
         .info {
             max-width: 78%;
         }
-
-
-        =======border: 1px solid #00000061;
-        border-radius: 8px;
-
-
-        // height: 300px;
-        .row {
-            align-items: center;
-            display: flex;
-            height: 100px;
-            border-bottom: 1px solid #00000061;
-            line-height: 2; //行高設定
-            padding: 25px 5px; //
-
-
-            .label {
-                min-width: 250px;
-                width: 30%;
-                background-color: #00000061;
-            }
-
-            >>>>>>>Alice &:last-child {
-                border-bottom: none;
-            }
-        }
-    }</style>
+    }
+}
+</style>
