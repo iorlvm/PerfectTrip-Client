@@ -1,19 +1,38 @@
-<script setup></script>
+<script setup>
+
+</script>
 
 <template>
   <header>
     <nav class="container">
       <ul>
-        <li class="logo">PerfectTrip.com</li>
+        <li class="logo">
+          <router-link to="/">
+            PerfectTrip.com
+          </router-link>
+        </li>
         <li class="grow"></li>
-        <li>商家註冊</li>
+        <li>
+          <router-link to="/store">
+            商家註冊
+          </router-link>
+        </li>
         <li><i class="bi bi-question-circle"></i></li>
-        <template v-if="true">
+        <template v-if="false">
           <li>註冊</li>
           <li>登入</li>
         </template>
         <template v-else>
-          <li><i class="bi bi-person-circle"></i></li>
+          <li>
+            <router-link to="/member/journey">
+              我的旅程
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/member">
+              <i class="bi bi-person-circle"></i>&nbsp;會員名稱
+            </router-link>
+          </li>
         </template>
       </ul>
     </nav>
@@ -23,7 +42,11 @@
 <style lang="scss" scoped>
 header {
   background-color: $headerFooter;
-  padding: 2px 10px;
+  padding: 8px 10px 3px;
+}
+
+a {
+  color: $xtxColor;
 }
 
 ul {

@@ -126,7 +126,7 @@ const openFlod = () => {
 
 .open-flod {
   .el-button {
-    opacity: 0.6;
+    opacity: 1;
     width: 100%;
     // margin-left: 2px;
     font-size: 1em;

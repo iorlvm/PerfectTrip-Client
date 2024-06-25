@@ -10,7 +10,7 @@ const createOrder = () => {
     const orderId = 1; // 假資料  還沒做功能沒法寫真的
     // 導去對應編號的頁面
     router.push(
-        `/order/${orderId}`
+        `/order/form/${orderId}`
     )
 }
 
@@ -71,6 +71,23 @@ const createOrder = () => {
             width: calc(100% - 16px);
             font-size: 1.2em;
             height: 35px;
+        }
+
+        .el-button--primary {
+            --el-color-primary: #f7c411;
+            --el-button-text-color: $headerFooter;
+            --el-button-hover-text-color: $headerFooter;
+            --el-button-hover-bg-color: #f9d658;
+            --el-button-outline-color: #fbe288;
+            --el-button-active-color: #c69d0e;
+            --el-button-hover-link-text-color: #fbe288;
+            --el-button-hover-border-color: #f9d658;
+            --el-button-active-bg-color: #c69d0e;
+            --el-button-active-border-color: #c69d0e;
+            --el-button-disabled-text-color: #ffffff;
+            --el-button-disabled-bg-color: #fbe288;
+            --el-button-disabled-border-color: #fbe288;
+            font-weight: bold;
         }
     }
 }

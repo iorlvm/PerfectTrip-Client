@@ -70,56 +70,51 @@ ul {
   position: relative;
 }
 
-.fill-half {
-  background: linear-gradient(to bottom, $headerFooter 50%, transparent 50%);
-}
+// .ellipsis {
+//   white-space: nowrap;
+//   text-overflow: ellipsis;
+//   overflow: hidden;
+// }
 
-.ellipsis {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+// .ellipsis-2 {
+//   word-break: break-all;
+//   text-overflow: ellipsis;
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 2;
+//   overflow: hidden;
+// }
 
-.ellipsis-2 {
-  word-break: break-all;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
+// .fl {
+//   float: left;
+// }
 
-.fl {
-  float: left;
-}
+// .fr {
+//   float: right;
+// }
 
-.fr {
-  float: right;
-}
-
-.clearfix:after {
-  content: ".";
-  display: block;
-  visibility: hidden;
-  height: 0;
-  line-height: 0;
-  clear: both;
-}
+// .clearfix:after {
+//   content: ".";
+//   display: block;
+//   visibility: hidden;
+//   height: 0;
+//   line-height: 0;
+//   clear: both;
+// }
 
 // reset element
 .el-breadcrumb__inner.is-link {
   font-weight: 400 !important;
 }
 
-.el-button--primary {
-  color: $headerFooter !important;
-  font-weight: bold !important;
-}
-
 .breadcrumb-container {
   position: relative;
   margin: 20px auto;
   width: 92%;
+}
+
+.fill-half {
+  background: linear-gradient(to bottom, $headerFooter 50%, transparent 50%);
 }
 
 .space {

@@ -84,8 +84,8 @@ const checkForm = async (formEl) => {
     });
 };
 
-const isDisable = () => {
-    return props.active !== 1;
+const isVisible = () => {
+    return props.active === 1;
 }
 
 const route = useRoute();
@@ -115,48 +115,105 @@ onMounted(() => {
                 <div class="login-status">是否已登入</div>
                 <div class="name-row">
                     <el-form-item label="姓" prop="lastName">
-                        <el-input v-model="formData.lastName" placeholder="請輸入姓氏" :disabled="isDisable()"></el-input>
+                        <template v-if="isVisible()">
+                            <el-input v-model="formData.lastName" placeholder="請輸入姓氏"></el-input>
+                        </template>
+                        <template v-else>
+                            <p class="check-value">{{ formData.lastName }}</p>
+                        </template>
                     </el-form-item>
                     <el-form-item label="名" prop="firstName">
-                        <el-input v-model="formData.firstName" placeholder="請輸入名字" :disabled="isDisable()"></el-input>
+                        <template v-if="isVisible()">
+                            <el-input v-model="formData.firstName" placeholder="請輸入名字"></el-input>
+                        </template>
+                        <template v-else>
+                            <p class="check-value">{{ formData.firstName }}</p>
+                        </template>
                     </el-form-item>
                 </div>
                 <el-form-item label="電子信箱" prop="email">
-                    <el-input v-model="formData.email" placeholder="請輸入電子信箱" :disabled="isDisable()"></el-input>
+                    <template v-if="isVisible()">
+                        <el-input v-model="formData.email" placeholder="請輸入電子信箱"></el-input>
+                    </template>
+                    <template v-else>
+                        <p class="check-value">{{ formData.email }}</p>
+                    </template>
                 </el-form-item>
                 <el-form-item label="國家/地區" prop="region">
-                    <el-select v-model="formData.region" placeholder="請選擇國家/地區" :disabled="isDisable()">
-                        <el-option v-for="item in regions" :key="item" :label="item" :value="item" />
-                    </el-select>
+                    <template v-if="isVisible()">
+                        <el-select v-model="formData.region" placeholder="請選擇國家/地區">
+                            <el-option v-for="item in regions" :key="item" :label="item" :value="item" />
+                        </el-select>
+                    </template>
+                    <template v-else>
+                        <p class="check-value">{{ formData.region }}</p>
+                    </template>
                 </el-form-item>
                 <el-form-item label="電話/手機" prop="phone">
-                    <el-input v-model="formData.phone" placeholder="請輸入電話/手機" :disabled="isDisable()"></el-input>
+                    <template v-if="isVisible()">
+                        <el-input v-model="formData.phone" placeholder="請輸入電話/手機"></el-input>
+                    </template>
+                    <template v-else>
+                        <p class="check-value">{{ formData.phone }}</p>
+                    </template>
                 </el-form-item>
             </div>
 
             <div class="remarks-block">
-                <h3>您還有什麼特別要求？</h3>
-                <p class="desc">住宿方無法保證達成您的特殊要求，但將盡力為您安排，訂單完成後，您依然可隨時提出特殊要求！</p>
+                <template v-if="isVisible()">
+                    <h3>您還有什麼特別要求？</h3>
+                    <p class="desc">住宿方無法保證達成您的特殊要求，但將盡力為您安排，訂單完成後，您依然可隨時提出特殊要求！</p>
+                </template>
+                <template v-else>
+                    <h3>
+                        特別需求
+                    </h3>
+                </template>
                 <el-form-item class="remarks-text" prop="remarks">
                     <template #label>
-                        <span>請用英語或是中文填寫您的請求</span>
-                        <span class="note"> ( 選填 )</span>
+                        <template v-if="isVisible()">
+                            <span>請用英語或是中文填寫您的請求 </span>
+                            <span class="note"> ( 選填 )</span>
+                        </template>
                     </template>
-                    <el-input v-model="formData.remarks" type="textarea" placeholder="請輸入備註"
-                        :disabled="isDisable()"></el-input>
+                    <template v-if="isVisible()">
+                        <el-input v-model="formData.remarks" type="textarea" placeholder="請輸入備註"></el-input>
+                    </template>
+                    <template v-else>
+                        <p class="check-value">
+                            <template v-if="!formData.freeParking && formData.remarks.trim() === ''">
+                                無
+                            </template>
+                            <template v-else>
+                                {{ formData.remarks }}
+                                <br v-if="formData.remarks.trim() !== '' && formData.freeParking">
+                                {{ formData.freeParking ? '我需要額外的免費私人停車位' : '' }}
+                            </template>
+                        </p>
+                    </template>
                 </el-form-item>
-                <el-form-item>
-                    <el-checkbox class="free-parking-check-box" v-model="formData.freeParking"
-                        :disabled="isDisable()">我想要免費私人停車位
+                <el-form-item v-if="isVisible()">
+                    <el-checkbox class="free-parking-check-box" v-model="formData.freeParking">我想要免費私人停車位
                         (額外)</el-checkbox>
                 </el-form-item>
                 <h3>您的抵達時間</h3>
-                <p class="center"><span class="check-icon"><i class="bi bi-check-circle"></i></span>您可在 14:00 -
-                    20:00 間入住</p>
-                <el-form-item class="arrival-time-select" label="提供您預計的抵達時間" prop="arrivalTime">
-                    <el-time-select v-model="formData.arrivalTime" format="HH:mm" :clearable="false" start="14:00"
-                        step="00:30" end="20:00" placeholder="選擇時間" :disabled="isDisable()"></el-time-select>
-                </el-form-item>
+                <template v-if="isVisible()">
+                    <p class="center"><span class="check-icon"><i class="bi bi-check-circle"></i></span>您可在 14:00 -
+                        20:00 間入住</p>
+                    <el-form-item class="arrival-time-select" label="提供您預計的抵達時間" prop="arrivalTime">
+                        <el-time-select v-model="formData.arrivalTime" format="HH:mm" :clearable="false" start="14:00"
+                            step="00:30" end="20:00" placeholder="選擇時間"></el-time-select>
+                    </el-form-item>
+                </template>
+                <template v-else>
+                    <el-form-item class="arrival-time-select">
+                        <p class="check-value">
+                            {{ formData.arrivalTime }}
+                        </p>
+                    </el-form-item>
+                </template>
+
+
                 <div class="rule">
                     <h3>查看住宿規定</h3>
                     <p>&nbsp;住宿方需要您同意以下住宿規定：</p>
@@ -302,6 +359,23 @@ onMounted(() => {
         margin-bottom: 10px;
         display: flex;
         justify-content: end;
+
+        .el-button--primary {
+            --el-color-primary: #f7c411;
+            --el-button-text-color: $headerFooter;
+            --el-button-hover-text-color: $headerFooter;
+            --el-button-hover-bg-color: #f9d658;
+            --el-button-outline-color: #fbe288;
+            --el-button-active-color: #c69d0e;
+            --el-button-hover-link-text-color: #fbe288;
+            --el-button-hover-border-color: #f9d658;
+            --el-button-active-bg-color: #c69d0e;
+            --el-button-active-border-color: #c69d0e;
+            --el-button-disabled-text-color: #ffffff;
+            --el-button-disabled-bg-color: #fbe288;
+            --el-button-disabled-border-color: #fbe288;
+            font-weight: bold;
+        }
     }
 }
 </style>

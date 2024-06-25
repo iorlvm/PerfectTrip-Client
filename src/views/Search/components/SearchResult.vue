@@ -25,24 +25,12 @@ const orderOptions = [
   <div class="search-result">
     <h3>不知道是哪個地方：找到 <strong>9,999</strong> 間住宿</h3>
     <div class="select" :class="isOnSelect || isOptionOpen ? 'on-select' : ''">
-      <el-select
-        v-model="orederBy"
-        placeholder="Select"
-        size="large"
-        style="width: 240px"
-        @visible-change="isOptionOpen = !isOptionOpen"
-        @change="isOnSelect = true"
-        @blur="isOnSelect = false"
-      >
+      <el-select v-model="orederBy" placeholder="Select" size="large" style="width: 240px"
+        @visible-change="isOptionOpen = !isOptionOpen" @change="isOnSelect = true" @blur="isOnSelect = false">
         <template #prefix>
           <span class="arrow">⮃</span>
         </template>
-        <el-option
-          v-for="item in orderOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
+        <el-option v-for="item in orderOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </div>
   </div>
@@ -52,9 +40,11 @@ const orderOptions = [
 .search-result {
   .el-select__wrapper {
     border-radius: 20px;
+
     span {
       color: $headerFooter;
     }
+
     .arrow {
       font-size: 1.2em;
     }
@@ -71,11 +61,12 @@ const orderOptions = [
 }
 
 .on-select {
-  background-color: #ffb302;
+  background-color: var(--el-color-primary);
 }
 
 .search-result {
   margin: 10px 0;
+
   h3 {
     margin-bottom: 10px;
     font-weight: normal;

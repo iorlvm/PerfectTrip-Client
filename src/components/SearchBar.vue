@@ -156,6 +156,27 @@ onMounted(() => {
   height: 50px;
   padding: 5px;
   border-radius: 6px;
+
+  .el-button--primary {
+    --el-color-primary: #f7c411;
+    --el-button-text-color: $headerFooter;
+    --el-button-hover-text-color: $headerFooter;
+    --el-button-hover-bg-color: #f9d658;
+    --el-button-outline-color: #fbe288;
+    --el-button-active-color: #c69d0e;
+    --el-button-hover-link-text-color: #fbe288;
+    --el-button-hover-border-color: #f9d658;
+    --el-button-active-bg-color: #c69d0e;
+    --el-button-active-border-color: #c69d0e;
+    --el-button-disabled-text-color: #ffffff;
+    --el-button-disabled-bg-color: #fbe288;
+    --el-button-disabled-border-color: #fbe288;
+    font-weight: bold;
+  }
+}
+
+.icon {
+  font-size: 1.4em;
 }
 </style>
 
@@ -239,11 +260,5 @@ onMounted(() => {
     font-weight: 550;
     letter-spacing: 2px;
   }
-}
-</style>
-
-<style lang="scss" scoped>
-.icon {
-  font-size: 1.4em;
 }
 </style>

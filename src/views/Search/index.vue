@@ -51,9 +51,7 @@ onMounted(() => {
   padding: 0 20px;
 
   aside {
-    // background-color: aquamarine;
     width: 270px;
-    // flex-shrink: 0;
     padding: 5px;
   }
 

@@ -1,15 +1,18 @@
 <script setup></script>
 
 <template>
-  <div class="bg">
-    <div class="container">
-      <el-carousel height="400px">
-        <el-carousel-item v-for="item in 4" :key="item">
-          <h3 class="small justify-center" text="2xl">{{ item }}</h3>
-        </el-carousel-item>
-      </el-carousel>
-    </div>
-  </div>
+  <!-- <div class="bg"> -->
+  <!-- <div class="container"> -->
+  <el-carousel height="450px">
+    <el-carousel-item>
+      <img src="@/assets/images/slider-one.jpg" alt="">
+    </el-carousel-item>
+    <!-- <el-carousel-item v-for="item in 4" :key="item">
+        <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+      </el-carousel-item> -->
+  </el-carousel>
+  <!-- </div> -->
+  <!-- </div> -->
 
 </template>
 
