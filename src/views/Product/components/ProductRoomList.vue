@@ -66,11 +66,12 @@ const createOrder = () => {
         top: 40px;
 
         .order-button {
+            padding-top: 16px;
             margin-top: 10px;
             margin-left: 12px;
             width: calc(100% - 16px);
             font-size: 1.2em;
-            height: 35px;
+            height: 36px;
         }
 
         .el-button--primary {

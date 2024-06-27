@@ -1,5 +1,4 @@
 <script setup>
-
 import SearchBar from '@/components/SearchBar.vue';
 import ProductOverview from './components/ProductOverview.vue';
 import ProductRoomList from './components/ProductRoomList.vue';
@@ -7,9 +6,6 @@ import HotelFacility from '@/views/Product/components/HotelFacility.vue'
 import HotelRule from './components/HotelRule.vue';
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-
-
-
 
 const router = useRoute();
 
@@ -39,9 +35,6 @@ onMounted(() => {
         </el-anchor-link>
         <el-anchor-link class="a-link" href="#facility"> 設施 </el-anchor-link>
         <el-anchor-link class="a-link" href="#rules"> 住宿規定 </el-anchor-link>
-        <el-anchor-link class="a-link" href="#precautions">
-          注意事項
-        </el-anchor-link>
         <el-anchor-link class="a-link"> 住客評價(999) </el-anchor-link>
         <div class="bottom-line"></div>
       </el-anchor>
@@ -53,10 +46,6 @@ onMounted(() => {
       <HotelFacility id="facility" />
       <el-divider class="divider" />
       <HotelRule id="rules" />
-
-
-      <el-divider class="divider" />
-      <div class="temp" id="precautions">注意事項</div>
     </div>
   </div>
 </template>
@@ -81,14 +70,10 @@ onMounted(() => {
 </style>
 
 <style lang="scss" scoped>
-.temp {
-  border: 1px solid #000;
-  height: 350px;
-}
-
 .product-container {
   width: 95%;
   margin: 0 auto;
+  padding-bottom: 50px;
 }
 
 .divider {

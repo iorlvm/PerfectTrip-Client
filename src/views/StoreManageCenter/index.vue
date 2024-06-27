@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Menu as IconMenu, Message, Setting, List } from '@element-plus/icons-vue'
 
-const defaultOpeneds = ref(['0', '1']);
+const defaultOpeneds = ref([]);
 const defaultActive = ref('');
 
 const navigators = [

@@ -132,7 +132,7 @@ const openFlod = () => {
     font-size: 1em;
     padding: 14px;
     --el-button-hover-bg-color: #d7d8dd;
-    --el-button-hover-text-color: #5d6d95;
+    --el-button-hover-text-color: #536288;
     --el-button-hover-border-color: #aeb6ca;
   }
 }

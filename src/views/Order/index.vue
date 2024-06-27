@@ -21,24 +21,17 @@ onMounted(() => {
 <template>
     <div class="space"></div>
     <div class="container">
-        <el-steps class="step" :active="active" finish-status="success" align-center>
+        <el-steps class="step" :active="active" process-status="finish" finish-status="success" align-center>
             <el-step title="您的選項" />
             <el-step title="您的資料" />
             <el-step title="完成預定" />
         </el-steps>
         <el-divider class="divider" />
-        <div class="order-view">
-            <div class="order-info"></div>
-            <div class="main">
-                <router-view v-slot="{ Component }">
-                    <component :is="Component" :active="active" @nextActive="nextStep" @backActive="backStep" />
-                </router-view>
-            </div>
-        </div>
-
+        <router-view v-slot="{ Component }">
+            <component :is="Component" :active="active" @nextActive="nextStep" @backActive="backStep" />
+        </router-view>
     </div>
 </template>
-
 
 <style lang="scss" scoped>
 .space {
@@ -52,20 +45,5 @@ onMounted(() => {
 
 .step {
     margin-top: 20px;
-}
-
-
-.order-view {
-    display: flex;
-    padding: 20px;
-
-    .main {
-        width: 68%;
-    }
-
-    .order-info {
-        margin-right: 20px;
-        width: 33%;
-    }
 }
 </style>

@@ -107,14 +107,6 @@ const router = createRouter({
             },
           ]
         },
-        {
-          path: '/error',
-          component: ErrorPage
-        },
-        {
-          path: '/:catchAll(.*)',
-          component: ErrorPage
-        },
       ]
     },
     {
@@ -181,6 +173,14 @@ const router = createRouter({
           component: StoreAccount,
         },
       ]
+    },
+    {
+      path: '/error',
+      component: ErrorPage
+    },
+    {
+      path: '/:catchAll(.*)',
+      component: ErrorPage
     },
   ],
   scrollBehavior(to, from, savedPosition) {

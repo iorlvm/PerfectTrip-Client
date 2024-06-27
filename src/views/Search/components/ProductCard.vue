@@ -72,7 +72,9 @@ const routeToProduct = (id) => {
             <p class="large">TWD 9,999,999</p>
             <p class="small">不含稅費與其他費用</p>
             <el-button type="primary" @click="routeToProduct(1)"> <!-- 靜態暫時寫死 記得要換 -->
-              &nbsp;查看客房供應情況&nbsp;<i class="bi bi-chevron-right"></i></el-button>
+              &nbsp;查看客房供應情況&nbsp;<el-icon>
+                <ArrowRightBold />
+              </el-icon></el-button>
           </div>
 
         </div>

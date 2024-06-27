@@ -107,135 +107,254 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="order-form">
-        <el-form :model="formData" :rules="rules" ref="ruleFormRef" label-position="top" label-width="auto"
-            :status-icon="true" :scroll-to-error="true">
-            <div class="basic-info">
-                <h2>輸入個人資料</h2>
-                <div class="login-status">是否已登入</div>
-                <div class="name-row">
-                    <el-form-item label="姓" prop="lastName">
-                        <template v-if="isVisible()">
-                            <el-input v-model="formData.lastName" placeholder="請輸入姓氏"></el-input>
-                        </template>
-                        <template v-else>
-                            <p class="check-value">{{ formData.lastName }}</p>
-                        </template>
-                    </el-form-item>
-                    <el-form-item label="名" prop="firstName">
-                        <template v-if="isVisible()">
-                            <el-input v-model="formData.firstName" placeholder="請輸入名字"></el-input>
-                        </template>
-                        <template v-else>
-                            <p class="check-value">{{ formData.firstName }}</p>
-                        </template>
-                    </el-form-item>
+    <div class="order-view">
+        <div class="order-info">
+            <div class="info-card hotel-name">
+                <h4>民宿</h4>
+                <h2>旅館名稱</h2>
+                <p>旅館地址 旅館地址XXX路 XXX 號 XX樓</p>
+                <div class="flex">
+                    <div class="number">9.2</div>
+                    <div class="desc">很讚 - 9,999則評語</div>
                 </div>
-                <el-form-item label="電子信箱" prop="email">
-                    <template v-if="isVisible()">
-                        <el-input v-model="formData.email" placeholder="請輸入電子信箱"></el-input>
-                    </template>
-                    <template v-else>
-                        <p class="check-value">{{ formData.email }}</p>
-                    </template>
-                </el-form-item>
-                <el-form-item label="國家/地區" prop="region">
-                    <template v-if="isVisible()">
-                        <el-select v-model="formData.region" placeholder="請選擇國家/地區">
-                            <el-option v-for="item in regions" :key="item" :label="item" :value="item" />
-                        </el-select>
-                    </template>
-                    <template v-else>
-                        <p class="check-value">{{ formData.region }}</p>
-                    </template>
-                </el-form-item>
-                <el-form-item label="電話/手機" prop="phone">
-                    <template v-if="isVisible()">
-                        <el-input v-model="formData.phone" placeholder="請輸入電話/手機"></el-input>
-                    </template>
-                    <template v-else>
-                        <p class="check-value">{{ formData.phone }}</p>
-                    </template>
-                </el-form-item>
+                <div class="flex">
+                    <div class="tag">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>免費無線網路</span>
+                    </div>
+                    <div class="tag">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>停車場</span>
+                    </div>
+                </div>
             </div>
+            <div class="info-card selected-room">
+                <h3>您的訂房資訊</h3>
+                <div class="flex">
+                    <div class="date">
+                        <p>入住時間</p>
+                        <p class="big">2024 年 7 月 8 日 ( 一 )</p>
+                        <p class="small">15:00 - 22:00</p>
+                    </div>
+                    <div class="date">
+                        <p>退房時間</p>
+                        <p class="big check-out">2024 年 7 月 9 日 ( 二 )</p>
+                        <p class="small">12:00 前</p>
+                    </div>
+                </div>
+                <div class="total-days">
+                    <p>總共入住：</p>
+                    <span>1 晚</span>
+                </div>
 
-            <div class="remarks-block">
-                <template v-if="isVisible()">
-                    <h3>您還有什麼特別要求？</h3>
-                    <p class="desc">住宿方無法保證達成您的特殊要求，但將盡力為您安排，訂單完成後，您依然可隨時提出特殊要求！</p>
-                </template>
-                <template v-else>
-                    <h3>
-                        特別需求
-                    </h3>
-                </template>
-                <el-form-item class="remarks-text" prop="remarks">
-                    <template #label>
-                        <template v-if="isVisible()">
-                            <span>請用英語或是中文填寫您的請求 </span>
-                            <span class="note"> ( 選填 )</span>
-                        </template>
-                    </template>
-                    <template v-if="isVisible()">
-                        <el-input v-model="formData.remarks" type="textarea" placeholder="請輸入備註"></el-input>
-                    </template>
-                    <template v-else>
-                        <p class="check-value">
-                            <template v-if="!formData.freeParking && formData.remarks.trim() === ''">
-                                無
+                <el-divider class="divider" />
+                <p>已選擇：</p>
+                <div class="selected">
+                    <el-collapse>
+                        <el-collapse-item>
+                            <template #title>
+                                <div class="title">5 間客房 ( 10 位成人 )</div>
+                            </template>
+                            <p>1 x 標準雙人或雙床房</p>
+                            <p>3 x 高級雙人或雙床房</p>
+                            <p>1 x 豪華雙人或雙床房</p>
+                        </el-collapse-item>
+                    </el-collapse>
+                    <el-link type="primary" @click="$router.go(-1)"><span>更改選擇</span></el-link>
+                </div>
+            </div>
+            <div class="info-card total-price">
+                <h3>房價明細</h3>
+                <div class="row">
+                    <div class="flex">
+                        <h4>原價</h4>
+                        <p>TWD 2,104</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="flex">
+                        <h4>折扣</h4>
+                        <p>- TWD 492</p>
+                    </div>
+                    <p class="small">該住宿正在打折，因此您可享折扣價。</p>
+                </div>
+                <div class="row">
+                    <div class="flex">
+                        <h4>優惠券</h4>
+                        <p>- TWD 210</p>
+                    </div>
+                    <p class="small">您使用了優惠券，因此享有額外折扣。</p>
+                </div>
+                <div class="highlight">
+                    <p class="right through">TWD 2,104</p>
+                    <div class="flex">
+                        <h2>總金額</h2>
+                        <h2 class="right">TWD 1,401</h2>
+                    </div>
+                    <p class="right">含稅費與其他費用</p>
+                </div>
+                <div class="price-info">
+                    <h3>價格資訊</h3>
+                    <div>
+                        <div class="desc">
+                            <el-icon size="20">
+                                <PriceTag />
+                            </el-icon>
+                            <h4>
+                                包含 TWD 188 稅費與其他費用
+                            </h4>
+                        </div>
+                        <div class="flex">
+                            <p>5% 加值稅</p>
+                            <p>TWD 61</p>
+                        </div>
+                        <div class="flex">
+                            <p>10% 住宿方服務費</p>
+                            <p>TWD 127</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div class="order-form">
+                <el-form :model="formData" :rules="rules" ref="ruleFormRef" label-position="top" label-width="auto"
+                    :status-icon="true" :scroll-to-error="true">
+                    <div class="basic-info">
+                        <h2>輸入個人資料</h2>
+                        <div class="login-status">是否已登入</div>
+                        <div class="name-row">
+                            <el-form-item label="姓" prop="lastName">
+                                <template v-if="isVisible()">
+                                    <el-input v-model="formData.lastName" placeholder="請輸入姓氏"></el-input>
+                                </template>
+                                <template v-else>
+                                    <p class="check-value">{{ formData.lastName }}</p>
+                                </template>
+                            </el-form-item>
+                            <el-form-item label="名" prop="firstName">
+                                <template v-if="isVisible()">
+                                    <el-input v-model="formData.firstName" placeholder="請輸入名字"></el-input>
+                                </template>
+                                <template v-else>
+                                    <p class="check-value">{{ formData.firstName }}</p>
+                                </template>
+                            </el-form-item>
+                        </div>
+                        <el-form-item label="電子信箱" prop="email">
+                            <template v-if="isVisible()">
+                                <el-input v-model="formData.email" placeholder="請輸入電子信箱"></el-input>
                             </template>
                             <template v-else>
-                                {{ formData.remarks }}
-                                <br v-if="formData.remarks.trim() !== '' && formData.freeParking">
-                                {{ formData.freeParking ? '我需要額外的免費私人停車位' : '' }}
+                                <p class="check-value">{{ formData.email }}</p>
                             </template>
-                        </p>
-                    </template>
-                </el-form-item>
-                <el-form-item v-if="isVisible()">
-                    <el-checkbox class="free-parking-check-box" v-model="formData.freeParking">我想要免費私人停車位
-                        (額外)</el-checkbox>
-                </el-form-item>
-                <h3>您的抵達時間</h3>
-                <template v-if="isVisible()">
-                    <p class="center"><span class="check-icon"><i class="bi bi-check-circle"></i></span>您可在 14:00 -
-                        20:00 間入住</p>
-                    <el-form-item class="arrival-time-select" label="提供您預計的抵達時間" prop="arrivalTime">
-                        <el-time-select v-model="formData.arrivalTime" format="HH:mm" :clearable="false" start="14:00"
-                            step="00:30" end="20:00" placeholder="選擇時間"></el-time-select>
-                    </el-form-item>
-                </template>
-                <template v-else>
-                    <el-form-item class="arrival-time-select">
-                        <p class="check-value">
-                            {{ formData.arrivalTime }}
-                        </p>
-                    </el-form-item>
-                </template>
+                        </el-form-item>
+                        <el-form-item label="國家/地區" prop="region">
+                            <template v-if="isVisible()">
+                                <el-select v-model="formData.region" placeholder="請選擇國家/地區">
+                                    <el-option v-for="item in regions" :key="item" :label="item" :value="item" />
+                                </el-select>
+                            </template>
+                            <template v-else>
+                                <p class="check-value">{{ formData.region }}</p>
+                            </template>
+                        </el-form-item>
+                        <el-form-item label="電話/手機" prop="phone">
+                            <template v-if="isVisible()">
+                                <el-input v-model="formData.phone" placeholder="請輸入電話/手機"></el-input>
+                            </template>
+                            <template v-else>
+                                <p class="check-value">{{ formData.phone }}</p>
+                            </template>
+                        </el-form-item>
+                    </div>
+
+                    <div class="remarks-block">
+                        <template v-if="isVisible()">
+                            <h3>您還有什麼特別要求？</h3>
+                            <p class="desc">住宿方無法保證達成您的特殊要求，但將盡力為您安排，訂單完成後，您依然可隨時提出特殊要求！</p>
+                        </template>
+                        <template v-else>
+                            <h3>
+                                特別需求
+                            </h3>
+                        </template>
+                        <el-form-item class="remarks-text" prop="remarks">
+                            <template #label>
+                                <template v-if="isVisible()">
+                                    <span>請用英語或是中文填寫您的請求 </span>
+                                    <span class="note"> ( 選填 )</span>
+                                </template>
+                            </template>
+                            <template v-if="isVisible()">
+                                <el-input v-model="formData.remarks" type="textarea" placeholder="請輸入備註"></el-input>
+                            </template>
+                            <template v-else>
+                                <p class="check-value">
+                                    <template v-if="!formData.freeParking && formData.remarks.trim() === ''">
+                                        無
+                                    </template>
+                                    <template v-else>
+                                        {{ formData.remarks }}
+                                        <br v-if="formData.remarks.trim() !== '' && formData.freeParking">
+                                        {{ formData.freeParking ? '我需要額外的免費私人停車位' : '' }}
+                                    </template>
+                                </p>
+                            </template>
+                        </el-form-item>
+                        <el-form-item v-if="isVisible()">
+                            <el-checkbox class="free-parking-check-box" v-model="formData.freeParking">我想要免費私人停車位
+                                (額外)</el-checkbox>
+                        </el-form-item>
+                        <h3>您的抵達時間</h3>
+                        <template v-if="isVisible()">
+                            <p class="center"><span class="check-icon"><i class="bi bi-check-circle"></i></span>您可在
+                                14:00 -
+                                20:00 間入住</p>
+                            <el-form-item class="arrival-time-select" label="提供您預計的抵達時間" prop="arrivalTime">
+                                <el-time-select v-model="formData.arrivalTime" format="HH:mm" :clearable="false"
+                                    start="14:00" step="00:30" end="20:00" placeholder="選擇時間"></el-time-select>
+                            </el-form-item>
+                        </template>
+                        <template v-else>
+                            <el-form-item class="arrival-time-select">
+                                <p class="check-value">
+                                    {{ formData.arrivalTime }}
+                                </p>
+                            </el-form-item>
+                        </template>
 
 
-                <div class="rule">
-                    <h3>查看住宿規定</h3>
-                    <p>&nbsp;住宿方需要您同意以下住宿規定：</p>
-                    <p><i class="bi bi-dot"></i>&nbsp;禁止吸菸</p>
-                    <p><i class="bi bi-dot"></i>&nbsp;禁止攜帶寵物入住</p>
-                    <p>&nbsp;若繼續下一步，代表您同意住宿規定</p>
-                </div>
+                        <div class="rule">
+                            <h3>查看住宿規定</h3>
+                            <p>&nbsp;住宿方需要您同意以下住宿規定：</p>
+                            <p><i class="bi bi-dot"></i>&nbsp;禁止吸菸</p>
+                            <p><i class="bi bi-dot"></i>&nbsp;禁止攜帶寵物入住</p>
+                            <p>&nbsp;若繼續下一步，代表您同意住宿規定</p>
+                        </div>
+                    </div>
+                    <div class="button-block">
+                        <template v-if="active === 1">
+                            <el-button @click="checkForm(ruleFormRef)" size="large"
+                                type="primary">下一步：最後資料確認&nbsp;<el-icon>
+                                    <ArrowRightBold />
+                                </el-icon></el-button>
+                        </template>
+                        <template v-else-if="active === 2">
+                            <el-button @click="goback" size="large" type="info" plain><el-icon>
+                                    <ArrowLeftBold />
+                                </el-icon>再次確認個人資料&nbsp;</el-button>
+                            <el-button @click="submitForm" size="large" type="primary"><el-icon>
+                                    <Lock />
+                                </el-icon>&nbsp;完成訂房</el-button>
+                        </template>
+                    </div>
+                </el-form>
             </div>
-            <div class="button-block">
-                <template v-if="active === 1">
-                    <el-button @click="checkForm(ruleFormRef)" size="large" type="primary">下一步：最後資料確認&nbsp;<i
-                            class="bi bi-chevron-right"></i></el-button>
-                </template>
-                <template v-else-if="active === 2">
-                    <el-button @click="goback" size="large" type="info" plain><i
-                            class="bi bi-chevron-left"></i>再次確認個人資料&nbsp;</el-button>
-                    <el-button @click="submitForm" size="large" type="primary"><i
-                            class="bi bi-lock"></i>&nbsp;完成訂房</el-button>
-                </template>
-            </div>
-        </el-form>
+        </div>
     </div>
+
+
 </template>
 
 
@@ -251,14 +370,221 @@ onMounted(() => {
         font-weight: bold;
     }
 }
+
+.selected-room {
+    .el-collapse {
+        --el-collapse-border-color: transparent;
+    }
+}
 </style>
 
 <style lang="scss" scoped>
+.order-view {
+    display: flex;
+    padding: 20px;
+
+    .main {
+        flex-grow: 1;
+    }
+
+    .order-info {
+        flex-shrink: 0;
+        margin-right: 35px;
+        width: 350px;
+
+        .info-card {
+            margin-bottom: 25px;
+            padding: 10px 20px 15px;
+            border: 1px solid #00000020;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px -1px #00000020;
+
+            h2 {
+                font-size: 1.4em;
+                margin: 6px 0;
+                letter-spacing: 1px;
+            }
+
+            h3 {
+                font-size: 1.25em;
+                letter-spacing: 1px;
+                margin: 8px 0;
+            }
+
+            h4 {
+                letter-spacing: 1px;
+                margin-top: 2px;
+                font-size: 1.05em;
+            }
+        }
+    }
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}
+
+.hotel-name {
+    .number {
+        margin-right: 7px;
+        font-size: 1.15em;
+        font-weight: bold;
+        width: 2em;
+        height: 2em;
+        color: #eeeeee;
+        background-color: $headerFooter;
+        text-align: center;
+        line-height: 2;
+        border-radius: 5px;
+    }
+
+    p {
+        font-size: 1.1em;
+        margin: 10px 0;
+    }
+
+    .desc {
+        font-size: 1.1em;
+    }
+
+    .tag {
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+
+        span {
+            font-weight: bold;
+            margin: 0 15px 0 5px;
+        }
+    }
+}
+
+.selected-room {
+    .divider {
+        margin: 10px 0;
+    }
+
+    p {
+        font-size: 1.05em;
+        margin: 5px 0;
+    }
+
+    span {
+        font-size: 1.15em;
+        letter-spacing: 1px;
+        font-weight: bold;
+    }
+
+    .date {
+        width: calc(50% - 1px);
+        margin-bottom: 10px;
+
+        .big {
+            margin: 6px 0;
+            font-size: 1.15em;
+            font-weight: bold;
+        }
+
+        .small {
+            font-size: 0.98em;
+            opacity: 0.85;
+        }
+
+        .check-out {
+            position: relative;
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: -17px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1px;
+                height: 116%;
+                background-color: #00000025;
+            }
+        }
+
+        &:first-child {
+            margin-right: 28px;
+        }
+    }
+
+    .selected {
+        .title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+
+    }
+}
+
+.total-price {
+    .flex {
+        justify-content: space-between;
+    }
+
+    .row {
+        margin: 8px 0;
+    }
+
+    .small {
+        opacity: 0.8;
+    }
+
+    .right {
+        text-align: right;
+    }
+
+    .through {
+        color: $priceColor;
+        text-decoration: line-through;
+    }
+
+    .highlight {
+        padding: 12px 0;
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: -20px;
+            right: -20px;
+            top: 0;
+            bottom: 0;
+            background-color: #509cff1c;
+            border-bottom: 1px solid #00000012;
+            border-top: 1px solid #00000012;
+        }
+    }
+
+
+
+    .price-info {
+        .desc {
+            display: flex;
+            align-items: center;
+            margin: 15px 0 7px;
+
+            h4 {
+                margin: 0 0 0 11px;
+            }
+        }
+
+        p {
+            margin: 5px 0 5px 30px;
+        }
+    }
+}
+
 .order-form {
     padding: 10px 30px 10px 20px;
     border: 1px solid #00000025;
     border-radius: 8px;
-    box-shadow: 0 4px 8px -2px #00000020;
+    box-shadow: 0 1px 3px -1px #00000020;
 
     .el-form-item {
         margin-bottom: 25px;
@@ -376,6 +702,15 @@ onMounted(() => {
             --el-button-disabled-border-color: #fbe288;
             font-weight: bold;
         }
+    }
+
+    .check-value {
+        color: #3f5976 !important;
+        font-size: 1.1em !important;
+        font-weight: bold;
+        padding: 5px 12px;
+        background-color: #f4f0f0;
+        border-radius: 10px;
     }
 }
 </style>
