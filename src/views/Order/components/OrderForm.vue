@@ -10,6 +10,8 @@ const emit = defineEmits([
     'nextActive', 'backActive'
 ]);
 
+const selectedActive = ref(0);
+
 const goback = () => {
     scrollTop();
     emit('backActive');
@@ -18,6 +20,7 @@ const goback = () => {
 const nextStep = () => {
     scrollTop();
     emit('nextActive');
+    selectedActive.value = 1;
 }
 
 const scrollTop = () => {
@@ -76,7 +79,8 @@ const checkForm = async (formEl) => {
 
     await formEl.validate((valid, fields) => {
         if (valid) {
-            console.log('表單驗證通過！', formData.value);
+            // console.log('表單驗證通過！', formData.value);
+
             nextStep();
         } else {
             console.log('表單驗證失敗！', fields);
@@ -150,17 +154,17 @@ onMounted(() => {
                 <el-divider class="divider" />
                 <p>已選擇：</p>
                 <div class="selected">
-                    <el-collapse>
-                        <el-collapse-item>
+                    <el-collapse v-model="selectedActive">
+                        <el-collapse-item :name="1" :disabled="active !== 1">
                             <template #title>
-                                <div class="title">5 間客房 ( 10 位成人 )</div>
+                                <div class="title" style="color: black;">5 間客房 ( 10 位成人 )</div>
                             </template>
                             <p>1 x 標準雙人或雙床房</p>
                             <p>3 x 高級雙人或雙床房</p>
                             <p>1 x 豪華雙人或雙床房</p>
                         </el-collapse-item>
                     </el-collapse>
-                    <el-link type="primary" @click="$router.go(-1)"><span>更改選擇</span></el-link>
+                    <el-link type="primary" @click="$router.go(-1)" v-if="active === 1"><span>更改選擇</span></el-link>
                 </div>
             </div>
             <div class="info-card total-price">

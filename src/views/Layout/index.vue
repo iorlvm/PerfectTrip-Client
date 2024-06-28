@@ -1,6 +1,7 @@
 <script setup>
 import LayoutNav from './components/LayoutNav.vue';
 import LayoutFooter from './components/LayoutFooter.vue';
+import LayoutChat from './components/LayoutChat.vue';
 </script>
 
 <template>
@@ -8,9 +9,11 @@ import LayoutFooter from './components/LayoutFooter.vue';
     <LayoutNav />
     <main class="flex-main">
       <RouterView />
+
     </main>
     <LayoutFooter />
   </div>
+  <LayoutChat />
 </template>
 
 
