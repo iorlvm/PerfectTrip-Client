@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { Search } from '@element-plus/icons-vue'
 
-// 假資料
+
 const contacts = ref([]);
 
+// 假資料
+// TODO 之後可以思考一下處理的方式
+// 要請求時去跟伺服器要求排序後的資料還是一次撈下來本地做排序處理
 const contactsData = [
     {
         id: 1,
@@ -12,7 +15,7 @@ const contactsData = [
         date: '2024-06-27',
         lastMessage: 'See you soon!',
         unreadMessages: 3,
-        avatar: 'avatar1.jpg',
+        avatar: '/avatar1.jpg',
         pinned: false
     },
     {
@@ -21,7 +24,7 @@ const contactsData = [
         date: '2024-06-28',
         lastMessage: 'Got it!',
         unreadMessages: 1,
-        avatar: 'avatar2.jpg',
+        avatar: '/avatar2.jpg',
         pinned: true
     },
     {
@@ -30,7 +33,7 @@ const contactsData = [
         date: '2024-06-28',
         lastMessage: 'Let’s meet tomorrow.',
         unreadMessages: 0,
-        avatar: 'avatar3.jpg',
+        avatar: '/avatar3.jpg',
         pinned: false
     },
     {
@@ -39,7 +42,7 @@ const contactsData = [
         date: '2024-06-29',
         lastMessage: 'Thank you!',
         unreadMessages: 5,
-        avatar: 'avatar4.jpg',
+        avatar: '/avatar4.jpg',
         pinned: false
     }
 ];
@@ -90,14 +93,24 @@ const changShowModel = (key) => {
 // 可能需要記憶最後一個打開的對話框
 const cardActive = ref(-1);
 
-const cardActiveChang = index => {
+const cardActiveChang = (index) => {
     cardActive.value = index;
+    let chatId = contacts.value[index].id;
+    getChatSession(chatId);
+    getChatingWith();
+    scrollToBottom();
 }
 
-const dropdownActive = ref(contacts.value.map(() => false));
+const dropdownActive = ref(-1);
 
 const dropdownVisibleChange = (isVisible, index) => {
-    dropdownActive.value[index] = isVisible;
+    if (isVisible) {
+        dropdownActive.value = index;
+    } else {
+        setTimeout(() => {
+            dropdownActive.value = -1;
+        }, 90);
+    }
 };
 
 const formatDate = (dateStr) => {
@@ -105,12 +118,154 @@ const formatDate = (dateStr) => {
     return date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' });
 };
 
+const formatTime = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
 
 onMounted(() => {
     showAll();
 })
 const searchName = ref('');
 
+
+
+// TODO 假的暫時寫死記得要改
+const loginUserId = ref('user2');
+
+const messagesScrollbar = ref();
+const messagesScrollbarInnerRef = ref();
+
+// 訊息
+const chatSession = ref(null);
+
+const inputTextarea = ref('');
+
+const getChatSession = (chatId) => {
+    chatSession.value = chatSessionData;
+}
+
+const chatingWith = ref({});
+const getChatingWith = () => {
+    chatSession.value.participants.forEach(participant => {
+        if (participant.userId !== loginUserId.value) {
+            chatingWith.value = participant;
+            return;
+        }
+    });
+}
+
+const sendMessage = () => {
+    if (inputTextarea.value.trim().length < 1) {
+        return;
+    }
+    inputTextarea.value = inputTextarea.value.trim();
+    // TODO 送出訊息
+    console.log('送出訊息:' + inputTextarea.value);
+    inputTextarea.value = '';
+}
+
+const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+        if (event.shiftKey) {
+            return;
+        } else {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+}
+
+const scrollToBottom = () => {
+    nextTick(() => {
+        console.log(messagesScrollbar.value);
+        if (messagesScrollbar.value) {
+            console.log(messagesScrollbarInnerRef.value.clientHeight);
+            messagesScrollbar.value.setScrollTop(messagesScrollbarInnerRef.value.clientHeight);
+        }
+    });
+};
+
+const isUserMessage = (senderId) => {
+    return senderId === loginUserId.value;
+}
+
+
+// mock聊天訊息
+const chatSessionData = {
+    id: 'uniqueChatSessionID', // 通訊ID
+    participants: [
+        { userId: 'user1', name: 'Alice' },
+        { userId: 'user2', name: 'WeiEN' }
+    ], // 參與者列表
+    messages: [
+        {
+            messageId: 'msg1',
+            senderId: 'user2',
+            content: '嘿！最近過得怎麼樣？',
+            timestamp: '2024-06-29T12:00:00Z'
+        },
+        {
+            messageId: 'msg2',
+            senderId: 'user1',
+            content: '嘿！挺好的，最近天氣真不錯。',
+            timestamp: '2024-06-29T12:01:00Z'
+        },
+        {
+            messageId: 'msg3',
+            senderId: 'user2',
+            content: '是啊，最近出去走走的話，感覺心情都會好很多。',
+            timestamp: '2024-06-29T12:03:00Z'
+        },
+        {
+            messageId: 'msg4',
+            senderId: 'user1',
+            content: '對啊，運動和新鮮空氣對身心都有好處。',
+            timestamp: '2024-06-29T12:04:00Z'
+        },
+        {
+            messageId: 'msg5',
+            senderId: 'user2',
+            content: '你平時有什麼喜歡做的休閒活動嗎？',
+            timestamp: '2024-06-29T12:06:00Z'
+        },
+        {
+            messageId: 'msg6',
+            senderId: 'user1',
+            content: '我喜歡看書、做手工藝，還有跟朋友聚聚。',
+            timestamp: '2024-06-29T12:18:00Z'
+        },
+        {
+            messageId: 'msg7',
+            senderId: 'user2',
+            content: '聽起來很有趣！最近有什麼新計劃嗎？',
+            timestamp: '2024-06-29T12:30:00Z'
+        },
+        {
+            messageId: 'msg8',
+            senderId: 'user1',
+            content: '我在計劃一個小旅行，打算去附近的一個公園走走。',
+            timestamp: '2024-06-29T12:35:00Z'
+        },
+        {
+            messageId: 'msg9',
+            senderId: 'user2',
+            content: '聽起來挺放鬆的！希望你有個愉快的旅行！',
+            timestamp: '2024-06-29T12:55:00Z'
+        }
+    ], // 訊息列表
+    createdAt: '2024-06-29T11:00:00Z', // 創建時間
+    lastActivity: '2024-06-29T12:01:00Z', // 最後活動時間
+    status: 'active', // 通訊狀態
+    notificationSettings: {
+        user1: 'on',
+        user2: 'off'
+    }, // 通知設置
+    historySettings: {
+        saveHistory: true,
+        retentionPeriod: '30 days'
+    } // 歷史記錄保存設置
+}
 </script>
 
 <template>
@@ -157,7 +312,7 @@ const searchName = ref('');
                                     <span>{{ contact.unreadMessages < 100 ? contact.unreadMessages : 99 }}</span>
                                 </div>
                                 <el-dropdown class="contact-dropdown" trigger="click"
-                                    :class="{ 'dropdown-active': dropdownActive[index] }"
+                                    :class="{ 'dropdown-active': index === dropdownActive }"
                                     @visible-change="(isVisible) => dropdownVisibleChange(isVisible, index)">
                                     <el-icon class="dropdown-icon">
                                         <arrow-down />
@@ -178,7 +333,57 @@ const searchName = ref('');
         </div>
         <div class="divider"></div>
         <div class="messages-block">
+            <div class="messages-card" v-if="chatSession">
+                <div class="messages-bar">
+                    <el-dropdown trigger="click">
+                        <div class="dropdown">
+                            {{ chatingWith.name }}
+                            <el-icon class="chating-dropdown">
+                                <arrow-down />
+                            </el-icon>
+                        </div>
 
+                        <template #dropdown>
+                            <div>
+                                對方的資訊<br>
+                                使用者頭像<br>
+                                資訊等<br>
+                            </div>
+                            <el-dropdown-menu>
+                                <el-dropdown-item>關閉提醒</el-dropdown-item>
+                                <el-dropdown-item>封鎖使用者</el-dropdown-item>
+                                <el-dropdown-item>刪除對話</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </div>
+                <div class="messages-list">
+                    <el-scrollbar ref="messagesScrollbar" class="messages-scrollbar" always>
+                        <div ref="messagesScrollbarInnerRef">
+                            <div class="message" v-for="message in chatSession.messages" :key="message.messageId">
+                                <p :class="{
+                                    'left': !isUserMessage(message.senderId),
+                                    'right': isUserMessage(message.senderId),
+                                }">{{ message.content }} <span>{{ formatTime(message.timestamp) }}</span></p>
+                            </div>
+                        </div>
+
+                    </el-scrollbar>
+                </div>
+                <div class="input-block">
+                    <el-scrollbar class="input-scrollbar">
+                        <el-input class="text-block" v-model="inputTextarea" style="width: 100%" :rows="2"
+                            type="textarea" resize="none" :autosize="true" :autofocus="true" maxlength="200"
+                            :show-word-limit="true" placeholder="輸入文字" @keydown="handleKeyDown" />
+                    </el-scrollbar>
+                    <div class="input-button-block">
+                        <div class="input-block-icon"></div>
+                        <div class="input-block-icon send-icon" @click="sendMessage">
+                            <i class="bi bi-send" :class="{ 'efficient': inputTextarea.trim().length > 0 }"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -339,12 +544,142 @@ const searchName = ref('');
     .messages-block {
         flex-grow: 1;
         background-color: #f3f3f3;
+
+        .messages-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .messages-bar {
+                background-color: #fff;
+                height: 35px;
+                border-bottom: 1px solid #00000020;
+                padding: 10px 15px;
+                flex-shrink: 0;
+
+                .dropdown {
+                    display: flex;
+                    align-items: center;
+
+                    .chating-dropdown {
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .messages-list {
+                background-color: #f3f3f3;
+                flex-grow: 1;
+                overflow: hidden;
+
+                .messages-scrollbar {
+                    height: 100%;
+                }
+
+                .message {
+                    margin: 10px 20px;
+                    display: flex;
+
+                    p {
+                        position: relative;
+                        max-width: 60%;
+                        background-color: #fff;
+                        padding: 10px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 4px -1px #00000031;
+
+                        span {
+                            float: right;
+                            clear: both;
+                            margin-top: 0.43em;
+                            font-size: 0.7em;
+                        }
+                    }
+
+                    .left {
+                        border-top-left-radius: 0;
+                        margin-right: auto;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: -10px;
+                            width: 0;
+                            height: 0;
+                            border-top: 10px solid #fff;
+                            border-right: 10px solid #fff;
+                            border-bottom: 10px solid transparent;
+                            border-left: 10px solid transparent;
+                        }
+                    }
+
+                    .right {
+                        border-top-right-radius: 0;
+                        margin-left: auto;
+                        background-color: #d7f7e7;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            right: -10px;
+                            width: 0;
+                            height: 0;
+                            border-top: 10px solid #d7f7e7;
+                            border-left: 10px solid #d7f7e7;
+                            border-bottom: 10px solid transparent;
+                            border-right: 10px solid transparent;
+                        }
+                    }
+
+                }
+            }
+
+            .input-block {
+                flex-shrink: 0;
+                max-height: 235px;
+                min-height: 80px;
+                border-top: 1px solid #00000020;
+                background-color: #fff;
+
+                .input-scrollbar {
+                    height: calc(100% - 30px);
+
+                    .text-block {
+                        --el-color-primary: transparent;
+                        --el-input-hover-border-color: transparent;
+                        --el-input-border-color: transparent;
+                    }
+                }
+
+
+                .input-button-block {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    height: 30px;
+                    padding: 0 12px;
+
+                    .input-block-icon {
+                        cursor: pointer;
+                        font-size: 1.25em;
+                    }
+
+                    .send-icon {
+                        cursor: auto;
+                        color: #00000040;
+                    }
+
+                    .efficient {
+                        cursor: pointer;
+                        color: $tagColor;
+                    }
+
+                }
+            }
+        }
     }
-
-
-}
-
-.temp {
-    height: 1500px;
 }
 </style>

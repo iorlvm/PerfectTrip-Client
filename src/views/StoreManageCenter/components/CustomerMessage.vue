@@ -1,11 +1,15 @@
 <template>
-    <div>
-        我是客戶訊息
+    <div class="chat-room">
+        <ChatRoom />
     </div>
 </template>
 
 <script setup>
-
+import ChatRoom from '@/components/ChatRoom.vue';
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chat-room {
+    height: 100%;
+}
+</style>

@@ -29,17 +29,20 @@ const createOrder = () => {
                 <RoomCard />
                 <RoomCard />
             </el-col>
-            <el-col :xs="0" :sm="0" :md="4">
+            <el-col :xs="24" :sm="24" :md="4">
                 <div class="order-title"></div>
-                <div class="order-block">
-                    <el-button class="order-button" type="primary" size="large" @click="createOrder">現在就預定</el-button>
-                    <div>
+                <el-row class="order-block">
+                    <el-col :span="24">
+                        <el-button class="order-button" type="primary" size="large"
+                            @click="createOrder">現在就預定</el-button>
+                    </el-col>
+                    <el-col :xs="0" :sm="0" :md="24">
                         <p><i class="bi bi-dot"></i>資訊</p>
+                    </el-col>
+                    <el-col :xs="0" :sm="0" :md="24">
                         <p><i class="bi bi-dot"></i>資訊</p>
-                        <p><i class="bi bi-dot"></i>資訊</p>
-                        <p><i class="bi bi-dot"></i>資訊</p>
-                    </div>
-                </div>
+                    </el-col>
+                </el-row>
             </el-col>
         </el-row>
     </div>
@@ -47,6 +50,14 @@ const createOrder = () => {
 </template>
 
 <style lang="scss" scoped>
+@media (max-width: 992px) {
+    .order-title {
+        position: relative !important;
+        height: 3px !important;
+        margin-left: 0 !important;
+    }
+}
+
 .product-container {
     width: 95%;
     margin: 0 auto;

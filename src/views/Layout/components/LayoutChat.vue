@@ -1,7 +1,7 @@
 <script setup>
 import ChatRoom from '@/components/ChatRoom.vue'
 import { ref } from 'vue';
-const newMessage = ref(99);
+const newMessage = ref(9);
 const isOpen = ref(false);
 
 const roomStyle = ref([80, 40, 0.1]);
@@ -110,7 +110,6 @@ const closeChatRoom = () => {
 
             span {
                 padding-left: 1px;
-                padding-top: 2px;
                 font-size: 0.8em;
             }
         }

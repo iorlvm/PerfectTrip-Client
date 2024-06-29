@@ -73,8 +73,7 @@ const navigators = [
                     </el-menu>
                 </el-scrollbar>
             </el-aside>
-
-            <el-container>
+            <main>
                 <el-header>
                     <ul class="toolbar">
                         <li>
@@ -117,12 +116,8 @@ const navigators = [
                     </ul>
                 </el-header>
 
-                <el-main>
-                    <el-scrollbar>
-                        <router-view></router-view>
-                    </el-scrollbar>
-                </el-main>
-            </el-container>
+                <router-view></router-view>
+            </main>
         </el-container>
     </div>
 
@@ -132,6 +127,7 @@ const navigators = [
 <style lang="scss" scoped>
 .manage-layout {
     .el-header {
+
         position: relative;
         background-color: #fff;
         border-bottom: 2px solid #00000011;
@@ -164,8 +160,13 @@ const navigators = [
         }
     }
 
-    .el-main {
+    main {
+        flex-grow: 1;
+        height: 100vh;
         background-color: #f1f1f1;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
     }
 
     .el-aside {
