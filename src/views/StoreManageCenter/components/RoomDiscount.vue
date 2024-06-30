@@ -16,9 +16,6 @@ function editDiscount(id) {
 function deleteDiscount(id) {
     // 刪除折扣
 }
-
-
-
 </script>
 
 <template>
@@ -30,99 +27,85 @@ function deleteDiscount(id) {
             左選項2
         </li>
     </ManageToolbar>
+    <el-scrollbar>
+        <div class="body">
+            <div id="discount-management">
+                <dic class="title">
+                    <h1>房型折扣管理</h1>
+                    <nav>
+                        <!-- <button @click="goToHome()">返回主頁</button>
+                        <button @click="logout()">登出</button> -->
+                    </nav>
+                </dic>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>房型折扣管理</title>
-    </head>
+                <section id="discount-list">
+                    <h2>現有折扣</h2>
+                    <ul>
+                        <li>
+                            <h3>標準房 - 夏季折扣</h3>
+                            <p>折扣 ：20%</p>
+                            <p>有效期：2024-06-01 至 2024-12-31</p>
+                            <div class="actions">
+                                <button @click="editDiscount()">編輯</button>
+                                <button @click="deleteDiscount()">刪除</button>
+                            </div>
+                        </li>
+                        <!--添加更多折扣-->
+                    </ul>
+                </section>
 
-    <body>
-        <div id="discount-management">
+                <section id="add-discount">
+                    <h2>添加新折扣</h2>
+                    <form>
+                        <label for="roomType">房型</label>
+                        <select name="roomType" id="roomType">
+                            <option value="standard">標準房</option>
+                            <option value="deluxe">豪華房</option>
+                        </select>
 
-            <head>
-                <h1>房型折扣管理</h1>
-                <nav>
-                    <button @click="goToHome()">返回主頁</button>
-                    <button @click="logout()">登出</button>
-                </nav>
-            </head>
+                        <label for="discount">折扣 （％）</label>
+                        <input type="number" id="discount" name="discount" min="0" max="100" required>
 
-            <section id="discount-list">
-                <h2>現有折扣</h2>
-                <ul>
-                    <li>
-                        <h3>標準房 - 夏季折扣</h3>
-                        <p>折扣 ：20%</p>
-                        <p>有效期：2024-06-01 至 2024-12-31</p>
-                        <button @click="editDiscount()">編輯</button>
-                        <button @click="delectDiscount()">刪除</button>
-                    </li>
-                    <!--添加更多折扣-->
-                </ul>
-            </section>
+                        <label for="startDate">開始日期</label>
+                        <input type="date" id="startDate" name="startDate" required>
 
-            <section id="add-discount">
-                <h2>添加新折扣</h2>
-                <form>
-                    <label for="roomType">房型</label>
-                    <select name="roomType" id="roomType">
-                        <option value="standard">標準房</option>
-                        <option value="deluxe">豪華房</option>
-                    </select>
+                        <label for="endDate">結束日期</label>
+                        <input type="date" id="endDate" name="endDate" required>
+                    </form>
+                </section>
 
-                    <label for="discount">折扣 （％）</label>
-                    <input type="number" id="discount" name="discount" min="0" max="100" required>
-
-                    <label for="startDate">開始日期</label>
-                    <input type="date" id="startDate" name="startDate" required>
-
-                    <label for="endDate">結束日期</label>
-                    <input type="date" id="endDate" name="endDate" required>
-
-                </form>
-            </section>
-
-            <footer>
-                <p>&copy; 2024 飯店管理平台</p>
-            </footer>
-
-
+                <footer>
+                    <p>&copy; 2024 飯店管理平台</p>
+                </footer>
+            </div>
         </div>
-
-
-    </body>
-
+    </el-scrollbar>
 </template>
 
 <style lang="scss" scoped>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
+.body {
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
 #discount-management {
-    width: 800px;
+    min-width: 800px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
 
-header {
+.title {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-header h1 {
+.title h1 {
     margin: 0;
     font-size: 24px;
     color: #333;
