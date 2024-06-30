@@ -1,14 +1,6 @@
 <script setup>
 import ManageToolbar from './ManageToolbar.vue';
 
-function goToHome() {
-    //回首頁
-}
-
-function logout() {
-    // 登出
-}
-
 function editDiscount(id) {
     // 編輯折扣
 }
@@ -20,25 +12,17 @@ function deleteDiscount(id) {
 
 <template>
     <ManageToolbar>
-        <li>
-            左選項1
-        </li>
-        <li>
-            左選項2
-        </li>
+        <li>左選項1</li>
+        <li>左選項2</li>
     </ManageToolbar>
     <el-scrollbar>
         <div class="body">
-            <div id="discount-management">
-                <dic class="title">
+            <div class="discount-management">
+                <div class="title">
                     <h1>房型折扣管理</h1>
-                    <nav>
-                        <!-- <button @click="goToHome()">返回主頁</button>
-                        <button @click="logout()">登出</button> -->
-                    </nav>
-                </dic>
+                </div>
 
-                <section id="discount-list">
+                <section class="discount-list">
                     <h2>現有折扣</h2>
                     <ul>
                         <li>
@@ -50,13 +34,16 @@ function deleteDiscount(id) {
                                 <button @click="deleteDiscount()">刪除</button>
                             </div>
                         </li>
-                        <!--添加更多折扣-->
+                        <!-- 添加更多折扣 -->
                     </ul>
                 </section>
 
-                <section id="add-discount">
+                <section class="add-discount">
                     <h2>添加新折扣</h2>
                     <form>
+                        <label for="title">標題</label>
+                        <input type="input" id="title" name="title" required>
+
                         <label for="roomType">房型</label>
                         <select name="roomType" id="roomType">
                             <option value="standard">標準房</option>
@@ -71,6 +58,7 @@ function deleteDiscount(id) {
 
                         <label for="endDate">結束日期</label>
                         <input type="date" id="endDate" name="endDate" required>
+                        <button>新增</button>
                     </form>
                 </section>
 
@@ -83,6 +71,10 @@ function deleteDiscount(id) {
 </template>
 
 <style lang="scss" scoped>
+$primary-color: #007bff;
+$danger-color: #dc3545;
+$confirm-color: #28a745;
+
 .body {
     padding: 20px;
     display: flex;
@@ -90,138 +82,127 @@ function deleteDiscount(id) {
     align-items: center;
 }
 
-#discount-management {
+.discount-management {
     min-width: 800px;
-    background-color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-}
 
-.title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
 
-.title h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #333;
-}
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+    }
 
-nav button {
-    margin-left: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+    .discount-list,
+    .add-discount {
+        margin-bottom: 20px;
 
-nav button:hover {
-    background-color: #0056b3;
-}
+        h2 {
+            font-size: 20px;
+            color: #333;
+            border-bottom: 2px solid $primary-color;
+            padding-bottom: 5px;
+        }
 
-#discount-list,
-#add-discount {
-    margin-bottom: 20px;
-}
+        ul {
+            list-style-type: none;
+            padding: 0;
 
-#discount-list h2,
-#add-discount h2 {
-    font-size: 20px;
-    color: #333;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
-}
+            li {
+                background-color: #f1f1f1;
+                border: 1px solid #e7e7e7;
+                padding: 15px;
+                margin-bottom: 10px;
+                border-radius: 4px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
 
-#discount-list ul {
-    list-style-type: none;
-    padding: 0;
-}
+                h3,
+                p {
+                    margin: 5px 0;
+                }
 
-#discount-list li {
-    background-color: #f1f1f1;
-    border: 1px solid #e7e7e7;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+                .actions {
+                    display: flex;
+                    gap: 10px;
 
-#discount-list li h3,
-#discount-list li p {
-    margin: 5px 0;
-}
+                    button {
+                        padding: 5px 10px;
+                        background-color: $confirm-color;
+                        color: #fff;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        transition: background-color 0.3s;
 
-#discount-list li .actions {
-    display: flex;
-    gap: 10px;
-}
+                        &:hover {
+                            background-color: darken($confirm-color, 10%);
+                        }
 
-#discount-list li .actions button {
-    padding: 5px 10px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
+                        &:nth-child(2) {
+                            background-color: $danger-color;
 
-#discount-list li .actions button:hover {
-    background-color: #218838;
-}
+                            &:hover {
+                                background-color: darken($danger-color, 10%);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-#discount-list li .actions button:nth-child(2) {
-    background-color: #dc3545;
-}
+    .add-discount form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
 
-#discount-list li .actions button:nth-child(2):hover {
-    background-color: #c82333;
-}
+        label {
+            font-size: 14px;
+            color: #333;
+        }
 
-#add-discount form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+        input,
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-#add-discount form label {
-    font-size: 14px;
-    color: #333;
-}
+        button {
+            margin-top: 5px;
+            padding: 12px;
+            background-color: $primary-color;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
 
-#add-discount form input,
-#add-discount form select,
-#add-discount form button {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+            &:hover {
+                background-color: darken($primary-color, 10%);
+            }
+        }
+    }
 
-#add-discount form button {
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#add-discount form button:hover {
-    background-color: #0056b3;
-}
-
-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #666;
+    footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+    }
 }
 </style>
