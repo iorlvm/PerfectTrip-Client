@@ -31,64 +31,59 @@ function deleteInventory(id) {
             左選項2
         </li>
     </ManageToolbar>
-    <div id="inventory-managemnet">
 
-        <head>
-            <h1>房間庫存管理</h1>
-            <nav>
-                <button @click="goToHome()">返回主頁</button>
-                <button @click="logout()">登出</button>
-            </nav>
-        </head>
+    <el-scrollbar>
 
-        <section id='filter-search'>
-            <input type="text" id="searchQuery" placeholder="搜索房型或房間">
-            <select id="filterStatus">
-                <option value="">所有狀態</option>
-                <option value="available">可用</option>
-                <option value="booked">已預訂</option>
-            </select>
-        </section>
+        <div class="body">
+            <div id="inventory-management">
+                <header>
+                    <h1>房間庫存管理</h1>
+                </header>
 
-        <section id='inventory-list'>
-            <h2>房間庫存列表</h2>
-            <button @click="addInventory()">添加庫存</button>
-            <ul>
-                <li>
-                    <p>房間號碼：101</p>
-                    <p>房型：標準房</p>
-                    <p>狀態: <span class="可用"></span>
-                    </p>
-                    <div class="actions">
-                        <button @click="editInventory()">編輯</button>
-                        <button @click="delectInventory()">刪除</button>
-                    </div>
-                </li>
-            </ul>
+                <section id='filter-search'>
+                    <input type="text" id="searchQuery" placeholder="搜索房型或房間">
+                    <select id="filterStatus">
+                        <option value="">所有狀態</option>
+                        <option value="available">可用</option>
+                        <option value="booked">已預訂</option>
+                    </select>
+                </section>
 
-        </section>
-        <footer>
-            <p>&copy; 2024 酒店管理平台</p>
-        </footer>
-
-    </div>
+                <section id='inventory-list'>
+                    <h2>房間庫存列表</h2>
+                    <button class="add-button" @click="addInventory()">添加庫存</button>
+                    <ul>
+                        <li>
+                            <p>房間號碼：101</p>
+                            <p>房型：標準房</p>
+                            <p>狀態: <span class="可用"></span>
+                            </p>
+                            <div class="actions">
+                                <button @click="editInventory()">編輯</button>
+                                <button @click="deleteInventory()">刪除</button>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+                <footer>
+                    <p>&copy; 2024 酒店管理平台</p>
+                </footer>
+            </div>
+        </div>
+    </el-scrollbar>
 </template>
 
 
 <style lang="scss" scoped>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
+.body {
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
 #inventory-management {
-    width: 800px;
+    min-width: 800px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -108,20 +103,6 @@ header h1 {
     color: #333;
 }
 
-nav button {
-    margin-left: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-nav button:hover {
-    background-color: #0056b3;
-}
 
 #filter-search {
     display: flex;
@@ -206,7 +187,7 @@ nav button:hover {
 }
 
 .add-button {
-    padding: 10px 20px;
+    padding: 8px 15px;
     background-color: #007bff;
     color: #fff;
     border: none;
