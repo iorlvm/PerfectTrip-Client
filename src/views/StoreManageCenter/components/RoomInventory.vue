@@ -1,5 +1,38 @@
+<script setup>
+import ManageToolbar from './ManageToolbar.vue';
+function goToHome() {
+    // 返回主頁
+}
+
+function logout() {
+    // 登出
+}
+
+function addInventory() {
+    // 添加庫存
+}
+
+function editInventory(id) {
+    // 編輯庫存
+}
+
+function deleteInventory(id) {
+    // 刪除庫存
+}
+
+</script>
+
 <template>
-    <div id = "inventory-managemnet">
+    <ManageToolbar>
+        <li>
+            左選項1
+        </li>
+        <li>
+            左選項2
+        </li>
+    </ManageToolbar>
+    <div id="inventory-managemnet">
+
         <head>
             <h1>房間庫存管理</h1>
             <nav>
@@ -8,16 +41,16 @@
             </nav>
         </head>
 
-        <section id = 'filter-search'>
-        <input type="text" id = "searchQuery" placeholder="搜索房型或房間">
-        <select id="filterStatus">
-            <option value="">所有狀態</option>
-            <option value="available">可用</option>
-            <option value="booked">已預訂</option>
-        </select>
+        <section id='filter-search'>
+            <input type="text" id="searchQuery" placeholder="搜索房型或房間">
+            <select id="filterStatus">
+                <option value="">所有狀態</option>
+                <option value="available">可用</option>
+                <option value="booked">已預訂</option>
+            </select>
         </section>
 
-        <section id = 'inventory-list'>
+        <section id='inventory-list'>
             <h2>房間庫存列表</h2>
             <button @click="addInventory()">添加庫存</button>
             <ul>
@@ -26,7 +59,7 @@
                     <p>房型：標準房</p>
                     <p>狀態: <span class="可用"></span>
                     </p>
-                    <div class ="actions">
+                    <div class="actions">
                         <button @click="editInventory()">編輯</button>
                         <button @click="delectInventory()">刪除</button>
                     </div>
@@ -41,28 +74,6 @@
     </div>
 </template>
 
-<script>
-function goToHome() {
-            // 返回主頁
-        }
-
-        function logout() {
-            // 登出
-        }
-
-        function addInventory() {
-            // 添加庫存
-        }
-
-        function editInventory(id) {
-            // 編輯庫存
-        }
-
-        function deleteInventory(id) {
-            // 刪除庫存
-        }
-
-</script>
 
 <style lang="scss" scoped>
 body {
@@ -215,5 +226,4 @@ footer {
     font-size: 14px;
     color: #666;
 }
-
 </style>

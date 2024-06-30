@@ -1,34 +1,68 @@
+<script setup>
+import ManageToolbar from './ManageToolbar.vue';
+
+function goToHome() {
+    //回首頁
+}
+
+function logout() {
+    // 登出
+}
+
+function editDiscount(id) {
+    // 編輯折扣
+}
+
+function deleteDiscount(id) {
+    // 刪除折扣
+}
+
+
+
+</script>
+
 <template>
+    <ManageToolbar>
+        <li>
+            左選項1
+        </li>
+        <li>
+            左選項2
+        </li>
+    </ManageToolbar>
+
     <head>
         <meta charset="UTF-8">
-        <meta name = "viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>房型折扣管理</title>
     </head>
+
     <body>
-        <div id= "discount-management">
+        <div id="discount-management">
+
             <head>
                 <h1>房型折扣管理</h1>
                 <nav>
-                    <button @click = "goToHome()">返回主頁</button>
+                    <button @click="goToHome()">返回主頁</button>
                     <button @click="logout()">登出</button>
                 </nav>
             </head>
 
-            <section id = "discount-list">
-            <h2>現有折扣</h2>
-            <ul>
-                <li>
-                    <h3>標準房 - 夏季折扣</h3>
-                    <p>折扣 ：20%</p>
-                    <p>有效期：2024-06-01 至 2024-12-31</p>
-                    <button @click="editDiscount()">編輯</button>
-                    <button @click = "delectDiscount()">刪除</button>
-                </li>
-                <!--添加更多折扣-->
-            </ul>
+            <section id="discount-list">
+                <h2>現有折扣</h2>
+                <ul>
+                    <li>
+                        <h3>標準房 - 夏季折扣</h3>
+                        <p>折扣 ：20%</p>
+                        <p>有效期：2024-06-01 至 2024-12-31</p>
+                        <button @click="editDiscount()">編輯</button>
+                        <button @click="delectDiscount()">刪除</button>
+                    </li>
+                    <!--添加更多折扣-->
+                </ul>
             </section>
 
-            <section id = "add-discount">
+            <section id="add-discount">
                 <h2>添加新折扣</h2>
                 <form>
                     <label for="roomType">房型</label>
@@ -38,13 +72,13 @@
                     </select>
 
                     <label for="discount">折扣 （％）</label>
-                    <input type="number" id = "discount" name = "discount" min="0" max = "100" required>
+                    <input type="number" id="discount" name="discount" min="0" max="100" required>
 
                     <label for="startDate">開始日期</label>
-                    <input type="date" id = "startDate" name = "startDate" required>
+                    <input type="date" id="startDate" name="startDate" required>
 
                     <label for="endDate">結束日期</label>
-                    <input type="date" id = "endDate" name = "endDate" required>
+                    <input type="date" id="endDate" name="endDate" required>
 
                 </form>
             </section>
@@ -58,32 +92,10 @@
 
 
     </body>
-    
+
 </template>
 
-<script setup>
-    function goToHome() {
-            //回首頁
-        }
-
-        function logout() {
-            // 登出
-        }
-
-        function editDiscount(id) {
-            // 編輯折扣
-        }
-
-        function deleteDiscount(id) {
-            // 刪除折扣
-        }
-
-
-
-</script>
-
 <style lang="scss" scoped>
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f9f9;
@@ -229,6 +241,4 @@ footer {
     font-size: 14px;
     color: #666;
 }
-
-
 </style>

@@ -30,6 +30,7 @@ import RoomList from '@/views/StoreManageCenter/components/RoomList.vue'
 import RoomDiscount from '@/views/StoreManageCenter/components/RoomDiscount.vue'
 import RoomInventory from '@/views/StoreManageCenter/components/RoomInventory.vue'
 import HotelInfo from '@/views/StoreManageCenter/components/HotelInfo.vue'
+import HotelInfoEdit from '@/views/StoreManageCenter/components/HotelInfoEdit.vue'
 import StoreAccount from '@/views/StoreManageCenter/components/StoreAccount.vue'
 
 
@@ -167,7 +168,11 @@ const router = createRouter({
         {
           path: 'setting/info',
           component: HotelInfo,
-        },
+        }, {
+          path: 'setting/infoedit',
+          component: HotelInfoEdit,
+        }
+        ,
         {
           path: 'setting/account',
           component: StoreAccount,
