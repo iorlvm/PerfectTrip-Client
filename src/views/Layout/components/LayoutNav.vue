@@ -1,4 +1,6 @@
 <script setup>
+import router from '@/router';
+
 
 </script>
 
@@ -17,7 +19,10 @@
             商家註冊
           </router-link>
         </li>
-        <li><i class="bi bi-question-circle"></i></li>
+        <li>
+
+          <router-link to="/qa"><i class="bi bi-question-circle"></i></router-link>
+        </li>
         <template v-if="false">
           <li>註冊</li>
           <li>登入</li>

@@ -32,7 +32,7 @@ import RoomInventory from '@/views/StoreManageCenter/components/RoomInventory.vu
 import HotelInfo from '@/views/StoreManageCenter/components/HotelInfo.vue'
 import HotelInfoEdit from '@/views/StoreManageCenter/components/HotelInfoEdit.vue'
 import StoreAccount from '@/views/StoreManageCenter/components/StoreAccount.vue'
-
+import QA from '@/views/QA/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +107,10 @@ const router = createRouter({
               component: MemberSafety,
             },
           ]
+        },
+        {
+          path: 'qa',
+          component: QA
         },
       ]
     },
