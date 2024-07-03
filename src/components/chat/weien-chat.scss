@@ -36,6 +36,55 @@
     width: 28%;
     min-width: 220px;
   }
+
+  // 滑動開關樣式
+  .chat-room-slider {
+    width: 35px;
+    height: 18px;
+    background-color: #ddd;
+    border-radius: 9px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(1px);
+    cursor: pointer;
+
+    .chat-room-slider-button {
+      width: 14px;
+      height: 14px;
+      background-color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: left 0.3s ease;
+      cursor: pointer;
+
+      .chat-room-slider-text {
+        color: #fff;
+        font-weight: bold;
+        display: none;
+      }
+    }
+
+    &.chat-room-slider-on {
+      background-color: var(--weien-chat-primary);
+
+      .chat-room-slider-button {
+        top: 2px;
+        left: calc(100% - 16px);
+
+        .chat-room-slider-text {
+          display: inline;
+        }
+      }
+    }
+  }
 }
 
 // 請與上方的設定區同步更新
@@ -69,7 +118,8 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: var(--weien-chat-bg-list);
 
     .chat-list-bar {
@@ -172,7 +222,7 @@
               font-size: 1.05em;
               padding: 5px 12px;
               width: 6em;
-              right: -0.3em;
+              right: -5px;
               top: calc(100% + 3px);
               background-color: var(--weien-chat-room-card-dropdown-option-bg);
               box-shadow: 0 2px 4px -1px #00000020;
@@ -183,6 +233,8 @@
               .chat-room-dropdown-option {
                 cursor: pointer;
                 display: flex;
+                justify-content: space-between;
+                align-items: center;
                 margin: 8px 0;
 
                 &:hover {

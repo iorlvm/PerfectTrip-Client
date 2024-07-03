@@ -11,6 +11,13 @@ const pinnedIcon = () => {
     `;
 }
 
+/**
+ * 設定聊天室下拉選單
+ * text: 選項文字
+ * click: 對應的click方法 (如需跨域執行需在clickHandlers設定對應的佔位符, 於主程式中進行函式覆寫)
+ * slider: 是否出現滑動開關以及綁定的property名稱 (默認不出現, 僅能進行true/flase切換)
+ * @returns 
+ */
 const chatOption = () => {
     return {
         icon: `
@@ -22,30 +29,36 @@ const chatOption = () => {
         `,
         options: [
             {
-                title: '選項1',
-                click: (id) => {
-                    console.log(id + ' : ' + this.title);
+                text: '選項1',
+                click: function (id) {
+                    // TODO: 去問老師為什麼無法用箭頭函式?
+                    console.log(id + ' : ' + this.text + ' <- 無須跨域執行的函式');
                 }
             },
             {
-                title: '選項1',
-                click: (id) => {
-                    console.log(id + ' : ' + this.title);
-                },
-                suffix: {
-
-                }
+                text: '釘選',
+                click: clickHandlers.handler1,
+                slider: 'pinned'
             },
             {
-                title: '選項1',
-                click: (id) => {
-                    console.log(id + ' : ' + this.title);
-                }
+                text: '選項3',
+                click: clickHandlers.handler2
             },
         ]
-
     }
 }
+
+
+export const clickHandlers = {
+    handler1: (id, ele) => {
+        console.log('chatId : ' + id);
+        console.dir(ele);
+    },
+    handler2: (id, ele) => {
+        console.log('chatId : ' + id);
+        console.log(ele.innerHTML);
+    }
+};
 
 
 /**
@@ -231,16 +244,43 @@ export class WeienChat {
         chatOption().options.forEach(option => {
             let dropdownOption = document.createElement('div');
             dropdownOption.classList.add('chat-room-dropdown-option');
-            dropdownOption.innerHTML = `
-                <div>${option.title}</div>
-                <div></div>
-            `;
+            dropdownOption.innerHTML = `<div>${option.text}</div>`;
+            if (option.slider) {
+                let slider = this._createSlider(option);
+                chat.bindElement(
+                    option.slider,
+                    slider,
+                    (el, value) => {
+                        if (value) {
+                            el.classList.add('chat-room-slider-on');
+                        } else {
+                            el.classList.remove('chat-room-slider-on');
+                        }
+                    }
+                )
+                dropdownOption.addEventListener('click', () => {
+                    option.click(chat.data.chatId, slider);
+                    chat.data[option.slider] = !chat.data[option.slider];
+                });
+                dropdownOption.append(slider);
+            } else {
+                dropdownOption.addEventListener('click', () => {
+                    option.click(chat.data.chatId, dropdownOption);
+                });
+            }
             dropdownOptions.append(dropdownOption);
         })
 
         iconBlock.append(dropdown);
 
         return chatCard;
+    }
+
+    _createSlider() {
+        let slider = document.createElement('div');
+        slider.classList.add('chat-room-slider');
+        slider.innerHTML = '<div class="chat-room-slider-button"></div>';
+        return slider;
     }
 
     _getChatRooms() {
