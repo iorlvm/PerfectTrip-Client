@@ -1,9 +1,45 @@
+// 屬性設定區 (若是更改了html上的id屬性，這裡以及下方的id選擇器也需要同步更新)
 #weien-chat {
-  // set color
+  // color setting
+  --weien-chat-primary: #3182ec;
+
   --weien-chat-bg-main: #ffffff;
+  --weien-chat-bg-list: #ffffff;
   --weien-chat-bg-chating: #f3f3f3;
+
+  --weien-chat-room-card: transparent;
+  --weien-chat-room-card-hover: #bdbdbd17;
+  --weien-chat-room-card-hover-border: #a9a9a917;
+  --weien-chat-room-card-active: #bdbdbd31;
+  --weien-chat-room-card-active-border: #a9a9a931;
+
+  --weien-chat-room-card-dropdown: #6b6b6b;
+  --weien-chat-room-card-dropdown-active: #000;
+  --weien-chat-room-card-dropdown-option-bg: #ffffff;
+
+  --weien-chat-unread-color: #e26237;
+  --weien-chat-unread-text: #fff;
+
   --weien-divider-color: #0000002a;
 
+  --weien-chat-pinned-icon: #a9a9a9;
+  --weien-chat-unpined-icon: #a9a9a9;
+
+  // font setting
+  color: #333;
+  font: 1em/1.4 "Microsoft Yahei", "PingFang SC", "Avenir", "Segoe UI",
+    "Hiragino Sans GB", "STHeiti", "Microsoft Sans Serif", "WenQuanYi Micro Hei",
+    sans-serif;
+
+  // layout setting (側邊欄位寬度設定)
+  .chat-list-block {
+    width: 28%;
+    min-width: 220px;
+  }
+}
+
+// 請與上方的設定區同步更新
+#weien-chat {
   width: 100%;
   height: 100%;
   display: flex;
@@ -15,16 +51,189 @@
     box-sizing: border-box;
   }
 
-  .chat-list-block {
-    flex-shrink: 0;
-    width: 28%;
+  img {
+    width: 100%;
     height: 100%;
-    min-width: 220px;
+    object-fit: cover;
+    vertical-align: middle;
   }
 
   .chating-block {
     flex-grow: 1;
     background-color: var(--weien-chat-bg-chating);
+  }
+
+
+  .chat-list-block {
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-color: var(--weien-chat-bg-list);
+
+    .chat-list-bar {
+      width: 100%;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      padding-left: 10px;
+      margin: 6px 0;
+    }
+
+    .chat-room-list {
+      width: 100%;
+      flex-grow: 1;
+
+      .chat-room-card {
+        width: 100%;
+        height: 65px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        background-color: var(--weien-chat-room-card);
+
+        .chat-room-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          overflow: hidden;
+          flex-shrink: 0;
+          margin-right: 5px;
+        }
+
+        .chat-room-overview {
+          flex-grow: 1;
+
+          .chat-room-icon-block,
+          .chat-messages-preview,
+          .chat-room-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .chat-room-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+
+          .chat-room-date {
+            font-size: 0.95em;
+          }
+
+          .chat-room-details {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+
+          .pinned-icon {
+            font-size: 1.15em;
+            margin-right: 5px;
+            color: var(--weien-chat-pinned-icon);
+          }
+
+          .unread-count {
+            margin-top: 2px;
+            width: 1.3em;
+            height: 1.3em;
+            box-sizing: content-box;
+            border: 1px solid var(--weien-chat-unread-text);
+            border-radius: 50%;
+            background-color: var(--weien-chat-unread-color);
+            color: var(--weien-chat-unread-text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span {
+              font-size: 0.8em;
+            }
+          }
+
+          .chat-room-dropdown {
+            display: none;
+            position: relative;
+            margin-left: 3px;
+            color: var(--weien-chat-room-card-dropdown);
+            cursor: pointer;
+
+            .chat-room-dropdown-options-block {
+              cursor: auto;
+              display: none;
+              position: absolute;
+              box-sizing: content-box;
+              font-size: 1.05em;
+              padding: 5px 12px;
+              width: 6em;
+              right: -0.3em;
+              top: calc(100% + 3px);
+              background-color: var(--weien-chat-room-card-dropdown-option-bg);
+              box-shadow: 0 2px 4px -1px #00000020;
+              border: 1px solid #00000010;
+              border-radius: 10px;
+              z-index: 1;
+
+              .chat-room-dropdown-option {
+                cursor: pointer;
+                display: flex;
+                margin: 8px 0;
+
+                &:hover {
+                  color: var(--weien-chat-primary);
+                }
+              }
+
+              &::before {
+                // 擴大dropdown-options-block的hover範圍
+                content: '';
+                position: absolute;
+                top: -15px;
+                bottom: -15px;
+                left: -15px;
+                right: -15px;
+                background: transparent;
+                z-index: -1;
+              }
+
+              &:hover {
+                display: block;
+              }
+            }
+          }
+        }
+
+        &:hover {
+          border-top: 1px solid var(--weien-chat-room-card-hover-border);
+          border-bottom: 1px solid var(--weien-chat-room-card-hover-border);
+          background-color: var(--weien-chat-room-card-hover);
+
+          .chat-room-dropdown {
+            display: block;
+
+            &:hover {
+              color: var(--weien-chat-room-card-dropdown-active);
+
+              .chat-room-dropdown-options-block {
+                display: block;
+              }
+            }
+          }
+        }
+      }
+
+      .active-chat {
+        border-top: 1px solid var(--weien-chat-room-card-active-border);
+        border-bottom: 1px solid var(--weien-chat-room-card-active-border);
+        background-color: var(--weien-chat-room-card-active) !important;
+      }
+    }
   }
 
   .vertical-divider {

@@ -15,7 +15,6 @@ const roomCount = ref(1);
 onMounted(() => {
   searchQuery.value = searchStore.searchQuery;
   loadGuestCount();
-  console.log(searchQuery.value);
 });
 
 const loadGuestCount = () => {
