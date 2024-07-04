@@ -91,7 +91,6 @@ const navigators = [
         background-color: #f1f1f1;
         display: flex;
         flex-direction: column;
-        flex-grow: 1;
     }
 
     .el-aside {

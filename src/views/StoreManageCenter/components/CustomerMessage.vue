@@ -20,5 +20,6 @@ import ChatRoom from '@/components/ChatRoom.vue';
 <style lang="scss" scoped>
 .chat-room {
     height: 100%;
+    overflow: hidden;
 }
 </style>

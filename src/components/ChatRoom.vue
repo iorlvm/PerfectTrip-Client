@@ -1,6 +1,10 @@
 <script setup>
 import { onMounted } from 'vue';
-import { WeienChat } from './chat/weien-chat';
+import { WeienChat, actionHandlers } from './chat/weien-chat';
+
+actionHandlers.handler2 = () => {
+    console.log('handler2外部定義方法');
+}
 
 const chat = new WeienChat();
 
@@ -8,7 +12,7 @@ onMounted(() => {
     chat.init();
     chat.setChatList(chatRoomData);
     setTimeout(() => {
-        chat.chatRoomsData.array.target[0].data['unreadMessages'] = 5;
+        chat.chatRoomsData.array.target[0].value['unreadMessages'] = 5;
     }, 2000)
 })
 
@@ -51,6 +55,81 @@ const chatRoomData = [
         lastMessage: 'Thank you!',
         unreadMessages: 5,
         avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar4.jpg',
+        pinned: false
+    },
+
+
+
+    {
+        chatId: 4,
+        name: 'Diana',
+        date: '2024-06-29',
+        lastMessage: 'Thank you!',
+        unreadMessages: 5,
+        avatar: '/avatar.jpg',
         pinned: false
     }
 ];
