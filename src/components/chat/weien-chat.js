@@ -1,14 +1,24 @@
 // 客製化調整區
 /**
  * 設定釘選的圖標樣式
- * @returns icon標籤 (建議是svg格式)
+ * @returns icon標籤
  */
 const pinnedIcon = () => {
-    return `
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
-        <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/>
-    </svg>
-    `;
+    return {
+        placement: 'avatar',  // 僅接受三種參數傳入 'avatar', 'text', 'both' (未設定時預設為'avatar', 輸入這三個參數以外的數值為不顯示)
+        icon: '<i class="bi bi-pin-angle-fill"></i>'
+    }
+}
+
+/**
+ * 設定提醒開關的圖標樣式
+ * @returns icon標籤
+ */
+const notifIcon = () => {
+    return {
+        on: '<i class="bi bi-bell-fill"></i>',
+        off: '<i class="bi bi-bell-slash-fill"></i>'
+    }
 }
 
 /**
@@ -17,31 +27,35 @@ const pinnedIcon = () => {
  * options: 選項陣列 輸入後會對應產出相應的選項於下拉選單中
  *     text: 選項文字
  *     click: 對應的click方法 (如需跨域執行需在actionHandlers設定對應的佔位符, 於主程式中進行函式覆寫)
- *            預設傳遞兩個參數 binder物件, 點擊事件的html元素 
- *     bind: 綁定property, (根據值切換text的顯示內容, 成功設定時text的屬性會失效)
+ *            預設傳遞兩個參數 binder物件, 事件物件 
+ *     bind: 根據值切換text的顯示內容 (成功設定時text的屬性會失效)
+ *         text: [] 字串陣列, 長度為2
+ *         property: 根據具體哪個property進行切換
+ *         condition: 回傳值為boolean的判斷函式
  *     slider: 綁定property (根據值的響應式滑動開關, 無設定時不出現)
  */
-const chatOption = () => {
+const chatListOptionSettings = () => {
     return {
         icon: `
-            <div style="transform: translateY(2px);  line-height: 1;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
-                </svg>
+            <div style="transform: translateY(1px);">
+                <i class="bi bi-chevron-down"></i>
             </div>
         `,
+        // 可以在這裡指定下拉欄位的寬度以及邊距, 不建議使用百分比指定寬度, 父容器的寬度非常小(約1em)
+        width: 'calc(4em + 45px)',      // 未指定時的預設值: width: 5em;
+        padding: '12px 10px 12px 12px',    // 未指定時的預設值: padding: '10px';
         options: [
             {
                 text: '釘選',
                 click: actionHandlers.pinnedToggle, // 請於下方的actionHandlers進行定義
                 bind: {
                     property: 'pinned',
-                    text: ['置頂', '取消置頂'],
+                    text: ['對話置頂', '取消置頂'],
                     condition: (binder) => {
                         return !binder.value.pinned;
                     }
                 },
-                slider: 'pinned'
+                slider: 'pinned' // 可以與bind同時使用 (如果有需要的話)
             },
             {
                 // text: '釘選',  // bind設定成功時, 無傳入text也可以正常運作
@@ -51,20 +65,12 @@ const chatOption = () => {
                     text: [
                         // 可以直接使用行內樣式做微調 
                         `
-                        <div style="margin-right: 4px; transform: translateY(1px);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle" viewBox="0 0 16 16">
-                                <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146"/>
-                            </svg>
-                        </div>
-                        <p>置頂</p>
+                            <i class="bi bi-pin" style="margin-right: 8px; transform: translateY(1px); font-size:16px"></i>
+                            <p>對話置頂</p>
                         `,
                         `
-                        <div style="margin-right: 4px; margin-top: 1px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16">
-                                <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a6 6 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707s.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a6 6 0 0 1 1.013.16l3.134-3.133a3 3 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146m.122 2.112v-.002zm0-.002v.002a.5.5 0 0 1-.122.51L6.293 6.878a.5.5 0 0 1-.511.12H5.78l-.014-.004a5 5 0 0 0-.288-.076 5 5 0 0 0-.765-.116c-.422-.028-.836.008-1.175.15l5.51 5.509c.141-.34.177-.753.149-1.175a5 5 0 0 0-.192-1.054l-.004-.013v-.001a.5.5 0 0 1 .12-.512l3.536-3.535a.5.5 0 0 1 .532-.115l.096.022c.087.017.208.034.344.034q.172.002.343-.04L9.927 2.028q-.042.172-.04.343a1.8 1.8 0 0 0 .062.46z"/>
-                            </svg>
-                        </div>
-                        <p>取消置頂</p>
+                            <i class="bi bi-pin-angle" style="margin-right: 8px; transform: translateY(-1px); font-size:16px"></i>
+                            <p>取消置頂</p>
                         `
                     ],
                     condition: (binder) => {
@@ -73,11 +79,80 @@ const chatOption = () => {
                 }
             },
             {
-                text: '展示1',
+                text: 'log回傳值',
                 click: actionHandlers.handler1
             },
             {
-                text: '展示2',
+                text: '外部定義測試',
+                click: actionHandlers.handler2
+            },
+        ]
+    }
+}
+
+/**
+ * 設定聊天室下拉選單
+ * icon: 下拉選單的icon 可使用額外的元素包裹並指定樣式微調
+ * options: 選項陣列 輸入後會對應產出相應的選項於下拉選單中
+ *     text: 選項文字
+ *     click: 對應的click方法 (如需跨域執行需在actionHandlers設定對應的佔位符, 於主程式中進行函式覆寫)
+ *            預設傳遞兩個參數 binder物件, 事件物件 
+ *     bind: 根據值切換text的顯示內容 (成功設定時text的屬性會失效)
+ *         text: [] 字串陣列, 長度為2
+ *         property: 根據具體哪個property進行切換
+ *         condition: 回傳值為boolean的判斷函式
+ *     slider: 綁定property (根據值的響應式滑動開關, 無設定時不出現)
+ */
+const chatingOptionSettings = () => {
+    return {
+        icon: `
+            <div style="transform: translateY(1px);">
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        `,
+        // 可以在這裡指定下拉欄位的寬度以及邊距, 不建議使用百分比指定寬度, 父容器的寬度非常小(約1em)
+        width: 'calc(4em + 45px)',      // 未指定時的預設值: width: 5em;
+        padding: '12px 10px 12px 12px',    // 未指定時的預設值: padding: '10px';
+        options: [
+            {
+                text: '釘選',
+                click: actionHandlers.pinnedToggle, // 請於下方的actionHandlers進行定義
+                bind: {
+                    property: 'pinned',
+                    text: ['對話置頂', '取消置頂'],
+                    condition: (binder) => {
+                        return !binder.value.pinned;
+                    }
+                },
+                slider: 'pinned' // 可以與bind同時使用 (如果有需要的話)
+            },
+            {
+                // text: '釘選',  // bind設定成功時, 無傳入text也可以正常運作
+                click: actionHandlers.pinnedToggle,
+                bind: {
+                    property: 'pinned',
+                    text: [
+                        // 可以直接使用行內樣式做微調 
+                        `
+                            <i class="bi bi-pin" style="margin-right: 8px; transform: translateY(1px); font-size:16px"></i>
+                            <p>對話置頂</p>
+                        `,
+                        `
+                            <i class="bi bi-pin-angle" style="margin-right: 8px; transform: translateY(-1px); font-size:16px"></i>
+                            <p>取消置頂</p>
+                        `
+                    ],
+                    condition: (binder) => {
+                        return !binder.value.pinned;
+                    }
+                }
+            },
+            {
+                text: 'log回傳值',
+                click: actionHandlers.handler1
+            },
+            {
+                text: '外部定義測試',
                 click: actionHandlers.handler2
             },
         ]
@@ -85,13 +160,16 @@ const chatOption = () => {
 }
 
 export const actionHandlers = {
-    pinnedToggle: (binder, ele) => {
+    pinnedToggle: (binder) => {
         binder.value.pinned = !binder.value.pinned;
-        console.dir(ele);
     },
-    handler1: (binder, ele) => {
+    getChatSessionData: (chatId) => {
+        console.log('(chatId: ' + chatId + ') => { 請改寫這個方法, 並回傳符合格式的數據組件才能正常運作 }');
+        return {};
+    },
+    handler1: (binder, e) => {
         console.log(binder);
-        console.dir(ele);
+        console.log(e.target);
     },
     handler2: () => {
         console.log('handler2預設方法');
@@ -120,18 +198,34 @@ const formatMessagesDate = (dateStr) => {
 }
 
 
+/**
+ * 聊天室物件
+ */
 export class WeienChat {
     /**
      * 建構子 (未來可以新增其他屬性做參數化調整)
+     * @param {*} chatUserId 登入的使用者id
+     * @param {string} activeChatId 初始化生效的聊天室id (如需要預設開啟某個聊天室時進行傳遞) 
      * @param {string} chatContainer 初始化html聊天容器的id (如做調整 也需要去scss檔進行相應的修改)
      */
-    constructor(chatContainerId = 'weien-chat') {
+    constructor(chatUserId, activeChatId = '', chatContainerId = 'weien-chat') {
+        this.chatUserId = chatUserId;
         this.chatContainerId = chatContainerId;
+        this._preChatId = '';
 
         this.state = new Binder({
             searchQuerry: '',
-            activeChatId: '',
+            activeChatId: activeChatId,
+            isMobile: false,
         });
+
+        this._chatSessionData = null;
+        this._chatRoomsData = [];
+        this._dropdownVisible = {
+            isOpen: false,
+            target: null
+        };
+
     }
 
     /**
@@ -139,25 +233,43 @@ export class WeienChat {
      */
     init() {
         this.chatContainerElement = document.getElementById(this.chatContainerId);
-        this.chatContainerElement.innerHTML = `
-            <div class="chat-list-block">
-                <div class="chat-list-bar">
-                    <input>
-                </div>
-                <div class="weien-chat-scroll">
-                    <div class="chat-room-list weien-chat-scroll-content"></div>
-                    <div class="weien-chat-scroll-bar">
-                        <div class="weien-chat-scroll-thumb"></div>
+        this.state.bindElement('isMobile', this.chatContainerElement, (el, value) => {
+            if (value) {
+                // TODO 手機板顯示
+                el.innerHTML = `
+                    <div class="chat-list-block chat-show-mode-mobile">
+                        <div class="chat-list-bar">
+                            <input>
+                        </div>
+                        <div class="weien-chat-scroll">
+                            <div class="chat-room-list weien-chat-scroll-content"></div>
+                            <div class="weien-chat-scroll-bar">
+                                <div class="weien-chat-scroll-thumb"></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="vertical-divider"></div>
-            <div class="chating-block"></div>
-        `;
+                    <div class="weien-chating-block mobile-mode-display-none"></div>
+                `;
+            } else {
+                el.innerHTML = `
+                    <div class="chat-list-block">
+                        <div class="chat-list-bar">
+                            <input>
+                        </div>
+                        <div class="weien-chat-scroll">
+                            <div class="chat-room-list weien-chat-scroll-content"></div>
+                            <div class="weien-chat-scroll-bar">
+                                <div class="weien-chat-scroll-thumb"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vertical-divider"></div>
+                    <div class="weien-chating-block"></div>
+                `;
+            }
+        })
         this._renderChatRooms();
-
-        // let chating = this.chatContainerElement.querySelector('.chating-block');
-        this._renderScrollbar();
+        this._renderChatingBlock();
     }
 
     /**
@@ -165,12 +277,192 @@ export class WeienChat {
      * @param {array} chatRoomsArray 
      */
     setChatList(chatRoomsArray) {
-        this.chatRoomsData.setArray(chatRoomsArray);
+        this._chatRoomsData = chatRoomsArray.map(item => {
+            if (typeof item === 'object' && item !== null) {
+                return new Binder(item);
+            } else {
+                return item;
+            }
+        });
+
+        this._renderChatRooms();
     }
 
-    _renderScrollbar() {
-        let scrollbars = this.chatContainerElement.querySelectorAll('.weien-chat-scroll');
+    /**
+     * 取得聊天室列表的響應式資料陣列
+     * @returns 聊天室列表陣列資料
+     */
+    getChatList() {
+        return this._chatRoomsData;
+    }
 
+    /**
+     * 將聊天室新增到列表尾端
+     * @param {object} chatRoom
+     */
+    appendChat(chatRoom) {
+        if (typeof chatRoom !== 'object' || chatRoom === null) return;
+        let listContainer = this.chatContainerElement.querySelector('.chat-room-list');
+
+        let chat = new Binder(chatRoom);
+        let chatChard = this._createChatCard(chat);
+        listContainer.append(chatChard);
+        this._resizeScrollbar(listContainer);
+    }
+
+    _renderChatingBlock() {
+        let chatingBlock = this.chatContainerElement.querySelector('.weien-chating-block');
+        this.state.bindElement(
+            'activeChatId',
+            chatingBlock,
+            (el, value) => {
+                if (value === this._preChatId) return;
+                this._preChatId = value;
+                if (value == '') {
+                    el.innerHTML = '';
+                } else {
+                    // 執行取得聊天資料
+                    this._chatSessionData = new Binder(actionHandlers.getChatSessionData(value));
+                    el.innerHTML = `
+                        <div class="weien-chating-header">
+                            <div class="weien-chating-name-block">
+                                <div class="weien-chating-name"></div>
+                                <div class="weien-chating-participants"></div>
+                            </div>
+                            <div class="weien-notif-icon"></div>
+                            <div style="flex:1"></div>
+                            <div class="weien-chating-state-tags"></div>
+                            <div class="weien-chating-dropdown"></div>
+                        </div>
+                        <div class="weien-chat-scroll">
+                            <div class="weien-messages-list weien-chat-scroll-content">1234</div>
+                            <div class="weien-chat-scroll-bar">
+                                <div class="weien-chat-scroll-thumb"></div>
+                            </div>
+                        </div>
+                        <div class="weien-chating-input-block">
+                            <textarea class="weien-message-input" rows="3" maxlength="200" placeholder="請輸入您的訊息"></textarea>
+                            <div>123</div>
+                        </div>
+                    `;
+                    this._renderChatingHeader(el.querySelector('.weien-chating-header'));
+                    this._renderMessagesList(el.querySelector('.weien-messages-list'));
+                    this._renderScrollbar(el.querySelectorAll('.weien-chat-scroll'));
+                    this._addInputBlockEventListener();
+                }
+            }
+        )
+    }
+
+    _renderChatingHeader(chatingHeader) {
+        let chatingName = chatingHeader.querySelector('.weien-chating-name');
+        this._chatSessionData.bindElement(
+            'chatName',
+            chatingName,
+            (el, value) => {
+                let len = this._chatSessionData.value.participants.length;
+                let text;
+                if (value) {
+                    text = value;
+                } else if (len > 2) {
+                    text = '會話群組';
+                } else if (len === 2) {
+                    text = this._getChatingWith();
+                } else {
+                    text = 'ERROR - 這個聊天室只有一個參與者';
+                }
+                el.textContent = text;
+                // TODO: 根據chatId同步更新list裡面的資料
+            }
+        );
+
+        let participants = chatingHeader.querySelector('.weien-chating-participants');
+        this._chatSessionData.bindElement(
+            'participants',
+            participants,
+            (el, value) => {
+                if (value.length > 2) {
+                    el.textContent = `(${value.length})`;
+                } else {
+                    el.textContent = '';
+                }
+                // TODO: 根據chatId同步更新list裡面的資料
+            }
+        );
+        let nameBlock = chatingHeader.querySelector('.weien-chating-name-block');
+        nameBlock.addEventListener('click', () => {
+            // TODO: 新增點擊後顯示名稱詳細訊息畫面
+        })
+
+        this._chatSessionData.bindElement(
+            'participants',
+            nameBlock, // 需要綁定的元素還沒創 之後記得改
+            (el, value) => {
+                // TODO: 根據參與者數量修改點擊名稱後顯示的畫面
+                if (value.length > 2) {
+                    // 顯示參與者列表
+                } else {
+                    // 顯示對方的詳細訊息
+                }
+            }
+        );
+
+        let notif = chatingHeader.querySelector('.weien-notif-icon');
+        this._chatSessionData.bindElement(
+            'notifSettings',
+            notif,
+            (el, value) => {
+                if (value === 'on') {
+                    el.innerHTML = notifIcon().on;
+                } else if (value === 'off') {
+                    el.innerHTML = notifIcon().off;
+                } else {
+                    el.style = "display: none;";
+                }
+            }
+        );
+
+        // TODO: 增加點擊切換提醒開關的事件
+
+        let dropdownBlock = chatingHeader.querySelector('.weien-chating-dropdown');
+        let dropdown = this._createDropdown(this._chatSessionData, chatingOptionSettings, false);
+        dropdownBlock.append(dropdown);
+    }
+
+    _getChatingWith() {
+        let res = '';
+        this._chatSessionData.value.participants.forEach(participant => {
+            if (this.chatUserId !== participant.userId) {
+                res = participant.name;
+                return;
+            }
+        });
+        return res;
+    }
+
+    _renderMessagesList(messagesList) {
+        console.log(messagesList);
+    }
+
+    _addInputBlockEventListener() {
+
+    }
+
+    _resizeScrollbar(element) {
+        const scrollBar = element.closest('.weien-chat-scroll');
+        const content = scrollBar.querySelector('.weien-chat-scroll-content');
+        const scrollThumb = scrollBar.querySelector('.weien-chat-scroll-thumb');
+        const contentHeight = content.scrollHeight;
+        const containerHeight = scrollBar.clientHeight;
+        if (contentHeight <= containerHeight) {
+            scrollThumb.style.height = 0;
+        } else {
+            const thumbHeight = containerHeight / contentHeight * containerHeight;
+            scrollThumb.style.height = `${thumbHeight - 3}px`; // 避免底部的1px圓角被吃掉
+        }
+    }
+
+    _renderScrollbar(scrollbars = this.chatContainerElement.querySelectorAll('.weien-chat-scroll')) {
         // 監聽滾動條父元素的大小變化 動態更新scroll-bar大小
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
@@ -198,7 +490,7 @@ export class WeienChat {
                     scrollThumb.style.height = 0;
                 } else {
                     const thumbHeight = containerHeight / contentHeight * containerHeight;
-                    scrollThumb.style.height = `${thumbHeight}px`;
+                    scrollThumb.style.height = `${thumbHeight - 3}px`; // 避免底部的1px圓角被吃掉
                 }
 
             }
@@ -212,23 +504,20 @@ export class WeienChat {
             resizeObserver.observe(parent);
 
             let timeout;
-            let transition = scrollBar.style.transition;
             const onScroll = () => {
                 const contentHeight = content.scrollHeight;
                 const containerHeight = container.clientHeight;
                 const scrollTop = content.scrollTop;
                 const thumbTop = scrollTop / contentHeight * containerHeight;
-                scrollThumb.style.top = `${thumbTop}px`;
-                scrollBar.style.transition = 'opacity 0.1s cubic-bezier(0.0, 0, 0.2, 1)';
-                scrollBar.style.opacity = 1;
+                scrollThumb.style.top = `${thumbTop + 1}px`; // 參數微調, 不希望完全觸頂
+                scrollBar.classList.add('on-scroll');
 
                 if (timeout) {
                     clearTimeout(timeout);
                 }
 
                 timeout = setTimeout(() => {
-                    scrollBar.style.transition = transition;
-                    scrollBar.style.opacity = 0;
+                    scrollBar.classList.remove('on-scroll');
                 }, 1500);
             }
 
@@ -247,7 +536,7 @@ export class WeienChat {
                     if (newTop < 0) {
                         scrollThumb.style.top = '0px';
                     } else if (newTop > maxTop) {
-                        scrollThumb.style.top = `${maxTop}px`;
+                        scrollThumb.style.top = `${maxTop - 2}px`; // 參數微調, 不希望完全觸底
                     } else {
                         scrollThumb.style.top = `${newTop}px`;
                     }
@@ -258,6 +547,9 @@ export class WeienChat {
                 const onMouseUp = () => {
                     document.removeEventListener('mousemove', onMouseMove);
                     document.removeEventListener('mouseup', onMouseUp);
+                    timeout = setTimeout(() => {
+                        scrollBar.classList.remove('on-scroll');
+                    }, 180);
                 }
 
                 document.addEventListener('mousemove', onMouseMove);
@@ -270,14 +562,14 @@ export class WeienChat {
     }
 
     _renderChatRooms() {
-        this.chatListElement = this.chatContainerElement.querySelector('.chat-room-list');
-        this.chatRoomsData = new ReactiveArray([], this.chatListElement, (element) => {
-            let chatRooms = this._getChatRooms();
-            chatRooms.forEach(chat => {
-                let chatCard = this._createChatCard(chat);
-                element.append(chatCard);
-            });
+        if (this._chatRoomsData.length === 0) return;
+        let listContainer = this.chatContainerElement.querySelector('.chat-room-list');
+
+        this._chatRoomsData.forEach(chat => {
+            let chatCard = this._createChatCard(chat);
+            listContainer.append(chatCard);
         });
+        this._renderScrollbar();
     }
 
     _createChatCard(chat) {
@@ -299,7 +591,9 @@ export class WeienChat {
         );
 
         chatCard.innerHTML = `
-            <div class="chat-room-avatar"></div>
+            <div class="chat-room-avatar">
+                <div class="chat-room-avatar-pinned"></div>
+            </div>
             <div class="chat-room-overview">
                 <div class="chat-room-header">
                     <div class="chat-room-name"></div>
@@ -344,20 +638,43 @@ export class WeienChat {
         )
 
         let iconBlock = chatCard.querySelector('.chat-room-icon-block');
-        let pinned = document.createElement('div');
-        chat.bindElement(
-            'pinned',
-            pinned,
-            (el, value) => {
-                if (value) {
-                    el.innerHTML = '<div = class="pinned-icon">' + pinnedIcon() + '</div>';
-                } else {
-                    el.innerHTML = '';
-                }
 
-            }
-        );
-        iconBlock.append(pinned);
+        let placement = pinnedIcon().placement;
+        if (placement == null || placement == 'avatar' || placement == 'both') {
+            // 需顯示到頭像下方
+            let pinned = chatAvatar.querySelector('.chat-room-avatar-pinned');
+            chat.bindElement(
+                'pinned',
+                pinned,
+                (el, value) => {
+                    if (value) {
+                        el.innerHTML = '<div = class="pinned-icon">' + pinnedIcon().icon + '</div>'
+                    } else {
+                        el.innerHTML = '';
+                    }
+
+                }
+            );
+        }
+
+        if (placement != null && (placement == 'text' || placement == 'both')) {
+            // 需顯示到文字框
+            let pinned = document.createElement('div');
+            chat.bindElement(
+                'pinned',
+                pinned,
+                (el, value) => {
+                    if (value) {
+                        el.innerHTML = '<div = class="pinned-icon">' + pinnedIcon().icon + '</div>';
+                    } else {
+                        el.innerHTML = '';
+                    }
+
+                }
+            );
+            iconBlock.append(pinned);
+        }
+
 
         let unread = document.createElement('div');
         chat.bindElement(
@@ -365,7 +682,7 @@ export class WeienChat {
             unread,
             (el, value) => {
                 if (value) {
-                    el.innerHTML = `<div = class="unread-count"><span>${value}</span></div>`;
+                    el.innerHTML = `<div = class="unread-count"><span>${value < 1000 ? value : '999+'}</span></div>`;
                 } else {
                     el.innerHTML = '';
                 }
@@ -373,60 +690,14 @@ export class WeienChat {
         );
         iconBlock.append(unread);
 
-        let dropdown = document.createElement('div');
-        dropdown.classList.add('chat-room-dropdown');
-        dropdown.innerHTML = chatOption().icon + '<div class="chat-room-dropdown-options-block"></div>';
 
-        let dropdownOptions = dropdown.querySelector('.chat-room-dropdown-options-block');
-        chatOption().options.forEach(option => {
-            let dropdownOption = document.createElement('div');
-            dropdownOption.classList.add('chat-room-dropdown-option');
-            dropdownOption.innerHTML = `
-                <div class="chat-room-dropdown-option-text">
-                    ${option.text}
-                </div>
-            `;
-            if (option.bind && this._validateOptionsBind(option.bind, chat)) {
-                let text = dropdownOption.querySelector('.chat-room-dropdown-option-text');
-                chat.bindElement(
-                    option.bind.property,
-                    text,
-                    (el) => {
-                        if (option.bind.condition(chat)) {
-                            el.innerHTML = `${option.bind.text[0]}`;
-                        } else {
-                            el.innerHTML = `${option.bind.text[1]}`;
-                        }
-                    }
-                );
-            }
-            if (option.slider) {
-                let slider = this._createSlider();
-                chat.bindElement(
-                    option.slider,
-                    slider,
-                    (el, value) => {
-                        if (value) {
-                            el.classList.add('chat-room-slider-on');
-                        } else {
-                            el.classList.remove('chat-room-slider-on');
-                        }
-                    }
-                )
-                dropdownOption.append(slider);
-            }
-            dropdownOption.addEventListener('click', () => {
-                option.click(chat, dropdownOption);
-            });
-            dropdownOptions.append(dropdownOption);
-        })
-
+        let dropdown = this._createDropdown(chat, chatListOptionSettings, true);
         iconBlock.append(dropdown);
 
         return chatCard;
     }
 
-    _validateOptionsBind(bind, chat) {
+    _validateOptionsBind(bind, binder) {
         // 檢查 text 是否為陣列且長度為2
         if (!Array.isArray(bind.text) || bind.text.length !== 2) {
             console.log('bind.text格式錯誤, 需為陣列且長度為2');
@@ -434,8 +705,8 @@ export class WeienChat {
         }
 
         // 檢查 property 是否為字串且 options.bind[property] 確實存在
-        if (typeof bind.property !== 'string' || !(bind.property in chat.value)) {
-            console.log('property需為一個字串且在chat中存在');
+        if (typeof bind.property !== 'string' || !(bind.property in binder.value)) {
+            console.log('property需為一個字串且在binder中存在');
             return false;
         }
 
@@ -448,15 +719,129 @@ export class WeienChat {
         return true;
     }
 
+    _createDropdown(binder, chatOption, isLeft = true) {
+        let dropdown = document.createElement('div');
+        dropdown.classList.add('chat-room-dropdown');
+        dropdown.innerHTML = `<div class="chat-room-dropdown-options-icon">${chatOption().icon}</div> <div class="chat-room-dropdown-options-block"></div>`;
+        let dropdownOptions = dropdown.querySelector('.chat-room-dropdown-options-block');
+        let dropdownIcon = dropdown.querySelector('.chat-room-dropdown-options-icon');
+
+        const closeDropdown = (ele) => {
+            if (ele.parentElement) {
+                ele.parentElement.classList.remove('dropdown-display-block');
+            } else {
+                dropdown.classList.remove('dropdown-display-block');
+            }
+            if (ele.nextElementSibling) {
+                ele.nextElementSibling.classList.remove('dropdown-display-block');
+            } else {
+                dropdownOptions.classList.remove('dropdown-display-block');
+            }
+            this._dropdownVisible.isOpen = false;
+        };
+
+        const openDropdown = e => {
+            e.stopPropagation();
+            dropdown.classList.add('dropdown-display-block');
+            dropdownOptions.classList.add('dropdown-display-block');
+
+            const dropdownRect = dropdown.getBoundingClientRect();
+            const optionsRect = dropdownOptions.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            if (dropdownRect.bottom + optionsRect.height > viewportHeight) {
+                dropdownOptions.style.top = `calc(0% - ${optionsRect.height}px + 1em)`;
+            } else {
+                dropdownOptions.style.top = 'calc(100% + 5px)';
+            }
+            this._dropdownVisible.isOpen = true;
+            this._dropdownVisible.target = e.currentTarget;
+        }
+
+        // 新增判斷底下空間是否足夠的事件
+        dropdownIcon.addEventListener('click', e => {
+            if (this._dropdownVisible.isOpen && this._dropdownVisible.target === e.currentTarget) {
+                closeDropdown(this._dropdownVisible.target);
+            } else if (this._dropdownVisible.isOpen) {
+                closeDropdown(this._dropdownVisible.target);
+                openDropdown(e);
+            } else {
+                openDropdown(e);
+            }
+        });
+
+        document.addEventListener('click', closeDropdown);
+
+        // 判斷是否有設定寬度參數
+        let width = chatOption().width;
+        if (width) {
+            if (isLeft) {
+                this.chatContainerElement.style.setProperty('--weien-chat-room-card-dropdown-left-option-size', width);
+            } else {
+                this.chatContainerElement.style.setProperty('--weien-chat-room-card-dropdown-right-option-size', width);
+            }
+        }
+        // 判斷是否有設定邊距大小
+        let padding = chatOption().padding;
+        if (padding) {
+            if (isLeft) {
+                this.chatContainerElement.style.setProperty('--weien-chat-room-card-dropdown-left-option-padding', padding);
+            } else {
+                this.chatContainerElement.style.setProperty('--weien-chat-room-card-dropdown-right-option-padding', padding);
+            }
+
+        }
+
+        chatOption().options.forEach(option => {
+            let dropdownOption = document.createElement('div');
+            dropdownOption.classList.add('chat-room-dropdown-option');
+            dropdownOption.innerHTML = `
+                <div class="chat-room-dropdown-option-text">
+                    ${option.text}
+                </div>
+            `;
+            if (option.bind && this._validateOptionsBind(option.bind, binder)) {
+                let text = dropdownOption.querySelector('.chat-room-dropdown-option-text');
+                binder.bindElement(
+                    option.bind.property,
+                    text,
+                    (el) => {
+                        if (option.bind.condition(binder)) {
+                            el.innerHTML = `${option.bind.text[0]}`;
+                        } else {
+                            el.innerHTML = `${option.bind.text[1]}`;
+                        }
+                    }
+                );
+            }
+            if (option.slider) {
+                let slider = this._createSlider();
+                binder.bindElement(
+                    option.slider,
+                    slider,
+                    (el, value) => {
+                        if (value) {
+                            el.classList.add('chat-room-slider-on');
+                        } else {
+                            el.classList.remove('chat-room-slider-on');
+                        }
+                    }
+                )
+                dropdownOption.append(slider);
+            }
+            dropdownOption.addEventListener('click', e => {
+                option.click(binder, e);
+            });
+            dropdownOptions.append(dropdownOption);
+        })
+        return dropdown;
+    }
+
     _createSlider() {
         let slider = document.createElement('div');
         slider.classList.add('chat-room-slider');
         slider.innerHTML = '<div class="chat-room-slider-button"></div>';
         return slider;
-    }
-
-    _getChatRooms() {
-        return this.chatRoomsData.array.target;
     }
 }
 
@@ -473,8 +858,22 @@ class Binder {
                 this._updateElements(property, value);
                 return true;
             },
+            get: (target, property) => {
+                if (Array.isArray(target) && this._isArrayMethod(property)) {
+                    return (...args) => {
+                        const result = Array.prototype[property].apply(target, args);
+                        this._updateElements(property, target);
+                        return result;
+                    };
+                }
+                return target[property];
+            }
         };
         return new Proxy(data, handler);
+    }
+
+    _isArrayMethod(property) {
+        return ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].includes(property);
     }
 
     bindElement(property, element, updateFunction = (el, value) => { el.textContent = value; }) {
@@ -497,91 +896,10 @@ class Binder {
     }
 
     _updateElements(property, value) {
-        if (this.elements[property]) {
+        if (this.elements && this.elements[property]) {
             this.elements[property].forEach(({ element, updateFunction }) => {
                 updateFunction(element, value);
             });
-        }
-    }
-}
-
-class ReactiveArray {
-    /**
-     * @param {Array} array 初始陣列值
-     * @param {HTMLElement} element 更新操作的元素
-     * @param {Function} update 更新方法
-     */
-    constructor(array, element, update = () => { }) {
-        this.element = element;
-        this.update = update;
-        this.array = this._makeReactive(array.map(item => {
-            if (typeof item === 'object' && item !== null) {
-                return new Binder(item);
-            } else {
-                return item;
-            }
-        }));
-    }
-
-    // 將陣列設置為響應式
-    _makeReactive(array) {
-        const handler = {
-            set: (target, property, value) => {
-                target[property] = value;
-                this.update(this.element);
-                return true;
-            },
-        };
-        return new Proxy(array, handler);
-    }
-
-
-    setArray(newArray) {
-        this.array.target = newArray.map(item => {
-            if (typeof item === 'object' && item !== null) {
-                return new Binder(item);
-            } else {
-                return item;
-            }
-        });
-    }
-
-    /**
-     * 插入元素到最下方  (使用場景: 當有新訊息時加入到留言的最下方)
-     * @param {*} item 
-     */
-    append(item) {
-        if (!(item instanceof Binder)) {
-            item = new Binder(item);
-        }
-        this.array.target.push(item);
-    }
-
-    /**
-     * 從列表中移除
-     * @param {*} id 
-     */
-    deleteById(id) {
-        this.array.target = this.array.target.filter(binder => binder.value.id !== id);
-    }
-
-    /**
-     * 調整或是插入數據到目標前方 (使用場景: 當有新訊息時可以直接插入到非置頂聊天室的最上方)
-     * @param {*} targetId 目標位置
-     * @param {*} item 
-     */
-    insertBeforeTarget(targetId, item) {
-        if (!(item instanceof Binder)) {
-            item = new Binder(item);
-        }
-        // 移除掉與item相同id的物件 
-        this.deleteById(item.value.id);
-        // 插入指定的位置
-        for (let i = 0; i < this.array.length; i++) {
-            if (this.array.target[i].value.id === targetId) {
-                this.array.target.splice(i, 0, item);
-                break;
-            }
         }
     }
 }

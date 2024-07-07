@@ -16,10 +16,10 @@
   --weien-chat-room-card-dropdown: #6b6b6b;
   --weien-chat-room-card-dropdown-active: #000;
   --weien-chat-room-card-dropdown-option-bg: #ffffff;
-  --weien-chat-room-card-dropdown-left-option-size: 6.7em;
-  --weien-chat-room-card-dropdown-left-option-padding: 5px 6px 5px 12px;
-  --weien-chat-room-card-dropdown-right-option-size: 6.7em;
-  --weien-chat-room-card-dropdown-right-option-padding: 5px 6px 5px 12px;
+  --weien-chat-room-card-dropdown-left-option-size: 5em;
+  --weien-chat-room-card-dropdown-left-option-padding: 10px;
+  --weien-chat-room-card-dropdown-right-option-size: 5em;
+  --weien-chat-room-card-dropdown-right-option-padding: 10px;
 
   --weien-chat-unread-color: #e26237;
   --weien-chat-unread-text: #fff;
@@ -31,8 +31,7 @@
   --weien-chat-scroll-bar-hover: #adadad;
   --weien-chat-scroll-bar-bg: transparent;
 
-  --weien-chat-pinned-icon: #a9a9a9;
-  --weien-chat-unpined-icon: #a9a9a9;
+  --weien-chat-text-icon: #a9a9a9;
 
   // font setting
   color: #333;
@@ -44,7 +43,27 @@
   .chat-list-block {
     width: 28%;
     min-width: 220px;
+    max-width: 320px;
   }
+
+  .chat-show-mode-mobile {
+    &.chat-list-block {
+      width: 100%;
+      min-width: none;
+      max-width: none;
+    }
+
+    &.weien-chating-block {
+      width: 100%;
+      min-width: none;
+      max-width: none;
+    }
+
+    .mobile-mode-display-none {
+      display: none;
+    }
+  }
+
 
   // 滑動開關樣式
   .chat-room-slider {
@@ -98,6 +117,7 @@
 
 // 請與上方的設定區同步更新id名稱
 #weien-chat {
+  line-height: 1;
   width: 100%;
   height: 100%;
   display: flex;
@@ -116,17 +136,69 @@
     scrollbar-width: none; // Firefox
   }
 
-  img {
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
-    transform: translate(-1px -1px);
-    object-fit: cover;
-    vertical-align: middle;
-  }
-
-  .chating-block {
+  .weien-chating-block {
+    height: 100%;
+    overflow: hidden;
     flex-grow: 1;
     background-color: var(--weien-chat-bg-chating);
+
+    .weien-chating-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--weien-chat-bg-main);
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--weien-divider-color);
+
+      .weien-chating-name-block {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+
+        .weien-chating-name {
+          font-size: 1.25em;
+          letter-spacing: 1px;
+          font-weight: bold;
+        }
+
+        .weien-chating-participants {
+          font-weight: bold;
+          font-size: 1.05em;
+          margin: 0 4px;
+        }
+
+        &:hover {
+          color: var(--weien-chat-primary);
+        }
+      }
+
+      .weien-notif-icon {
+        margin-left: 1px;
+        font-size: 1.18em;
+        color: var(--weien-chat-text-icon);
+        cursor: pointer;
+      }
+
+      .chat-room-dropdown {
+        margin-right: 10px;
+
+        .chat-room-dropdown-options-block {
+          width: var(--weien-chat-room-card-dropdown-right-option-size);
+          padding: var(--weien-chat-room-card-dropdown-right-option-padding);
+          right: -5px;
+        }
+      }
+    }
+
+
+    .weien-chating-input-block {
+      .weien-message-input {
+        border: none;
+        resize: none;
+        outline: none;
+        width: calc(100%);
+      }
+    }
   }
 
   .weien-chat-scroll {
@@ -143,14 +215,13 @@
 
     .weien-chat-scroll-bar {
       opacity: 0;
-      transition: opacity 0.35s cubic-bezier(0.0, 0, 0.2, 1);
+      transition: opacity 0.15s cubic-bezier(0.0, 0, 0.2, 1);
       position: absolute;
       right: 0;
       top: 0;
       bottom: 0;
       background: var(--weien-chat-scroll-bar-bg);
       width: 8px;
-      cursor: pointer;
 
       .weien-chat-scroll-thumb {
         background: var(--weien-chat-scroll-bar);
@@ -158,13 +229,25 @@
         margin: 1px;
         width: 6px;
         position: absolute;
+        cursor: pointer;
       }
 
       .weien-chat-scroll-thumb:hover {
         background: var(--weien-chat-scroll-bar-hover);
       }
-    }
 
+      &.on-scroll {
+        opacity: 1;
+
+        .weien-chat-scroll-thumb {
+          background: var(--weien-chat-scroll-bar-hover);
+        }
+      }
+
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
 
   .chat-room-dropdown {
@@ -173,13 +256,17 @@
     color: var(--weien-chat-room-card-dropdown);
     cursor: pointer;
 
+    .chat-room-dropdown-options-icon :hover {
+      color: #000;
+    }
+
     .chat-room-dropdown-options-block {
       cursor: auto;
       display: none;
       position: absolute;
       box-sizing: content-box;
       font-size: 1.05em;
-      top: calc(100% + 7px);
+      min-width: 3em;
       background-color: var(--weien-chat-room-card-dropdown-option-bg);
       box-shadow: 0 2px 4px -1px #00000020;
       border: 1px solid #00000010;
@@ -191,11 +278,16 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 9px 0;
+        margin-bottom: 13px;
 
         .chat-room-dropdown-option-text {
           display: flex;
-          // align-items: center;
+          align-items: center;
+          line-height: 1;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
         }
 
         &:hover {
@@ -203,22 +295,14 @@
         }
       }
 
-      &::before {
-        // 擴大dropdown-options-block的hover範圍
-        content: '';
-        position: absolute;
-        top: -15px;
-        bottom: -15px;
-        left: -15px;
-        right: -15px;
-        background: transparent;
-        z-index: -1;
-      }
-
       &:hover {
         display: block;
       }
     }
+  }
+
+  .dropdown-display-block {
+    display: block !important;
   }
 
   .chat-list-block {
@@ -241,30 +325,45 @@
 
       .chat-room-card {
         width: 100%;
-        height: 65px;
+        height: 75px;
         padding: 0 15px 0 10px;
         display: flex;
         align-items: center;
         background-color: var(--weien-chat-room-card);
 
         .chat-room-avatar {
-          width: 38px;
-          height: 38px;
+          position: relative;
+          width: 41px;
+          height: 41px;
           border: 1px solid var(--weien-avatar-border);
           border-radius: 50%;
-          overflow: hidden;
           flex-shrink: 0;
-          margin-right: 8px;
+          margin-right: 12px;
 
           background-color: var(--weien-avatar-border);
           background-size: cover;
           background-position: center;
           background-repeat: no-repeat;
+
+          .chat-room-avatar-pinned {
+            position: absolute;
+            background-color: var(--weien-chat-primary);
+            border-radius: 50%;
+            right: -5px;
+            bottom: -5px;
+
+            .pinned-icon {
+              padding: 1px;
+              line-height: 1;
+              color: #fff;
+              transform: scale(0.7);
+            }
+          }
         }
 
         .chat-room-overview {
-          width: calc(100% - 48px);
-          flex-grow: 0;
+          width: calc(100% - 54px);
+          flex-grow: 1;
 
           .chat-room-icon-block,
           .chat-messages-preview,
@@ -274,10 +373,18 @@
             justify-content: space-between;
           }
 
+          .chat-room-header {
+            padding-top: 5px;
+          }
+
+          .chat-messages-preview {
+            margin-top: 5px;
+            height: 1.35em;
+          }
+
           .chat-room-name {
             font-size: 1.1em;
             font-weight: bold;
-            flex: 1;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -288,7 +395,6 @@
           }
 
           .chat-room-details {
-            flex: 1;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -298,16 +404,16 @@
             font-size: 1.15em;
             line-height: 1;
             margin-right: 5px;
-            color: var(--weien-chat-pinned-icon);
+            color: var(--weien-chat-text-icon);
           }
 
           .unread-count {
-            margin-top: 2px;
-            width: 1.3em;
+            line-height: 1.3;
+            padding: 0 0.43em;
             height: 1.3em;
             box-sizing: content-box;
             border: 1px solid var(--weien-chat-unread-text);
-            border-radius: 50%;
+            border-radius: 0.65em;
             background-color: var(--weien-chat-unread-color);
             color: var(--weien-chat-unread-text);
             display: flex;
@@ -323,7 +429,7 @@
             display: none;
 
             .chat-room-dropdown-options-block {
-              right: -5px;
+              right: -3px;
             }
           }
         }
@@ -342,14 +448,6 @@
 
           .chat-room-dropdown {
             display: block;
-
-            &:hover {
-              color: var(--weien-chat-room-card-dropdown-active);
-
-              .chat-room-dropdown-options-block {
-                display: block;
-              }
-            }
           }
         }
       }
