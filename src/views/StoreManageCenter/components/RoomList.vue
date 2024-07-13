@@ -30,14 +30,6 @@ const filteredRooms = computed(() => {
   );
 });
 
-const goToHome = () => {
-
-};
-
-const logout = () => {
-
-};
-
 const addRoomType = () => {
 
 };
@@ -63,7 +55,6 @@ const deleteRoom = (id) => {
 };
 </script>
 
-
 <template>
   <ManageToolbar>
     <li>
@@ -73,64 +64,74 @@ const deleteRoom = (id) => {
       左選項2
     </li>
   </ManageToolbar>
-  <div id="room-management">
-    <header>
-      <h1>房型管理</h1>
-      <nav>
-        <button @click="goToHome">返回主頁</button>
-        <button @click="logout">登出</button>
-      </nav>
-    </header>
+  <el-scrollbar>
+    <div class="body">
+      <div class="room-management">
+        <header>
+          <h1>房型管理</h1>
+        </header>
 
-    <section id="filter-search">
-      <input type="text" v-model="searchQuery" placeholder="搜索房型或房間" />
-      <select v-model="filterStatus">
-        <option value="">所有狀態</option>
-        <option value="available">可用</option>
-        <option value="booked">已預訂</option>
-      </select>
-    </section>
+        <section class="filter-search">
+          <input type="text" v-model="searchQuery" placeholder="搜索房型或房間" />
+          <select v-model="filterStatus">
+            <option value="">所有狀態</option>
+            <option value="available">可用</option>
+            <option value="booked">已預訂</option>
+          </select>
+        </section>
 
-    <section id="room-types">
-      <h2>房型列表</h2>
-      <button class="add-button" @click="addRoomType">添加房型</button>
-      <ul>
-        <li v-for="type in filteredRoomTypes" :key="type.id">
-          <h3>{{ type.name }}</h3>
-          <p>{{ type.description }}</p>
-          <p>價格: {{ type.price }}</p>
-          <div class="actions">
-            <button @click="editRoomType(type.id)">編輯</button>
-            <button @click="deleteRoomType(type.id)">刪除</button>
-          </div>
-        </li>
-      </ul>
-    </section>
+        <section class="room-types">
+          <h2>房型列表</h2>
+          <button class="add-button" @click="addRoomType">添加房型</button>
+          <ul>
+            <li v-for="type in filteredRoomTypes" :key="type.id">
+              <h3>{{ type.name }}</h3>
+              <p>{{ type.description }}</p>
+              <p>價格: {{ type.price }}</p>
+              <div class="actions">
+                <button @click="editRoomType(type.id)">編輯</button>
+                <button @click="deleteRoomType(type.id)">刪除</button>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-    <section id="rooms">
-      <h2>房間列表</h2>
-      <button class="add-button" @click="addRoom">添加房間</button>
-      <ul>
-        <li v-for="room in filteredRooms" :key="room.id">
-          <p>房間號碼: {{ room.number }}</p>
-          <p>房型: {{ room.typeName }}</p>
-          <p>狀態: <span :class="room.status">{{ room.status === 'available' ? '可用' : '已預訂' }}</span></p>
-          <div class="actions">
-            <button @click="editRoom(room.id)">編輯</button>
-            <button @click="deleteRoom(room.id)">刪除</button>
-          </div>
-        </li>
-      </ul>
-    </section>
+        <section class="rooms">
+          <h2>房間列表</h2>
+          <button class="add-button" @click="addRoom">添加房間</button>
+          <ul>
+            <li v-for="room in filteredRooms" :key="room.id">
+              <p>房間號碼: {{ room.number }}</p>
+              <p>房型: {{ room.typeName }}</p>
+              <p>狀態: <span :class="room.status">{{ room.status === 'available' ? '可用' : '已預訂' }}</span></p>
+              <div class="actions">
+                <button @click="editRoom(room.id)">編輯</button>
+                <button @click="deleteRoom(room.id)">刪除</button>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-    <footer>
-      <p>&copy; 2024 飯店管理平台</p>
-    </footer>
-  </div>
+        <footer>
+          <p>&copy; 2024 飯店管理平台</p>
+        </footer>
+      </div>
+    </div>
+  </el-scrollbar>
+
 </template>
 
-<style scoped>
-#room-management {
+<style lang="scss" scoped>
+$primary-color: #007bff;
+$danger-color: #dc3545;
+$confirm-color: #28a745;
+
+.body {
+  width: 100%;
+  padding: 20px;
+}
+
+.room-management {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
@@ -144,129 +145,120 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-}
 
-header h1 {
-  margin: 0;
-  font-size: 24px;
-  color: #333;
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
 }
 
 nav button {
   margin-left: 10px;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: $primary-color;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
 }
 
-nav button:hover {
-  background-color: #0056b3;
-}
-
-#filter-search {
+.filter-search {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+
+  input,
+  select {
+    width: 48%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
 }
 
-#filter-search input,
-#filter-search select {
-  width: 48%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-#room-types,
-#rooms {
+.room-types,
+.rooms {
   margin-bottom: 20px;
-}
 
-#room-types h2,
-#rooms h2 {
-  margin-top: 0;
-  font-size: 20px;
-  color: #333;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 5px;
-}
+  h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #333;
+    border-bottom: 2px solid $primary-color;
+    padding-bottom: 5px;
+  }
 
-#room-types ul,
-#rooms ul {
-  list-style-type: none;
-  padding: 0;
-}
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 
-#room-types li,
-#rooms li {
-  background-color: #fff;
-  border: 1px solid #e7e7e7;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
+  li {
+    background-color: #fff;
+    border: 1px solid #e7e7e7;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
-#room-types li h3,
-#rooms li p {
-  margin: 5px 0;
-}
+    h3 {
+      margin: 5px 0;
+    }
 
-#rooms li p span.available {
-  color: green;
-}
+    .actions {
+      display: flex;
+      justify-content: flex-end;
 
-#rooms li p span.booked {
-  color: red;
-}
+      button {
+        margin-left: 10px;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-}
+      button:first-child {
+        background-color: $confirm-color;
+        color: #fff;
 
-.actions button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+        &:hover {
+          background-color: darken($confirm-color, 10%);
+        }
+      }
 
-.actions button:hover {
-  background-color: #218838;
-}
+      button:last-child {
+        background-color: $danger-color;
+        color: #fff;
 
-.actions button:nth-child(2) {
-  background-color: #dc3545;
-}
-
-.actions button:nth-child(2):hover {
-  background-color: #c82333;
+        &:hover {
+          background-color: darken($danger-color, 10%);
+        }
+      }
+    }
+  }
 }
 
 .add-button {
-  padding: 10px 20px;
-  background-color: #007bff;
+  padding: 8px 15px;
+  background-color: $primary-color;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
   margin-bottom: 10px;
-}
 
-.add-button:hover {
-  background-color: #0056b3;
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
 }
 
 footer {

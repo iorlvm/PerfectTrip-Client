@@ -1,15 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { User, CreditCard, SuitcaseLine, StarFilled, Message, Operation, Lock } from '@element-plus/icons-vue'
+import { User, CreditCard, SuitcaseLine, StarFilled, Lock } from '@element-plus/icons-vue'
 
 const options = [
     { path: '/member', label: '個人資訊', icon: User },
     { path: '/member/payment', label: '付款資訊', icon: CreditCard },
     { path: '/member/journey', label: '訂單和旅程', icon: SuitcaseLine },
     { path: '/member/favorite', label: '我的收藏', icon: StarFilled },
-    { path: '/member/message', label: '訊息中心', icon: Message },
-    { path: '/member/ferences', label: '偏好設定', icon: Operation },
     { path: '/member/safety', label: '帳號安全', icon: Lock }
 ]
 
@@ -47,7 +45,6 @@ onMounted(() => {
             <router-view></router-view>
         </main>
     </div>
-
 </template>
 
 
@@ -62,6 +59,8 @@ onMounted(() => {
     display: flex;
 
     .aside {
+        position: sticky;
+        top: 20px;
         width: 330px;
         border: 1px solid #00000022;
         border-radius: 15px;

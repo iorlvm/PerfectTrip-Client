@@ -1,195 +1,189 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/views/Login/index.vue'
-import ErrorPage from '@/views/ErrorPage/index.vue'
-import Layout from '@/views/Layout/index.vue'
-import Home from '@/views/Home/index.vue'
-import Search from '@/views/Search/index.vue'
-import Product from '@/views/Product/index.vue'
-import Order from '@/views/Order/index.vue'
-import OrderForm from '@/views/Order/components/OrderForm.vue'
-import OrderCreated from '@/views/Order/components/OrderCreated.vue'
-import Member from '@/views/Member/index.vue'
-import MemberInfo from '@/views/Member/components/MemberInfo.vue'
-import MemberPayment from '@/views/Member/components/MemberPayment.vue'
-import MemberFavorite from '@/views/Member/components/MemberFavorite.vue'
-import MemberBooking from '@/views/Member/components/MemberBooking.vue'
-import MemberMessage from '@/views/Member/components/MemberMessage.vue'
-import MemberFerences from '@/views/Member/components/MemberFerences.vue'
-import MemberSafety from '@/views/Member/components/MemberSafety.vue'
-import StoreIndex from '@/views/StorePage/index.vue'
-import StoreLogin from '@/views/StorePage/components/StoreLogin.vue'
-import StoreWelcome from '@/views/StorePage/components/StoreWelcome.vue'
-import StoreManageCenter from '@/views/StoreManageCenter/index.vue'
-import InfoOverview from '@/views/StoreManageCenter/components/InfoOverview.vue'
-import ImportantMessage from '@/views/StoreManageCenter/components/ImportantMessage.vue'
-import CustomerMessage from '@/views/StoreManageCenter/components/CustomerMessage.vue'
-import ContactUs from '@/views/StoreManageCenter/components/ContactUs.vue'
-import OrderList from '@/views/StoreManageCenter/components/OrderList.vue'
-import OrderCalendar from '@/views/StoreManageCenter/components/OrderCalendar.vue'
-import RoomList from '@/views/StoreManageCenter/components/RoomList.vue'
-import RoomDiscount from '@/views/StoreManageCenter/components/RoomDiscount.vue'
-import RoomInventory from '@/views/StoreManageCenter/components/RoomInventory.vue'
-import HotelInfo from '@/views/StoreManageCenter/components/HotelInfo.vue'
-import HotelInfoEdit from '@/views/StoreManageCenter/components/HotelInfoEdit.vue'
-import StoreAccount from '@/views/StoreManageCenter/components/StoreAccount.vue'
-import QA from '@/views/QA/index.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "@/views/Login/index.vue";
+import ErrorPage from "@/views/ErrorPage/index.vue";
+import Layout from "@/views/Layout/index.vue";
+import Home from "@/views/Home/index.vue";
+import Search from "@/views/Search/index.vue";
+import Product from "@/views/Product/index.vue";
+import Order from "@/views/Order/index.vue";
+import OrderForm from "@/views/Order/components/OrderForm.vue";
+import OrderCreated from "@/views/Order/components/OrderCreated.vue";
+import Member from "@/views/Member/index.vue";
+import MemberInfo from "@/views/Member/components/MemberInfo.vue";
+import MemberPayment from "@/views/Member/components/MemberPayment.vue";
+import MemberFavorite from "@/views/Member/components/MemberFavorite.vue";
+import MemberBooking from "@/views/Member/components/MemberBooking.vue";
+import MemberSafety from "@/views/Member/components/MemberSafety.vue";
+import StoreIndex from "@/views/StorePage/index.vue";
+import StoreLogin from "@/views/StorePage/components/StoreLogin.vue";
+import StoreWelcome from "@/views/StorePage/components/StoreWelcome.vue";
+import StoreManageCenter from "@/views/StoreManageCenter/index.vue";
+import InfoOverview from "@/views/StoreManageCenter/components/InfoOverview.vue";
+import ImportantMessage from "@/views/StoreManageCenter/components/ImportantMessage.vue";
+import CustomerMessage from "@/views/StoreManageCenter/components/CustomerMessage.vue";
+import ContactUs from "@/views/StoreManageCenter/components/ContactUs.vue";
+import OrderList from "@/views/StoreManageCenter/components/OrderList.vue";
+import OrderCalendar from "@/views/StoreManageCenter/components/OrderCalendar.vue";
+import RoomList from "@/views/StoreManageCenter/components/RoomList.vue";
+import RoomDiscount from "@/views/StoreManageCenter/components/RoomDiscount.vue";
+import RoomInventory from "@/views/StoreManageCenter/components/RoomInventory.vue";
+import HotelInfo from "@/views/StoreManageCenter/components/HotelInfo.vue";
+import HotelInfoEdit from "@/views/StoreManageCenter/components/HotelInfoEdit.vue";
+import StoreAccount from "@/views/StoreManageCenter/components/StoreAccount.vue";
+import QA from "@/views/QA/index.vue";
+import StoreRegister from "@/views/StorePage/components/StoreRegister.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: "/",
       component: Layout,
       children: [
         {
-          path: '',
-          component: Home
+          path: "",
+          component: Home,
         },
         {
-          path: 'search',
-          component: Search
+          path: "search",
+          component: Search,
         },
         {
-          path: 'login',
-          component: Login
+          path: "login",
+          component: Login,
         },
         {
-          path: 'product/:id',
-          component: Product
+          path: "product/:id",
+          component: Product,
         },
         {
-          path: 'order/',
+          path: "order/",
           component: Order,
-          redirect: '/error',
+          redirect: "/error",
           children: [
             {
-              path: 'form/:id',
+              path: "form/:id",
               component: OrderForm,
-              name: 'orderForm'
+              name: "orderForm",
             },
             {
-              path: 'created/:id',
+              path: "created/:id",
               component: OrderCreated,
-              name: 'orderCreated'
+              name: "orderCreated",
             },
-          ]
+          ],
         },
         {
-          path: 'member/',
+          path: "member/",
           component: Member,
           children: [
             {
-              path: '',
+              path: "",
               component: MemberInfo,
             },
             {
-              path: 'payment',
+              path: "payment",
               component: MemberPayment,
             },
             {
-              path: 'journey',
+              path: "journey",
               component: MemberBooking,
             },
             {
-              path: 'favorite',
+              path: "favorite",
               component: MemberFavorite,
             },
             {
-              path: 'message',
-              component: MemberMessage,
-            },
-            {
-              path: 'ferences',
-              component: MemberFerences,
-            },
-            {
-              path: 'safety',
+              path: "safety",
               component: MemberSafety,
             },
-          ]
+          ],
         },
         {
-          path: 'qa',
-          component: QA
+          path: "qa",
+          component: QA,
         },
-      ]
+      ],
     },
     {
-      path: '/store',
+      path: "/store",
       component: StoreIndex,
       children: [
         {
-          path: '',
+          path: "",
           component: StoreWelcome,
         },
         {
-          path: 'login',
+          path: "login",
           component: StoreLogin,
         },
-
-      ]
+        {
+          path:"register",
+          component: StoreRegister
+        }
+      ],
     },
     {
-      path: '/store/manage',
+      path: "/store/manage",
       component: StoreManageCenter,
       children: [
         {
-          path: '',
+          path: "",
           component: InfoOverview,
         },
         {
-          path: 'message/important',
+          path: "message/important",
           component: ImportantMessage,
         },
         {
-          path: 'message/customer',
+          path: "message/customer",
           component: CustomerMessage,
         },
         {
-          path: 'message/contactus',
+          path: "message/contactus",
           component: ContactUs,
         },
         {
-          path: 'order/list',
+          path: "order/list",
           component: OrderList,
         },
         {
-          path: 'order/calendar',
+          path: "order/calendar",
           component: OrderCalendar,
         },
         {
-          path: 'room/list',
+          path: "room/list",
           component: RoomList,
         },
         {
-          path: 'room/discount',
+          path: "room/discount",
           component: RoomDiscount,
         },
         {
-          path: 'room/inventory',
+          path: "room/inventory",
           component: RoomInventory,
         },
         {
-          path: 'setting/info',
+          path: "setting/info",
           component: HotelInfo,
-        }, {
-          path: 'setting/infoedit',
-          component: HotelInfoEdit,
-        }
-        ,
+        },
         {
-          path: 'setting/account',
+          path: "setting/infoedit",
+          component: HotelInfoEdit,
+        },
+        {
+          path: "setting/account",
           component: StoreAccount,
         },
-      ]
+      ],
     },
     {
-      path: '/error',
-      component: ErrorPage
+      path: "/error",
+      component: ErrorPage,
     },
     {
-      path: '/:catchAll(.*)',
-      component: ErrorPage
+      path: "/:catchAll(.*)",
+      component: ErrorPage,
     },
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -200,11 +194,11 @@ const router = createRouter({
       // 否則滾動到頂部
       return { top: 0 };
     }
-  }
-})
+  },
+});
 
 router.beforeEach((to, from, next) => {
-  if (from.name === 'orderCreated' && to.name === 'orderForm') {
+  if (from.name === "orderCreated" && to.name === "orderForm") {
     // 防止從完成頁面返回到表單頁面
     next(false);
   } else {
@@ -212,4 +206,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router
+export default router;
