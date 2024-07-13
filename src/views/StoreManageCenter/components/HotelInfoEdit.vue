@@ -17,13 +17,12 @@ const srcList = [
 const form = ref({
     name: '',
     region: '',
-    date1: '',
-    date2: '',
     delivery: false,
     type: [],
     resource: '',
     desc: '',
-    number: ''
+    number: '',
+    date: []
 })
 
 const onSubmit = () => {
@@ -51,7 +50,7 @@ const onSubmit = () => {
             <br>
             <div class="image">
 
-                <el-image style="width: 120px; height: 120px" :src="url" :zoom-rate="1.2" :max-scale="7"
+                <el-image style="width: 160px; height: 126px" :src="url" :zoom-rate="1.2" :max-scale="7"
                     :min-scale="0.2" :preview-src-list="srcList" fit="cover" />
 
                 <div style="margin-bottom: 20px" class="addtab">
@@ -61,37 +60,18 @@ const onSubmit = () => {
                 </div>
             </div>
 
-            <el-form :model="form" label-width="auto">
-                <el-form-item label="房間數量">
-                    <el-input type="number" :min="0" v-model="form.number" placeholder="0" style="width: 150px;" />
-                </el-form-item>
-                <el-form-item label="房價(TWD)" placeholder="TWD">
-                    <el-input v-model="form.price" style="width: 150px;" />
-                </el-form-item>
-                <el-form-item label="每房入住人數">
-                    <el-select v-model="form.region" placeholder="選擇人數" style="width: 150px;">
-                        <el-option label="1" value="1人" />
-                        <el-option label="2" value="2人" />
-                        <el-option label="3" value="3人" />
-                        <el-option label="4" value="4人" />
-                        <el-option label="5" value="5人" />
-                        <el-option label="6" value="6人" />
-                        <el-option label="7" value="7人" />
-                        <el-option label="8" value="8人" />
-                    </el-select>
-                </el-form-item>
+            <el-form :model="form" label-width="">
+
                 <el-form-item label="期間限定(非必填)">
                     <div class="demo-date-picker">
                         <div class="block">
                             <span class="demonstration"></span>
-                            <el-date-picker v-model="value1" type="daterange" range-separator="To"
-                                start-placeholder="開始日期" end-placeholder="結束日期" :size="size" />
+                            <el-date-picker v-model="form.date" type="daterange" range-separator="To"
+                                start-placeholder="開始日期" end-placeholder="結束日期" size="large" />
                         </div>
                     </div>
                 </el-form-item>
-                <el-form-item label="開放訂房">
-                    <el-switch v-model="form.open" />
-                </el-form-item>
+
                 <div class="hot">
                     <el-form-item label="熱門設施">
                         <el-checkbox-group v-model="form.type">
@@ -132,21 +112,15 @@ const onSubmit = () => {
                                 <img src="@/assets/images/family.png" class="icon">行李寄放
                             </el-checkbox>
                             <el-checkbox value="pet" name="type">
-                                <img src="@/assets/images/family.png" class="icon">寵物寄宿
+                                <img src="@/assets/images/family.png" class="icon">寵物友善
                             </el-checkbox>
 
                         </el-checkbox-group>
                     </el-form-item>
                 </div>
 
-                <el-form-item label="寵物友善">
-                    <el-radio-group v-model="form.resource">
-                        <el-radio value="Y">YES</el-radio>
-                        <el-radio value="N">NO</el-radio>
 
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="房型描述">
+                <el-form-item label="旅館介紹">
                     <el-input v-model="form.desc" type="textarea" rows="5" resize="none" class="textarea"
                         style="width:650px" />
                 </el-form-item>
