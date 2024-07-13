@@ -135,7 +135,7 @@ const chatRoomData = [
     },
     {
         chatId: 2,
-        // chatName: 'Bob',
+        chatName: '',
         lastMessageAt: '2024-06-28',
         lastMessage: 'Got it!',
         unreadMessages: 1,
