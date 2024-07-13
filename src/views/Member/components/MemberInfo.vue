@@ -9,11 +9,19 @@ const userInfo = ref({
     username: '12345678@gmail.com',
     phoneNumber: '091234567890',
     country: '韓國',
+    birthday: '1993/07/13',
     // address:'地址',
-
 });
+const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // 月份从0开始，所以需要加1
+    const day = ('0' + date.getDate()).slice(-2);
 
-const radio = ref(3)
+    return `${year}年${month}月${day}日`;
+};
+
+// const radio = ref('')
 const isNameEdit = ref(false);
 const isNickNameEdit = ref(false);
 const gender = ref(false);
@@ -54,7 +62,7 @@ const addressClick = (e) => {
     e.preventDefault();
     address.value = !address.value
 }
-const value1 = ref('')
+
 </script>
 
 <template>
@@ -72,7 +80,6 @@ const value1 = ref('')
                     </el-icon>
                 </div>
             </div>
-
         </div>
         <div class="row border-bottom">
             <template v-if="!isNameEdit">
@@ -119,7 +126,7 @@ const value1 = ref('')
         <div class="row border-bottom">
             <template v-if="!gender">
                 <div class="column">姓別</div>
-                <div class="info">男性</div>
+                <div class="info">{{ userInfo.gender }}</div>
                 <div class="edit">
                     <a href="" @click="genderClick">編輯</a>
                 </div>
@@ -128,10 +135,10 @@ const value1 = ref('')
                 <div class="afterclick">
                     <div class="column">性別</div>
                     <div class="input">
-                        <el-radio-group v-model="radio">
-                            <el-radio :value="3">女性</el-radio>
-                            <el-radio :value="6">男性 </el-radio>
-                            <el-radio :value="9">不顯示</el-radio>
+                        <el-radio-group v-model="userInfo.gender">
+                            <el-radio :value="'女'">女性</el-radio>
+                            <el-radio :value="'男'">男性 </el-radio>
+                            <el-radio :value="'不顯示'">不顯示</el-radio>
                         </el-radio-group>
                     </div>
                     <div class="edit">
@@ -144,7 +151,7 @@ const value1 = ref('')
         <div class="row border-bottom">
             <template v-if="!birthday">
                 <div class="column">生日</div>
-                <div class="info">1985年9月19日</div>
+                <div class="info">{{ formatDate(userInfo.birthday) }}</div>
                 <div class="edit">
                     <a href="" @click="birthdayClick">編輯</a>
                 </div>
@@ -155,7 +162,7 @@ const value1 = ref('')
                     <div class="input">
                         <div class="demo-date-picker">
                             <div class="block">
-                                <el-date-picker v-model="value1" type="date" placeholder="請選擇生日" :size="size" />
+                                <el-date-picker v-model="userInfo.birthday" type="date" placeholder="請選擇生日" />
                             </div>
                         </div>
                     </div>

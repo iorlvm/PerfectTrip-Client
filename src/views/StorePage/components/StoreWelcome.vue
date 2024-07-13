@@ -1,4 +1,8 @@
 <script setup>
+import router from '@/router';
+// const toRegister = () => {
+//     router.push('register')
+// }
 
 </script>
 
@@ -34,7 +38,7 @@
                 </div>
                 <el-divider class="divider" />
                 <div class="padding">
-                    <el-button type="primary" size="large">
+                    <el-button type="primary" size="large" @click="$router.push('store/register')">
                         現在就開始&nbsp;
                         <el-icon class="button-icon" size="20">
                             <Right />

@@ -38,21 +38,16 @@ import ManageToolbar from './ManageToolbar.vue';
             <div class="edit"><a href="">編輯</a></div>
         </div>
         <div class="row border-bottom">
+            <div class="column">負責人姓名</div>
+            <div class="info">王曉明</div>
+            <div class="edit"><a href="">編輯</a></div>
+        </div>
+        <div class="row border-bottom">
             <div class="column">聯絡電話</div>
             <div class="info">
                 <div>+886 1234567890</div>
-                <div class="remind">此電話將公佈於官方資訊</div>
+                <div class="remind">此電話將使用於官方聯絡資訊</div>
             </div>
-            <div class="edit"><a href="">編輯</a></div>
-        </div>
-        <div class="row border-bottom">
-            <div class="column">旅館營業登記證號</div>
-            <div class="info">府觀光業字第123456號</div>
-            <div class="edit"><a href="">編輯</a></div>
-        </div>
-        <div class="row border-bottom">
-            <div class="column">總資本額</div>
-            <div class="info">43億6000萬元 </div>
             <div class="edit"><a href="">編輯</a></div>
         </div>
         <div class="row border-bottom">
@@ -60,13 +55,6 @@ import ManageToolbar from './ManageToolbar.vue';
             <div class="info">888888</div>
             <div class="edit"><a href="">編輯</a></div>
         </div>
-        <div class="row border-bottom">
-            <div class="column">官方網站</div>
-            <div class="info"><a href="https://www.taipeimarriott.com.tw/">https://www.taipeimarriott.com.tw/</a></div>
-            <div class="edit"><a href="">編輯</a></div>
-        </div>
-
-
     </div>
 
 </template>
