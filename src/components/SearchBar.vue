@@ -12,6 +12,13 @@ const adultCount = ref(2);
 const childCount = ref(0);
 const roomCount = ref(1);
 
+defineProps({
+  half: {
+    type: Boolean,
+    default: true
+  }
+});
+
 onMounted(() => {
   searchQuery.value = searchStore.searchQuery;
   loadGuestCount();
@@ -69,7 +76,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="fill-half">
+  <div :class="{ 'fill-half': half }">
     <div class="container">
       <div class="search-bar">
         <el-row :gutter="3">
@@ -185,8 +192,14 @@ onMounted(() => {
   height: 50px;
 
   .el-input {
+
     height: 100%;
     flex-grow: 1;
+  }
+
+  .el-input__inner {
+    font-size: 1.2em;
+    transform: translateY(2px);
   }
 
   .el-range-editor.el-input__wrapper {
@@ -199,6 +212,11 @@ onMounted(() => {
     flex-grow: 1;
   }
 
+  .el-range-input {
+    font-size: 1.08em;
+    transform: translateY(1px);
+  }
+
   .guestCount {
     .el-select__prefix {
       width: 100%;
@@ -208,7 +226,7 @@ onMounted(() => {
 
     .guest-count-info {
       margin: 0 auto;
-      font-size: 0.95em;
+      font-size: 1.1em;
       color: #606266;
     }
 

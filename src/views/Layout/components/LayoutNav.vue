@@ -47,7 +47,7 @@ import router from '@/router';
 <style lang="scss" scoped>
 header {
   background-color: $headerFooter;
-  padding: 8px 10px 3px;
+  padding: 8px 10px 5px;
 }
 
 a {
@@ -61,6 +61,8 @@ ul {
 
   .logo {
     font-size: 1.3em;
+    letter-spacing: 1px;
+    font-weight: bold;
   }
 
   li {
