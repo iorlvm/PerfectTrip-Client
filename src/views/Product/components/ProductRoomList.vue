@@ -50,7 +50,7 @@ const createOrder = () => {
 </template>
 
 <style lang="scss" scoped>
-@media (max-width: 992px) {
+@media (max-width: 991px) {
     .order-title {
         position: relative !important;
         height: 3px !important;

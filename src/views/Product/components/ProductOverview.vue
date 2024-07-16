@@ -1,6 +1,9 @@
 <script setup>
 import Tag from '@/components/Tag.vue';
 import ProductAlbum from './ProductAlbum.vue';
+import CouponBlock from './CouponBlock.vue';
+import OverviewRate from './OverviewRate.vue';
+import OverviewMap from './OverviewMap.vue';
 import { ref } from 'vue';
 
 const rateScore = ref(5);
@@ -28,8 +31,12 @@ const openFlod = () => {
       </el-col>
       <el-col :xs="0" :sm="0" :md="6">
         <div class="rate-map">
-          <div class="rate">rate</div>
-          <div class="map">map</div>
+          <div class="rate">
+            <OverviewRate />
+          </div>
+          <div class="map">
+            <OverviewMap />
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -61,13 +68,6 @@ const openFlod = () => {
           <p>情侶特別喜歡這個位置，並給他們的雙人旅行住宿體驗評分9.8分。</p>
           <p>這邊的文字由旅館方輸入提供 (Html格式)</p>
         </div>
-      </el-col>
-      <el-col :xs="0" :sm="0" :md="8">
-        <div class="coupon">coupon</div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :xs="24" :sm="19" :md="14">
         <div class="facility-wrap">
           <h3>熱門設施</h3>
           <div class="facility-tags">
@@ -114,6 +114,9 @@ const openFlod = () => {
           </div>
         </div>
       </el-col>
+      <el-col :xs="24" :sm="24" :md="8">
+        <CouponBlock />
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -128,7 +131,6 @@ const openFlod = () => {
   .el-button {
     opacity: 1;
     width: 100%;
-    // margin-left: 2px;
     font-size: 1em;
     padding: 14px;
     --el-button-hover-bg-color: #d7d8dd;
@@ -139,14 +141,6 @@ const openFlod = () => {
 </style>
 
 <style lang="scss" scoped>
-.photos,
-.rate,
-.map,
-.coupon {
-  width: 100%;
-  border: 1px solid #000;
-}
-
 .title {
   margin-bottom: 30px;
 
@@ -167,9 +161,6 @@ const openFlod = () => {
   }
 }
 
-.photos {
-  height: 500px;
-}
 
 .rate-map {
   height: 100%;
@@ -178,11 +169,11 @@ const openFlod = () => {
   justify-content: space-between;
 
   .rate {
-    height: 270px;
+    height: 260px;
   }
 
   .map {
-    height: 185px;
+    height: 220px;
   }
 }
 
@@ -217,11 +208,6 @@ const openFlod = () => {
     line-height: 1.5;
     margin: 20px 3px;
   }
-}
-
-.coupon {
-  height: 185px;
-  margin: 20px 0;
 }
 
 .facility-wrap {
