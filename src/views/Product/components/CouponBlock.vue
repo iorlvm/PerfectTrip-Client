@@ -1,6 +1,6 @@
 <script setup>
 import ProductCoupon from './ProductCoupon.vue';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const coupons = ref([
   {
@@ -48,8 +48,8 @@ const containerWidth = ref(0);
 
 const handleScroll = () => {
   const wrapper = couponWrapper.value;
-  showLeftButton.value = wrapper.scrollLeft > 0;
-  showRightButton.value = wrapper.scrollLeft + wrapper.clientWidth < wrapper.scrollWidth;
+  showLeftButton.value = wrapper.scrollLeft > 5;
+  showRightButton.value = wrapper.scrollLeft + wrapper.clientWidth < wrapper.scrollWidth - 5;
 };
 
 let scrolOnce = 0;
@@ -61,14 +61,14 @@ const handleResize = () => {
     // RWD時 重置卷軸座標
     setTimeout(() => {
       // 設定少許延遲避免錯位
-      couponWrapper.value.scrollTo({ left: (scrolTimes * (scrolOnce + 1)), behavior: 'instant' });
+      couponWrapper.value.scrollTo({ left: (scrolTimes * (scrolOnce)), behavior: 'instant' });
     }, 1)
     preWidth = containerWidth.value;
   }
   if (containerWidth.value > 500) {
-    scrolOnce = containerWidth.value * 0.333 + 1;
+    scrolOnce = containerWidth.value * 0.334 - 4;
   } else {
-    scrolOnce = containerWidth.value;
+    scrolOnce = containerWidth.value - 18;
   }
   handleScroll();
 };
@@ -76,11 +76,19 @@ const handleResize = () => {
 const scrollLeft = () => {
   couponWrapper.value.scrollBy({ left: -scrolOnce, behavior: 'smooth' });
   scrolTimes--;
+  setTimeout(() => {
+    // 左右強制座標校正
+    if (!showLeftButton.value) couponWrapper.value.scrollTo({ left: 0, behavior: 'instant' });
+  }, 1)
 };
 
 const scrollRight = () => {
   couponWrapper.value.scrollBy({ left: scrolOnce, behavior: 'smooth' });
   scrolTimes++;
+  setTimeout(() => {
+    // 左右強制座標校正
+    if (!showRightButton.value) couponWrapper.value.scrollTo({ left: couponWrapper.value.scrollWidth - couponWrapper.value.clientWidth, behavior: 'instant' });
+  }, 1)
 };
 
 
@@ -89,19 +97,19 @@ const handleApply = (couponId) => {
   alert(`優惠券 ${couponId} 已使用！`);
 };
 
+let resizeObserver;
 onMounted(() => {
   handleResize();
   couponWrapper.value.addEventListener('scroll', handleScroll);
 
-  const resizeObserver = new ResizeObserver(handleResize);
+  resizeObserver = new ResizeObserver(handleResize);
   resizeObserver.observe(couponBlock.value);
 });
 
-onUnmounted(() => {
-  couponWrapper.value.removeEventListener('scroll', handleScroll);
+onBeforeUnmount(() => {
+  resizeObserver.unobserve(couponBlock.value);
+  resizeObserver.disconnect();
 });
-
-
 </script>
 
 <template>
@@ -129,8 +137,8 @@ onUnmounted(() => {
 @media (max-width: 991px) {
 
   .coupon-block {
-    border-top: 1px solid #00000020;
-    padding-top: 35px;
+    // border-top: 1px solid #00000020;
+    padding-top: 15px;
     transform: none !important;
   }
 

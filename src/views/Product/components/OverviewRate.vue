@@ -1,9 +1,13 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+
+const emit = defineEmits([
+    'openRate'
+])
 
 const comments = ref([
     {
-        id: 1, text: `只要不知道是誰說\n通通可以當成是胡適講的。`, author: '胡適 (沒有說過這句話)'
+        id: 1, text: `只要不知道是誰說的\n通通可以當成是胡適講的。`, author: '胡適 (並沒有說過這句話)'
     },
     { id: 2, text: '服務非常好，會再來！', author: '用戶B' },
     { id: 3, text: '食物很美味，推薦！', author: '用戶C' },
@@ -43,36 +47,37 @@ const handleResize = () => {
     handleScroll();
 };
 
-const scrollLeft = () => {
+const scrollLeft = (e) => {
+    e.stopPropagation();
     commentWrapper.value.scrollBy({ left: -scrollUnit, behavior: 'smooth' });
     scrollTimes++;
 };
 
-const scrollRight = () => {
+const scrollRight = (e) => {
+    e.stopPropagation();
     commentWrapper.value.scrollBy({ left: scrollUnit, behavior: 'smooth' });
     scrollTimes--;
 };
 
+let resizeObserver
 onMounted(() => {
     handleResize();
-
-    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver = new ResizeObserver(handleResize);
 
     resizeObserver.observe(commentBlock.value);
-
     commentWrapper.value.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
 });
 
-onUnmounted(() => {
-    commentWrapper.value.removeEventListener('scroll', handleScroll);
-    window.removeEventListener('resize', handleResize);
+onBeforeUnmount(() => {
+    resizeObserver.unobserve(commentBlock.value);
+    resizeObserver.disconnect();
 });
+
 </script>
 
 <template>
     <div class="rate-container">
-        <div class="title">
+        <div class="title" @click="emit('openRate')">
             <div class="desc">
                 <p>好吉了</p>
                 <p>9,999則評語</p>
@@ -117,6 +122,7 @@ onUnmounted(() => {
         justify-content: flex-end;
         align-items: center;
         font-size: 1.15em;
+        cursor: pointer;
 
         .desc {
             text-align: end;

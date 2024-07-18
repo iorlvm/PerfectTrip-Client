@@ -68,7 +68,7 @@ const routeToProduct = (id) => {
         </div>
         <div class="col price">
           <div class="price-info">
-            <p class="small">365 晚、 9,999 位成人</p>
+            <p>365 晚、 9,999 位成人</p>
             <p class="large">TWD 9,999,999</p>
             <p class="small">不含稅費與其他費用</p>
             <el-button type="primary" @click="routeToProduct(1)"> <!-- 靜態暫時寫死 記得要換 -->

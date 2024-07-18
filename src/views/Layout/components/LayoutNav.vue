@@ -48,6 +48,7 @@ import router from '@/router';
 header {
   background-color: $headerFooter;
   padding: 8px 10px 5px;
+  min-width: 768px;
 }
 
 a {

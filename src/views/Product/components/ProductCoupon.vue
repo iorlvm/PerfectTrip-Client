@@ -18,9 +18,9 @@ const applyCoupon = () => {
 
 const dynamicWidthStyle = computed(() => {
     if (props.containerWidth > 500) {
-        return { width: `${props.containerWidth * 0.333 - 39}px` };
+        return { width: `${props.containerWidth * 0.333 - 22}px` };
     } else {
-        return { width: `${props.containerWidth - 39}px` };
+        return { width: `${props.containerWidth - 36}px` };
     }
 });
 
@@ -45,11 +45,14 @@ const dynamicWidthStyle = computed(() => {
 <style lang="scss" scoped>
 .coupon {
     border: 1px solid #ccc;
-    // height: 185px;
-    margin: 0 19px 0 20px;
+    margin-right: 18px;
     border-radius: 10px;
     flex: 0 0 auto;
     overflow: hidden;
+
+    &:first-child {
+        margin-left: 18px;
+    }
 }
 
 .coupon-header {

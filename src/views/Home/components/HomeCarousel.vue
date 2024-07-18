@@ -14,7 +14,8 @@ const syncCarousels = (index) => {
 <template>
 
   <div class="container">
-    <el-carousel ref="carousel1" class="home-carousel" :initial-index="1" height="450px" @change="syncCarousels">
+    <el-carousel ref="carousel1" class="home-carousel" indicator-position="none" :initial-index="1" height="450px"
+      @change="syncCarousels">
       <el-carousel-item>
         <div class="item">
           <div class="text right">
@@ -52,8 +53,8 @@ const syncCarousels = (index) => {
         </div>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel ref="carousel2" class="home-carousel absolute left" :initial-index="0" arrow="never" height="450px"
-      :autoplay="false">
+    <el-carousel ref="carousel2" class="home-carousel absolute left" indicator-position="none" :initial-index="0"
+      arrow="never" height="450px" :autoplay="false">
       <el-carousel-item>
         <div class="item">
           <div class="text right">
@@ -91,8 +92,8 @@ const syncCarousels = (index) => {
         </div>
       </el-carousel-item>
     </el-carousel>
-    <el-carousel ref="carousel3" class="home-carousel absolute right" :initial-index="2" arrow="never" height="450px"
-      :autoplay="false">
+    <el-carousel ref="carousel3" class="home-carousel absolute right" indicator-position="none" :initial-index="2"
+      arrow="never" height="450px" :autoplay="false">
       <el-carousel-item>
         <div class="item">
           <div class="text right">
@@ -139,7 +140,7 @@ const syncCarousels = (index) => {
 .home-carousel {
   background-color: #ffffff;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1440px;
   flex-shrink: 0;
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 const active = ref(1)
 
 const nextStep = () => {
@@ -10,12 +10,6 @@ const backStep = () => {
     active.value -= 1;
 }
 
-onMounted(() => {
-    // window.scrollTo({
-    //     top: 0,
-    //     behavior: 'smooth'
-    // });
-})
 </script>
 
 <template>

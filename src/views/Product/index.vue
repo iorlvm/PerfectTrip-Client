@@ -4,10 +4,16 @@ import ProductOverview from './components/ProductOverview.vue';
 import ProductRoomList from './components/ProductRoomList.vue';
 import HotelFacility from '@/views/Product/components/HotelFacility.vue'
 import HotelRule from './components/HotelRule.vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
+const rateDrawer = ref(false);
+
 const router = useRoute();
+
+const openRate = () => {
+  rateDrawer.value = true;
+}
 
 onMounted(() => {
   const id = router.params.id;
@@ -35,19 +41,21 @@ onMounted(() => {
         </el-anchor-link>
         <el-anchor-link class="a-link" href="#facility"> 設施 </el-anchor-link>
         <el-anchor-link class="a-link" href="#rules"> 住宿規定 </el-anchor-link>
-        <el-anchor-link class="a-link"> 住客評價(999) </el-anchor-link>
+        <el-anchor-link class="a-link" @click="openRate"> 住客評價(999) </el-anchor-link>
         <div class="bottom-line"></div>
       </el-anchor>
-      <ProductOverview id="overview" />
+      <ProductOverview id="overview" @openRate="openRate" />
       <el-divider class="divider" />
       <ProductRoomList id="price-info" />
       <el-divider class="divider" />
-
       <HotelFacility id="facility" />
       <el-divider class="divider" />
       <HotelRule id="rules" />
     </div>
   </div>
+  <el-drawer v-model="rateDrawer" title="我是住客評價" size="40%" :lock-scroll="true">
+    <div>我是評價列表</div>
+  </el-drawer>
 </template>
 
 <style lang="scss">
