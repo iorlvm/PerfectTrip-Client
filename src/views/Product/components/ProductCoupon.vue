@@ -20,7 +20,7 @@ const dynamicWidthStyle = computed(() => {
     if (props.containerWidth > 500) {
         return { width: `${props.containerWidth * 0.333 - 22}px` };
     } else {
-        return { width: `${props.containerWidth - 36}px` };
+        return { width: `${props.containerWidth - 35}px` };
     }
 });
 

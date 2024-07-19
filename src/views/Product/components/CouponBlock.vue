@@ -68,7 +68,7 @@ const handleResize = () => {
   if (containerWidth.value > 500) {
     scrolOnce = containerWidth.value * 0.334 - 4;
   } else {
-    scrolOnce = containerWidth.value - 18;
+    scrolOnce = containerWidth.value - 17;
   }
   handleScroll();
 };
