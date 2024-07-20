@@ -40,7 +40,7 @@ const getFilterBlur = (index) => {
 const getFlexShrink = (index) => {
   const diff = Math.abs(index - selectedPohto.value);
   if (diff === 0) return 0;
-  return 1 + diff * 0.03;
+  return 1 + diff * 0.05;
 }
 
 let allowMouseHover = true;

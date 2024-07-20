@@ -38,6 +38,7 @@
 footer {
   background-color: $headerFooter;
   padding: 0 20px;
+  min-width: 768px;
 }
 
 .container {

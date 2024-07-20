@@ -7,6 +7,7 @@ html {
   height: 100%;
   font-size: 14px;
 }
+
 body {
   height: 100%;
   color: #333;
@@ -16,6 +17,7 @@ body {
     sans-serif;
   // font-family: Arial, sans-serif;
 }
+
 body,
 ul,
 h1,
@@ -27,14 +29,17 @@ dd {
   padding: 0;
   margin: 0;
 }
+
 a {
   text-decoration: none;
   color: #333;
   outline: none;
 }
+
 i {
   font-style: normal;
 }
+
 input[type="text"],
 input[type="search"],
 input[type="password"],
@@ -42,11 +47,13 @@ input[type="checkbox"] {
   padding: 0;
   outline: none;
   border: none;
+
   // -webkit-appearance: none;
   &::placeholder {
     color: #ccc;
   }
 }
+
 img {
   width: calc(100% + 2px);
   height: calc(100% + 2px);
@@ -55,6 +62,7 @@ img {
   vertical-align: middle;
   background: #ffffff url("@/assets/images/200.png") no-repeat center / cover;
 }
+
 ul {
   list-style: none;
 }
@@ -65,7 +73,7 @@ ul {
 }
 
 .container {
-  max-width: 1240px;
+  max-width: 1440px;
   min-width: 768px;
   margin: 0 auto;
   position: relative;
@@ -83,11 +91,13 @@ ul {
 }
 
 .fill-half {
+  min-width: 768px;
   background: linear-gradient(to bottom, $headerFooter 50%, transparent 50%);
 }
 
 .space {
   background-color: $headerFooter;
+  min-width: 768px;
   height: 12px;
 }
 

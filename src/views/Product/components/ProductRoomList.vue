@@ -19,11 +19,10 @@ const createOrder = () => {
 
 <template>
     <div class="room-list">
-        <h3>
+        <h2>
             空房情況
-        </h3>
-        <p>價格已轉換至TWD 圖標</p>
-        <div>更改條件搜尋組件 (這個功能可以考慮要不要做 這東西其實很麻煩 算是進階題 留給有興趣的組員玩XD)</div>
+        </h2>
+        <p class="desc">價格已轉換至TWD 圖標</p>
         <el-row>
             <el-col :xs="24" :sm="24" :md="20" class="roomCard-list">
                 <RoomCard />
@@ -50,7 +49,7 @@ const createOrder = () => {
 </template>
 
 <style lang="scss" scoped>
-@media (max-width: 992px) {
+@media (max-width: 991px) {
     .order-title {
         position: relative !important;
         height: 3px !important;
@@ -58,9 +57,16 @@ const createOrder = () => {
     }
 }
 
-.product-container {
-    width: 95%;
-    margin: 0 auto;
+.room-list {
+    h2 {
+        margin: 0;
+        line-height: 1.5;
+        letter-spacing: 1px;
+    }
+
+    .desc {
+        margin: 5px 0 12px;
+    }
 
     .order-title {
         position: sticky;

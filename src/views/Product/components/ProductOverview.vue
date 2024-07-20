@@ -1,6 +1,9 @@
 <script setup>
 import Tag from '@/components/Tag.vue';
 import ProductAlbum from './ProductAlbum.vue';
+import CouponBlock from './CouponBlock.vue';
+import OverviewRate from './OverviewRate.vue';
+import OverviewMap from './OverviewMap.vue';
 import { ref } from 'vue';
 
 const rateScore = ref(5);
@@ -9,6 +12,27 @@ const isOpenFlod = ref(false);
 const openFlod = () => {
   isOpenFlod.value = true;
 };
+
+const emit = defineEmits([
+  'openRate'
+])
+
+
+const text = ref(
+  `Aurora Star Hotel 地點絕佳，位於巴黎市中心，提供空調客房，擁有美麗的花園、免費WiFi和寬敞的露台。這間4星級飯店的每個房型都能欣賞到城市美景。住客可以享用館內餐廳和酒吧的美食。飯店還提供私人停車位。
+            
+  Aurora Star Hotel 的所有客房均配備舒適的座位區、平面電視和保險箱。每間客房都備有寢具和毛巾，確保住客享有舒適的住宿體驗。
+
+  飯店每天早上供應豐富的早餐，提供自助式、歐陸式和素食三種選擇，滿足不同住客的需求。
+
+  櫃台服務人員會講法語、英語、西班牙語和中文，可以幫助住客規劃行程，解答各種問題。
+
+  Aurora Star Hotel 附近的人氣景點包括艾菲爾鐵塔、羅浮宮博物館和香榭麗舍大街。最近的機場是夏爾·戴高樂國際機場，距離
+  Aurora Star Hotel 25 公里。飯店提供付費機場接駁服務。
+
+  情侶特別喜歡這個位置，並給他們的雙人旅行住宿體驗評分9.8分。
+
+  這邊的文字由旅館方輸入提供`);
 </script>
 
 <template>
@@ -28,46 +52,25 @@ const openFlod = () => {
       </el-col>
       <el-col :xs="0" :sm="0" :md="6">
         <div class="rate-map">
-          <div class="rate">rate</div>
-          <div class="map">map</div>
+          <div class="rate">
+            <OverviewRate @openRate="emit('openRate')" />
+          </div>
+          <div class="map">
+            <OverviewMap />
+          </div>
         </div>
       </el-col>
     </el-row>
-    <el-row :gutter="40">
+    <el-row :gutter="40" style="margin-top: 8px;">
       <el-col :xs="24" :sm="24" :md="16">
         <div class="introduce" :class="isOpenFlod ? '' : 'fold'">
           <div class="open-flod" v-if="!isOpenFlod">
             <el-button type="info" @click="openFlod" plain>顯示更多</el-button>
           </div>
-          <p>
-            Aurora Star Hotel
-            地點絕佳，位於巴黎市中心，提供空調客房，擁有美麗的花園、免費WiFi和寬敞的露台。這間4星級飯店的每個房型都能欣賞到城市美景。住客可以享用館內餐廳和酒吧的美食。飯店還提供私人停車位。
+          <p class="pre-line-text">
+            {{ text }}
           </p>
-          <p>
-            Aurora Star Hotel
-            的所有客房均配備舒適的座位區、平面電視和保險箱。每間客房都備有寢具和毛巾，確保住客享有舒適的住宿體驗。
-          </p>
-          <p>
-            飯店每天早上供應豐富的早餐，提供自助式、歐陸式和素食三種選擇，滿足不同住客的需求。
-          </p>
-          <p>
-            櫃台服務人員會講法語、英語、西班牙語和中文，可以幫助住客規劃行程，解答各種問題。
-          </p>
-          <p>
-            Aurora Star Hotel
-            附近的人氣景點包括艾菲爾鐵塔、羅浮宮博物館和香榭麗舍大街。最近的機場是夏爾·戴高樂國際機場，距離
-            Aurora Star Hotel 25 公里。飯店提供付費機場接駁服務。
-          </p>
-          <p>情侶特別喜歡這個位置，並給他們的雙人旅行住宿體驗評分9.8分。</p>
-          <p>這邊的文字由旅館方輸入提供 (Html格式)</p>
         </div>
-      </el-col>
-      <el-col :xs="0" :sm="0" :md="8">
-        <div class="coupon">coupon</div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :xs="24" :sm="19" :md="14">
         <div class="facility-wrap">
           <h3>熱門設施</h3>
           <div class="facility-tags">
@@ -114,6 +117,9 @@ const openFlod = () => {
           </div>
         </div>
       </el-col>
+      <el-col :xs="24" :sm="24" :md="8">
+        <CouponBlock />
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -128,7 +134,6 @@ const openFlod = () => {
   .el-button {
     opacity: 1;
     width: 100%;
-    // margin-left: 2px;
     font-size: 1em;
     padding: 14px;
     --el-button-hover-bg-color: #d7d8dd;
@@ -139,14 +144,6 @@ const openFlod = () => {
 </style>
 
 <style lang="scss" scoped>
-.photos,
-.rate,
-.map,
-.coupon {
-  width: 100%;
-  border: 1px solid #000;
-}
-
 .title {
   margin-bottom: 30px;
 
@@ -167,9 +164,6 @@ const openFlod = () => {
   }
 }
 
-.photos {
-  height: 500px;
-}
 
 .rate-map {
   height: 100%;
@@ -178,11 +172,11 @@ const openFlod = () => {
   justify-content: space-between;
 
   .rate {
-    height: 270px;
+    height: 245px;
   }
 
   .map {
-    height: 185px;
+    height: 225px;
   }
 }
 
@@ -213,15 +207,11 @@ const openFlod = () => {
     }
   }
 
-  p {
+  .pre-line-text {
     line-height: 1.5;
     margin: 20px 3px;
+    white-space: pre-line;
   }
-}
-
-.coupon {
-  height: 185px;
-  margin: 20px 0;
 }
 
 .facility-wrap {

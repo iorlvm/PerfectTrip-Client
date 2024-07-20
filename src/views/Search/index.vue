@@ -51,7 +51,8 @@ onMounted(() => {
   padding: 0 20px;
 
   aside {
-    width: 270px;
+    width: 25%;
+    min-width: 270px;
     padding: 5px;
   }
 
