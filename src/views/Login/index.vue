@@ -1,14 +1,44 @@
 <script setup>
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { ref } from 'vue';
+
+const userStore = useUserStore();
+const router = useRouter();
+
+const formData = ref({
+  username: '',
+  password: ''
+});
+
+const login = async (e) => {
+  e.preventDefault();
+
+  if (formData.value.username === '' || formData.value.password === '') {
+    ElMessage({
+      type: 'warning',
+      message: '帳號密碼不得為空'
+    });
+    return;
+  }
+
+  let username = formData.value.username;
+  let password = formData.value.password;
+  await userStore.getUserInfo({ username, password });
+  router.push('/');
+}
+
 </script>
 
 <template>
   <div class="login-container">
     <h2>會員登入</h2>
     <form>
-      <input type="text" placeholder="帳號" required>
-      <input type="password" placeholder="密碼" required>
+      <input type="text" placeholder="帳號" v-model="formData.username" required>
+      <input type="password" placeholder="密碼" v-model="formData.password" required>
       <div style="text-align: center;">
-        <button type="submit">登入</button>
+        <button type="submit" @click="login">登入</button>
         <button type="reset">清空</button>
       </div>
     </form>

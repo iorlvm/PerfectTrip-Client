@@ -10,7 +10,7 @@ const httpInstance = axios.create(
     {
         // 請求基礎路徑配置 (後端佈署後要更改)
         baseURL: 'http://localhost:8080',
-        timeout: 5000
+        timeout: 5000,
     }
 )
 
@@ -42,7 +42,7 @@ httpInstance.interceptors.response.use(
                 // 伺服器成功回應 但操作不成功
                 // 雖然很扯 但這個東西的解法就是不理這個紅字  手動import了反而會錯
                 ElMessage({
-                    type:'warning',
+                    type: 'warning',
                     message: resData.errorMsg
                 })
             }
@@ -53,8 +53,8 @@ httpInstance.interceptors.response.use(
     error => {
         // 響應錯誤時
         ElMessage({
-            type:'warning',
-            message: error.response.data.message 
+            type: 'warning',
+            message: error.response.data.message
         })
         // 401錯誤 需登錄頁面未登入或token失效處理 
         if (error.response.status === 401) {

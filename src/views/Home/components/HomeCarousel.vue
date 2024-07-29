@@ -1,20 +1,58 @@
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
 
-const carousel1 = ref(null);
-const carousel2 = ref(null);
-const carousel3 = ref(null);
+// const carousel1 = ref(null);
+// const carousel2 = ref(null);
+// const carousel3 = ref(null);
 
-const syncCarousels = (index) => {
-  carousel2.value.setActiveItem(index - 1);
-  carousel3.value.setActiveItem(index + 1);
-};
+// const syncCarousels = (index) => {
+//   carousel2.value.setActiveItem(index - 1);
+//   carousel3.value.setActiveItem(index + 1);
+// };
 </script>
 
 <template>
 
   <div class="container">
-    <el-carousel ref="carousel1" class="home-carousel" indicator-position="none" :initial-index="1" height="450px"
+    <el-carousel ref="carousel1" class="home-carousel" indicator-position="none" :initial-index="1" height="450px">
+      <el-carousel-item>
+        <div class="item">
+          <div class="text right">
+            <h1>熱氣球嘉年華</h1>
+            <h2>2025 | 1.23 ~ 3.25</h2>
+          </div>
+          <img src="/shutterstock_697138561.jpg" alt="">
+        </div>
+      </el-carousel-item>
+      <el-carousel-item>
+        <div class="item">
+          <div class="text left">
+            <h1>來一場</h1>
+            <h2>說走就走的旅行吧！</h2>
+          </div>
+          <img src="@/assets/images/slider-one.jpg" alt="">
+        </div>
+      </el-carousel-item>
+      <el-carousel-item>
+        <div class="item">
+          <div class="text left">
+            <h1>賞櫻趣</h1>
+            <h2>新倉富士淺間神社</h2>
+          </div>
+          <img src="/F1458119359482.jpg" alt="">
+        </div>
+      </el-carousel-item>
+      <el-carousel-item>
+        <div class="item">
+          <div class="text right">
+            <h1>越南峴港</h1>
+            <h2>此生必去的東方夏威夷</h2>
+          </div>
+          <img src="/64ddc8e9635af.jpg" alt="">
+        </div>
+      </el-carousel-item>
+    </el-carousel>
+    <!-- <el-carousel ref="carousel1" class="home-carousel" indicator-position="none" :initial-index="1" height="450px"
       @change="syncCarousels">
       <el-carousel-item>
         <div class="item">
@@ -130,13 +168,19 @@ const syncCarousels = (index) => {
           <img src="/64ddc8e9635af.jpg" alt="">
         </div>
       </el-carousel-item>
-    </el-carousel>
+    </el-carousel> -->
   </div>
 
 </template>
 
 
 <style lang="scss" scoped>
+// @media screen and (max-width: 1600px) {
+//   .absolute {
+//     display: none;
+//   }
+// }
+
 .home-carousel {
   background-color: #ffffff;
   width: 100%;

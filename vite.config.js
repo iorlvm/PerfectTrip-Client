@@ -11,15 +11,24 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
   plugins: [
     vue(),
+    //   Components({
+    //     resolvers: [
+    //       AutoImport({
+    //         resolvers: [ElementPlusResolver()],
+    //       }),
+    //       ElementPlusResolver({
+    //         importStyle: "sass",
+    //       }),
+    //     ],
+    //   }),
+    // ],
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
     Components({
-      resolvers: [
-        AutoImport({
-          resolvers: [ElementPlusResolver()],
-        }),
-        ElementPlusResolver({
-          importStyle: "sass",
-        }),
-      ],
+      resolvers: [ElementPlusResolver({
+        importStyle: "sass",
+      })],
     }),
   ],
   resolve: {

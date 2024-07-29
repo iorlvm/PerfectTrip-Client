@@ -1,4 +1,15 @@
 <script setup>
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router';
+
+const userStore = useUserStore();
+const router = useRouter();
+
+const doLogout = e => {
+    e.preventDefault();
+    userStore.clearUserInfo();
+    router.push('/');
+}
 </script>
 
 <template>
@@ -20,7 +31,7 @@
         <div class="row border-bottom">
             <div class="secret">活動狀態</div>
             <div class="desc">若選擇「登出」，除了此裝置外，您將從其他所有裝置登出。此過程最多需 10 分鐘。</div>
-            <div class="edit"><a href="">登出</a></div>
+            <div class="edit"><a href="" @click="doLogout">登出</a></div>
         </div>
         <div class="row border-bottom">
             <div class="secret">刪除帳戶</div>
@@ -54,29 +65,28 @@
     border-bottom: 1px solid #00000022;
 }
 
-.row{
+.row {
     display: flex;
     justify-content: space-between;
 
-    .secret{
+    .secret {
         width: 150px;
         // border: 1px solid black;
     }
 
-    .desc{
+    .desc {
         flex-grow: 1;
         // border: 1px solid black;
     }
 
-    .edit{
+    .edit {
         width: 80px;
+
         // border: 1px solid black;
-        a{
-            color: #0b94cf; 
+        a {
+            color: #0b94cf;
         }
     }
-    
+
 }
-
-
 </style>
