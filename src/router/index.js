@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/user";
 import Login from "@/views/Login/index.vue";
 import ErrorPage from "@/views/ErrorPage/index.vue";
 import Layout from "@/views/Layout/index.vue";
@@ -76,6 +77,9 @@ const router = createRouter({
         {
           path: "member/",
           component: Member,
+          meta: {
+            requiresRole: 'user'
+          },
           children: [
             {
               path: "",
@@ -118,7 +122,7 @@ const router = createRouter({
           component: StoreLogin,
         },
         {
-          path:"register",
+          path: "register",
           component: StoreRegister
         }
       ],
@@ -126,6 +130,9 @@ const router = createRouter({
     {
       path: "/store/manage",
       component: StoreManageCenter,
+      meta: {
+        requiresRole: 'company'
+      },
       children: [
         {
           path: "",
@@ -198,12 +205,32 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const { role } = userStore.userInfo;
+
   if (from.name === "orderCreated" && to.name === "orderForm") {
     // 防止從完成頁面返回到表單頁面
     next(false);
-  } else {
-    next();
+    return;
   }
+
+  if (to.matched.some(record => record.meta.requiresRole)) {
+    const requiredRole = to.matched.find(record => record.meta.requiresRole).meta.requiresRole;
+    if (role !== requiredRole) {
+      switch (requiredRole) {
+        case 'user':
+          next({ path: '/login' });
+          return;
+        case 'company':
+          next({ path: '/store/login' });
+          return;
+      }
+      next(false);
+      return;
+    }
+  }
+
+  next();
 });
 
 export default router;

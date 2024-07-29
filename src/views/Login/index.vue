@@ -26,7 +26,7 @@ const login = async (e) => {
   let username = formData.value.username;
   let password = formData.value.password;
   await userStore.getUserInfo({ username, password });
-  router.push('/');
+  router.go(-1);
 }
 
 </script>

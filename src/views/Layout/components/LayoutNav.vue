@@ -1,13 +1,7 @@
 <script setup>
-import router from '@/router';
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore();
-
-// const doLogout = () => {
-//   userStore.clearUserInfo();
-// }
-
 </script>
 
 <template>
@@ -29,7 +23,7 @@ const userStore = useUserStore();
 
           <router-link to="/qa"><i class="bi bi-question-circle"></i></router-link>
         </li>
-        <template v-if="!userStore.userInfo.token">
+        <template v-if="userStore.userInfo.role !== 'user'">
           <li>註冊</li>
           <router-link to="/login">
             <li>登入</li>
