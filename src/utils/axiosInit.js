@@ -52,12 +52,11 @@ httpInstance.interceptors.response.use(
     },
     error => {
         // 響應錯誤時
-        ElMessage({
-            type: 'warning',
-            message: error.response.data.message
-        })
-        // 401錯誤 需登錄頁面未登入或token失效處理 
         if (error.response.status === 401) {
+            ElMessage({
+                type: 'warning',
+                message: '使用者未登入'
+            })
             const userStore = useUserStore();
             userStore.clearUserInfo();
             router.push('/login');
