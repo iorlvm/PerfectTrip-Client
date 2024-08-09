@@ -1,203 +1,265 @@
 <script setup>
 import { onMounted } from 'vue';
 import { WeienChat, actionHandlers } from './chat/weien-chat';
+import { getChatRoomsAPI, getUidAPI, getMessagesAPI } from '@/apis/chat';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
+
+let webSocket;
 
 actionHandlers.handler2 = () => {
     console.log('handler2外部定義方法');
 }
 
-actionHandlers.getChatRoomsData = () => {
-    return chatRoomData;
+actionHandlers.getUID = async () => {
+    const res = await getUidAPI();
+    return res.data;
 }
 
 
-actionHandlers.getChatMessagesData = (chatId) => {
-    console.log('這裡是外部定義的getChatMessagesData chatId : ' + chatId);
-    // TODO: 利用chatId去取得資料
-    return chatId === 2 ? messages2 : messages;
+actionHandlers.getChatRoomsData = async () => {
+    const res = await getChatRoomsAPI();
+    return res.data;
 }
 
-actionHandlers.loadMoreChatRooms = (type) => {
-    console.log(type);
-    return chatRoomData;
+actionHandlers.getChatMessagesData = async (chatId) => {
+    const res = await getMessagesAPI(chatId);
+    console.log(res.data);
+
+    return res.data;
 }
 
-actionHandlers.loadMoreMessages = () => {
-    return messages;
+actionHandlers.loadMoreChatRooms = async (type) => {
+    let lastChat = chat.getLastChat();
+    console.log(type, lastChat);
+    const res = await getChatRoomsAPI(20, lastChat.value.lastModifiedAt);
+    // TODO: 可能要檢查有沒有回傳重複的值 (萬一時間完全相同的時候可能會出現問題)
+    return res.data;
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+actionHandlers.loadMoreMessages = async (chatId) => {
+    let lastMessage = chat.getLastMessage();
+    console.log(lastMessage.value.messageId);
+
+    const res = await getMessagesAPI(chatId, lastMessage?.value.messageId);
+    console.log(res.data);
+    // return res.data;
 }
 
-const random = () => {
-    let array = ['See you soon!', 'Let’s meet tomorrow.', 'Thank you!', 'Got it!'];
-
-    let i = parseInt(Math.random() * 4);
-    return array[i];
-}
-
-
-// 測試用直接寫死 未來應該從userStore取出
-const chat = new WeienChat('user2');
-
-onMounted(async () => {
-    chat.init();
-    let chatList = chat.getChatList();
-    setTimeout(() => {
-        chatList[0].value.unreadMessages = 0;
-        chat.appendChat({
-            chatId: 4,
-            chatName: 'Diana',
-            lastMessageAt: '2024-06-29',
-            lastMessage: 'Thank you!',
-            unreadMessages: 5,
-            photo: '/avatar4.jpg',
-            pinned: false,
-            participants: [
-                {
-                    userId: 'user1',
-                    name: 'Diana',
-                    type: 'member',
-                    avatar: '/avatar4.jpg',
-                    lastReadingAt: '2024-06-29T12:35:00Z',
-                    // online: true,  //目前無作用  未來考慮增加
-                },
-                {
-                    userId: 'user2',
-                    name: 'WeiEN',
-                    type: 'member',
-                    avatar: '/avatar1.jpg',
-                    lastReadingAt: '2024-06-29T12:05:00Z',
-                    // online: true,  //目前無作用  未來考慮增加
-                },
-            ], // 參與者列表 可大於2個人
-            notifSettings: 'on', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
-        });
-    }, 2000)
-
-    // 顯示模式切換測試
-    // setTimeout(() => {
-    //     chat.state.value.showMode = 'mobile';
-
-    //     setTimeout(() => {
-    //         chat.state.value.activeChatId = 1;
-    //         setTimeout(() => {
-    //             chat.state.value.showMode = 'default';
-    //             setTimeout(() => {
-    //                 chat._chatSessionData.value.participants[0].lastReadingAt = new Date();
-    //                 console.log(chat._chatSessionData.value);
-    //                 chat._chatSessionData.value._lastActivity = new Date(); // 已讀更新使用 (因綁定物件偵測不到深層陣列的變動)
-    //             }, 2000)
-    //         }, 2000)
-    //     }, 2000)
-    // }, 3000)
-
-
-    for (let i = 0; i < 1001; i += 2) {
-        chatList[1].value.unreadMessages = i;
-        chatList[1].value.lastMessage = random();
-        await sleep(3);
+actionHandlers.filterPinned = async () => {
+    // 前端過濾的偷懶做法 (但我的回傳設計只要是釘選聊天室的都會一次被傳到前端, 所以這個設計沒有問題)
+    const chatList = chat.getChatList();
+    if (chatList && chatList.length > 0) {
+        let chatRoomData = chatList.map(binder => {
+            return binder.value;
+        })
+        return chatRoomData.filter(e => e.pinned);
+    } else {
+        return [];
     }
+}
+
+actionHandlers.filterUnread = async () => {
+    // 前端過濾的偷懶做法  TODO:未來應該改成去伺服器取得資料
+    const chatList = chat.getChatList();
+    if (chatList && chatList.length > 0) {
+        let chatRoomData = chatList.map(binder => {
+            return binder.value;
+        })
+        return chatRoomData.filter(e => e.unreadMessages > 0);
+    } else {
+        return [];
+    }
+}
+
+actionHandlers.sendMessage = (message) => {
+    console.log(message);
+    webSocket.send(JSON.stringify({
+        chatId: message.chatId,
+        action: 'send-message',
+        content: JSON.stringify(message)
+    }));
+}
+
+const handleSendMessage = (payload) => {
+    let message = JSON.parse(payload.content);
+    console.log(message);
+    chat.appendMessage(message);
+};
+
+const handleReadMessage = (payload) => {
+};
+
+const handleUpdateUserInfo = (payload) => {
+};
+
+const handleUpdateRoomInfo = (payload) => {
+};
+
+const handleUpdateNotify = (payload) => {
+};
+
+const handleUpdatePinned = (payload) => {
+};
+
+
+const onChatRoomConnected = e => {
+}
+
+const onMessageReceived = e => {
+    let payload = JSON.parse(e.data);
+    switch (payload.action) {
+        case 'send-message':
+            handleSendMessage(payload);
+            break;
+        case 'read-message':
+            handleReadMessage(payload);
+            break;
+        case 'update-user-info':
+            handleUpdateUserInfo(payload);
+            break;
+        case 'update-room-info':
+            handleUpdateRoomInfo(payload);
+            break;
+        case 'update-notify':
+            handleUpdateNotify(payload);
+            break;
+        case 'update-pinned':
+            handleUpdatePinned(payload);
+            break;
+    }
+}
+
+const onChatRoomClosed = e => {
+
+}
+
+const onChatRoomError = e => {
+
+}
+
+const chat = new WeienChat();
+onMounted(async () => {
+    await chat.init();
+    console.log(chat.getChatList());
+
+
+    let token = userStore.userInfo.token;
+    webSocket = new WebSocket('ws://localhost:8080/chat?' + token);
+    webSocket.addEventListener('open', onChatRoomConnected);
+
+    webSocket.addEventListener('message', onMessageReceived);
+
+    webSocket.addEventListener('close', onChatRoomClosed);
+
+    webSocket.addEventListener('error', onChatRoomError);
+
+    // const input = document.querySelector('input');
+    // document.querySelector('#sendBtn').addEventListener('click', () => {
+    //     webSocket.send(input.value);
+    //     input.value = '';
+    // });
+
 })
 
 
 // 假資料
-const chatRoomData = [
-    {
-        chatId: 1,
-        //chatName: 'Alice', //可不傳遞, 未設定時的顯示規則: 參與者兩人時顯示另一個人的名稱   大於兩人時顯示'會話群組 (人數)'
-        unreadMessages: 3,
-        lastMessage: 'See you soon!',
-        lastMessageAt: '2024-07-05T17:55:00Z',
-        // photo: '/avatar1.jpg',
-        participants: [
-            {
-                userId: 'user1',
-                name: 'Alice',
-                type: 'member',
-                avatar: '/avatar1.jpg',
-                lastReadingAt: '2024-06-29T12:35:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-            {
-                userId: 'user2',
-                name: 'WeiEN',
-                type: 'member',
-                avatar: '/avatar1.jpg',
-                lastReadingAt: '2024-06-29T12:05:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-        ], // 參與者列表 可大於2個人
-        notifSettings: 'on', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
-        pinned: true,
-        // _lastActivity: 'new Data()' (程式額外添加的欄位, 用於偵測更新時間)
-    },
-    {
-        chatId: 2,
-        chatName: '',
-        lastMessageAt: '2024-06-28',
-        lastMessage: 'Got it!',
-        unreadMessages: 1,
-        photo: '/avatar2.jpg',
-        pinned: true,
-        participants: [
-            {
-                userId: 'user1',
-                name: 'Alice',
-                type: 'member',
-                avatar: '/avatar1.jpg',
-                lastReadingAt: '2024-06-29T12:35:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-            {
-                userId: 'user2',
-                name: 'WeiEN',
-                type: 'member',
-                avatar: '/avatar3.jpg',
-                lastReadingAt: '2024-06-29T12:05:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-            {
-                userId: 'user3',
-                name: 'Bob',
-                type: 'member',
-                avatar: '/avatar2.jpg',
-                lastReadingAt: '2024-06-29T12:05:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-        ], // 參與者列表 可大於2個人
-        notifSettings: 'off', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
-    },
-    {
-        chatId: 3,
-        chatName: 'Charlie',
-        lastMessageAt: '2024-06-28',
-        lastMessage: 'Let’s meet tomorrow.',
-        unreadMessages: 0,
-        photo: '/avatar3.jpg',
-        pinned: false,
-        participants: [
-            {
-                userId: 'user1',
-                name: 'Charlie',
-                type: 'member',
-                avatar: '/avatar3.jpg',
-                lastReadingAt: '2024-06-29T12:35:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-            {
-                userId: 'user2',
-                name: 'WeiEN',
-                type: 'member',
-                avatar: '/avatar1.jpg',
-                lastReadingAt: '2024-06-29T12:05:00Z',
-                // online: true,  //目前無作用  未來考慮增加
-            },
-        ], // 參與者列表 可大於2個人
-        notifSettings: 'off', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
-    },
-];
+// const chatRoomData = [
+//     {
+//         chatId: 1,
+//         //chatName: 'Alice', //可不傳遞, 未設定時的顯示規則: 參與者兩人時顯示另一個人的名稱   大於兩人時顯示'會話群組 (人數)'
+//         unreadMessages: 3,
+//         lastMessage: 'See you soon!',
+//         lastMessageAt: '2024-07-05T17:55:00Z',
+//         // photo: '/avatar1.jpg',
+//         participants: [
+//             {
+//                 userId: 'user1',
+//                 name: 'Alice',
+//                 type: 'member',
+//                 avatar: '/avatar1.jpg',
+//                 lastReadingAt: '2024-06-29T12:35:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//             {
+//                 userId: 'user2',
+//                 name: 'WeiEN',
+//                 type: 'member',
+//                 avatar: '/avatar1.jpg',
+//                 lastReadingAt: '2024-06-29T12:05:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//         ], // 參與者列表 可大於2個人
+//         notifSettings: 'on', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
+//         pinned: true,
+//         // _lastActivity: 'new Data()' (程式額外添加的欄位, 用於偵測更新時間)
+//     },
+//     {
+//         chatId: 2,
+//         chatName: '',
+//         lastMessageAt: '2024-06-28',
+//         lastMessage: 'Got it!',
+//         unreadMessages: 1,
+//         photo: '/avatar2.jpg',
+//         pinned: true,
+//         participants: [
+//             {
+//                 userId: 'user1',
+//                 name: 'Alice',
+//                 type: 'member',
+//                 avatar: '/avatar1.jpg',
+//                 lastReadingAt: '2024-06-29T12:35:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//             {
+//                 userId: 'user2',
+//                 name: 'WeiEN',
+//                 type: 'member',
+//                 avatar: '/avatar3.jpg',
+//                 lastReadingAt: '2024-06-29T12:05:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//             {
+//                 userId: 'user3',
+//                 name: 'Bob',
+//                 type: 'member',
+//                 avatar: '/avatar2.jpg',
+//                 lastReadingAt: '2024-06-29T12:05:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//         ], // 參與者列表 可大於2個人
+//         notifSettings: 'off', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
+//     },
+//     {
+//         chatId: 3,
+//         chatName: 'Charlie',
+//         lastMessageAt: '2024-06-28',
+//         lastMessage: 'Let’s meet tomorrow.',
+//         unreadMessages: 0,
+//         photo: '/avatar3.jpg',
+//         pinned: false,
+//         participants: [
+//             {
+//                 userId: 'user1',
+//                 name: 'Charlie',
+//                 type: 'member',
+//                 avatar: '/avatar3.jpg',
+//                 lastReadingAt: '2024-06-29T12:35:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//             {
+//                 userId: 'user2',
+//                 name: 'WeiEN',
+//                 type: 'member',
+//                 avatar: '/avatar1.jpg',
+//                 lastReadingAt: '2024-06-29T12:05:00Z',
+//                 // online: true,  //目前無作用  未來考慮增加
+//             },
+//         ], // 參與者列表 可大於2個人
+//         notifSettings: 'off', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
+//     },
+// ];
 
 const messages2 = [
     {

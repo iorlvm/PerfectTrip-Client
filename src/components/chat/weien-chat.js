@@ -211,7 +211,7 @@ const filterSettings = () => {
                 text: '未讀', // 超過兩個字高機率爆版
                 prefix: '<i class="bi bi-chat-dots"></i>',
                 suffix: '',
-                click: actionHandlers.filterPinned
+                click: actionHandlers.filterUnread
             },
             {
                 text: '釘選', // 超過兩個字高機率爆版
@@ -269,7 +269,11 @@ export const actionHandlers = {
             return 'none';
         }
     },
-    getChatRoomsData: () => {
+    getUID: async () => {
+        console.log('請改寫這個方法, 取得登入用戶的id');
+        return '';
+    },
+    getChatRoomsData: async () => {
         console.log(`請改寫這個方法, 回傳值為物件陣列, 格式如下: 
         [
             {
@@ -306,16 +310,16 @@ export const actionHandlers = {
         ]`);
         return [];
     },
-    getChatMessagesData: (chatId) => {
+    getChatMessagesData: async (chatId) => {
         console.log('(chatId: ' + chatId + ') => { 請改寫這個方法, 並回傳符合格式的數據陣列才能正常運作 }');
         return [];
     },
-    loadMoreChatRooms: (filterType) => {
+    loadMoreChatRooms: async (filterType) => {
         console.log(`聊天室列表滾到底部的事件觸發 (過濾模式: ${filterType})，如需添加更多聊天室請改寫並回傳陣列`);
         return [];
     },
-    loadMoreMessages: () => {
-        console.log('訊息列表滾到頂部的事件觸發，如需加載更多訊息請改寫並回傳陣列');
+    loadMoreMessages: async (chatId) => {
+        console.log('訊息列表滾到頂部的事件觸發chatId: ' + chatId + '，如需加載更多訊息請改寫並回傳陣列');
         return [];
     },
     updateFile: (selectedFile) => {
@@ -325,15 +329,15 @@ export const actionHandlers = {
         console.log('送出訊息: ' + message.content);
         console.log(message);
     },
-    filterUnread: (e) => {
+    filterUnread: async (e) => {
         console.log(e);
         return [];
     },
-    filterPinned: (e) => {
+    filterPinned: async (e) => {
         console.log(e);
         return [];
     },
-    filterQuery: (query) => {
+    filterQuery: async (query) => {
         console.log(query);
         // return [];  // 如果想做輸入篩選回傳陣列
     },
@@ -353,15 +357,14 @@ export const actionHandlers = {
 export class WeienChat {
     /**
      * 建構子 (未來可以新增其他屬性做參數化調整)
-     * @param {*} chatUserId 登入的使用者id
      * @param {string} activeChatId 初始化生效的聊天室id (如需要預設開啟某個聊天室時進行傳遞) 
      * @param {string} chatContainer 初始化html聊天容器的id (如做調整 也需要去scss檔進行相應的修改)
      */
-    constructor(chatUserId, activeChatId = '', chatContainerId = 'weien-chat') {
-        this.chatUserId = chatUserId;
+    constructor(activeChatId = '', chatContainerId = 'weien-chat') {
+        this.chatUserId = null;
         this.chatContainerId = chatContainerId;
         this._preChatId = '';
-        this._restMessage();
+        this._resetMessage();
 
 
         this.state = new Binder({
@@ -385,7 +388,7 @@ export class WeienChat {
     /**
      * 初始化啟動
      */
-    init() {
+    async init() {
         this.chatContainerElement = document.getElementById(this.chatContainerId);
         this.chatContainerElement.innerHTML = `
             <div class="chat-list-block">
@@ -408,7 +411,8 @@ export class WeienChat {
         `;
 
         // 自動呼叫方法取得資料 (使用前須先於外部覆寫定義)
-        this._setChatList(actionHandlers.getChatRoomsData());
+        this.chatUserId = await actionHandlers.getUID();
+        this._setChatList(await actionHandlers.getChatRoomsData());
 
         this.state.bindElement('showMode', this.chatContainerElement, (el, value) => {
             // TODO 手機顯示模式 (未來擴充)
@@ -459,6 +463,14 @@ export class WeienChat {
      */
     getChatList() {
         return this._chatRoomsData;
+    }
+
+    getLastChat() {
+        return this._chatRoomsData[this._chatRoomsData.length - 1];
+    }
+
+    getLastMessage() {
+        return this._preMessage;
     }
 
     /**
@@ -517,6 +529,7 @@ export class WeienChat {
 
         listContainer.append(messageCard);
         this._resizeScrollbar(listContainer);
+        this._scrollToBottom(listContainer.closest('.weien-chat-scroll'));
     }
 
     /**
@@ -565,7 +578,8 @@ export class WeienChat {
     }
 
     // 初始化訊息紀錄 (渲染用)
-    _restMessage() {
+    _resetMessage() {
+        this._moreMessages = true;
         this._preMessage = null;
         this._preMessageCard = null;
         this._lastMessage = null;
@@ -610,9 +624,9 @@ export class WeienChat {
         let settings = filterSettings();
 
         let isChange = false; // 避免重複請求
-        seaechInput.addEventListener('input', () => {
+        seaechInput.addEventListener('input', async () => {
             if (this.state.value.searchQuery.trim().length > 0) {
-                let filteredData = actionHandlers.filterQuery(this.state.value.searchQuery.trim());
+                let filteredData = await actionHandlers.filterQuery(this.state.value.searchQuery.trim());
                 if (filteredData) {
                     isChange = true;
                     this._setChatList(filteredData);
@@ -622,7 +636,7 @@ export class WeienChat {
                 if (!isChange) return;
                 let defaultOption = settings.options[0];
                 this.state.value.filter = defaultOption.text;
-                let arrayData = defaultOption.click();
+                let arrayData = await defaultOption.click();
                 this._setChatList(arrayData);
                 this._renderChatRooms();
                 isChange = false;
@@ -648,9 +662,9 @@ export class WeienChat {
             let optionEle = document.createElement('li');
             optionEle.classList.add('chat-room-dropdown-option');
             optionEle.innerHTML = option.prefix + option.text + option.suffix;
-            optionEle.addEventListener('click', e => {
+            optionEle.addEventListener('click', async e => {
                 this.state.value.filter = option.text;
-                let filteredData = option.click(e);
+                let filteredData = await option.click(e);
                 if (filteredData) {
                     this._setChatList(filteredData);
                     this._renderChatRooms();
@@ -679,30 +693,24 @@ export class WeienChat {
         return res;
     }
 
-    _renderChatingBlock() {
+    async _renderChatingBlock() {
         let chatingBlock = this.chatContainerElement.querySelector('.weien-chating-block');
         this.state.bindElement(
             'activeChatId',
             chatingBlock,
-            (el, value) => {
+            async (el, value) => {
                 if (value === this._preChatId) return;
                 this._preChatId = value;
-                this._restMessage();
+                this._resetMessage();
 
                 if (value === '') {
                     el.innerHTML = '';
                 } else {
-                    // // 執行取得聊天資料
-                    // let chatSessionData = actionHandlers.getChatSessionData(value);
-                    // chatSessionData._lastActivity = new Date(); // 增加最後活動時間參數
-                    // this._chatSessionData = new Binder(chatSessionData);
-
                     // 取得聊天資料
                     this._chatSessionData = this._getChatSessionData(value);
 
-
                     // 取得聊天訊息列表
-                    this._chatMessagesData = this._setChatMessages();
+                    this._chatMessagesData = await this._setChatMessages();
                     el.innerHTML = `
                         <div class="weien-chating-header">
                             <div class="weien-chating-name-block">
@@ -825,15 +833,20 @@ export class WeienChat {
         });
     }
 
-    _setChatMessages() {
-        let messagesArray = actionHandlers.getChatMessagesData(this._chatSessionData.value.chatId);
-        return messagesArray.map(item => {
-            if (typeof item === 'object' && item !== null) {
-                return new Binder(item);
-            } else {
-                return item;
-            }
-        });
+    async _setChatMessages() {
+        let messagesArray = await actionHandlers.getChatMessagesData(this._chatSessionData.value.chatId);
+        if (messagesArray) {
+            return messagesArray.map(item => {
+                if (typeof item === 'object' && item !== null) {
+                    return new Binder(item);
+                } else {
+                    return item;
+                }
+            });
+        } else {
+            this._moreMessages = false;
+            return [];
+        }
     }
 
     _getChatingWith(binder = this._chatSessionData) {
@@ -908,7 +921,7 @@ export class WeienChat {
 
     _renderMessagesList(messagesList) {
         messagesList.innerHTML = ''; // 確保清空
-        this._chatMessagesData.forEach(message => {
+        this._chatMessagesData?.forEach(message => {
             let messageCard = this._createMessageCard(message);
 
             if (this._preMessageCard && this._preMessage.value.senderId !== message.value.senderId) {
@@ -936,10 +949,10 @@ export class WeienChat {
             this._preMessageCard = messageCard;
             messagesList.prepend(messageCard);
         });
-        this._preMessageCard.classList.add('weien-header-message');
+        if (this._preMessageCard) this._preMessageCard.classList.add('weien-header-message');
 
         // 最頂部的日期標籤 (當訊息日期不是今天的時候才會顯)
-        if (!this._isSameDay(new Date(), this._preMessage.value.timestamp)) {
+        if (this._preMessage && !this._isSameDay(new Date(), this._preMessage.value.timestamp)) {
             let dateTag = document.createElement('div');
             dateTag.classList.add('weien-message-date-tag');
             dateTag.innerHTML = `<span>${formatMessagesDate(this._preMessage.value.timestamp)}</span>`;
@@ -1088,7 +1101,7 @@ export class WeienChat {
             resizeObserver.observe(parent);
 
             let timeout;
-            const onScroll = () => {
+            const onScroll = async () => {
                 const contentHeight = content.scrollHeight;
                 const containerHeight = container.clientHeight;
                 const scrollTop = content.scrollTop;
@@ -1116,37 +1129,54 @@ export class WeienChat {
                 }, 1500);
 
                 if (settings) {
-                    if (settings.trigger === 'bottom' && scrollTop + containerHeight >= contentHeight) {
-                        let dataArray = settings.getData(this.state.value.filter);
-                        if (!dataArray) return;
+                    if (target === 'message') {
+                        if (!this._moreMessages) return;
 
-                        if (target === 'message') {
+                        if (settings.trigger === 'bottom' && scrollTop + containerHeight >= contentHeight) {
+                            let dataArray = await settings.getData(this.state.value.activeChatId);
+                            if (!dataArray || dataArray.length === 0) {
+                                this._moreMessages = false;
+                                return;
+                            }
+
                             dataArray.forEach(message => {
                                 this.appendMessage(message);
                             });
-                        } else if (target === 'chat') {
+                        } else if (settings.trigger === 'top' && scrollTop === 0) {
+                            let dataArray = await settings.getData(this.state.value.activeChatId);
+                            if (!dataArray || dataArray.length === 0) {
+                                this._moreMessages = false;
+                                return;
+                            }
+
+                            let preContentHeight = contentHeight;
+                            dataArray.forEach(message => {
+                                this.appendMessage(message);
+                            });
+                            content.scrollTop = content.scrollHeight - preContentHeight;
+                        }
+                    } else if (target === 'chat') {
+                        if (settings.trigger === 'bottom' && scrollTop + containerHeight >= contentHeight) {
+                            let dataArray = await settings.getData(this.state.value.filter);
+                            if (!dataArray) {
+                                return;
+                            }
+
                             dataArray.forEach(chat => {
                                 this.appendChat(chat);
                             });
-                        }
-                    }
-                    if (settings.trigger === 'top' && scrollTop === 0) {
-                        let dataArray = settings.getData(this.state.value.filter);
-                        if (!dataArray) return;
+                        } else if (settings.trigger === 'top' && scrollTop === 0) {
+                            let dataArray = await settings.getData(this.state.value.filter);
+                            if (!dataArray) {
+                                return;
+                            }
 
-                        let preContentHeight = contentHeight;
-
-                        if (target === 'message') {
-                            dataArray.forEach(message => {
-                                this.prependMessage(message);
-                            });
-                        } else if (target === 'chat') {
+                            let preContentHeight = contentHeight;
                             dataArray.forEach(chat => {
-                                this.prependChat(chat);
+                                this.appendChat(chat);
                             });
+                            content.scrollTop = content.scrollHeight - preContentHeight;
                         }
-
-                        content.scrollTop = content.scrollHeight - preContentHeight;
                     }
                 }
             }
