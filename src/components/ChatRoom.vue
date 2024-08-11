@@ -25,7 +25,7 @@ actionHandlers.getChatRoomsData = async () => {
 
 actionHandlers.getChatMessagesData = async (chatId) => {
     const res = await getMessagesAPI(chatId);
-    console.log(res.data);
+    // console.log(res.data);
 
     return res.data;
 }
@@ -40,11 +40,8 @@ actionHandlers.loadMoreChatRooms = async (type) => {
 
 actionHandlers.loadMoreMessages = async (chatId) => {
     let lastMessage = chat.getLastMessage();
-    console.log(lastMessage.value.messageId);
-
     const res = await getMessagesAPI(chatId, lastMessage?.value.messageId);
-    console.log(res.data);
-    // return res.data;
+    return res.data;
 }
 
 actionHandlers.filterPinned = async () => {
@@ -74,7 +71,6 @@ actionHandlers.filterUnread = async () => {
 }
 
 actionHandlers.sendMessage = (message) => {
-    console.log(message);
     webSocket.send(JSON.stringify({
         chatId: message.chatId,
         action: 'send-message',
@@ -84,8 +80,17 @@ actionHandlers.sendMessage = (message) => {
 
 const handleSendMessage = (payload) => {
     let message = JSON.parse(payload.content);
-    console.log(message);
-    chat.appendMessage(message);
+    // 更新chat room list中的資料
+    chat.updateChatListInfo(payload.chatId, message);
+
+    // 接到訊息時利用authorId, chatId更新已讀時間
+    chat.updateReadingAtByChatIdAndAuthorId(payload.chatId, payload.authorId)
+
+    let activeChatId = chat.getActiveChatId();
+    if (activeChatId === payload.chatId) {
+        chat.appendMessage(message);
+        // TODO: 重新送出一個已讀操作
+    }
 };
 
 const handleReadMessage = (payload) => {
@@ -142,7 +147,7 @@ const onChatRoomError = e => {
 const chat = new WeienChat();
 onMounted(async () => {
     await chat.init();
-    console.log(chat.getChatList());
+    // console.log(chat.getChatList());
 
 
     let token = userStore.userInfo.token;

@@ -310,6 +310,10 @@ export const actionHandlers = {
         ]`);
         return [];
     },
+    getChatRoomDataByChatId: async (chatId) => {
+        console.log('(chatId: ' + chatId + ')');
+        return {};
+    },
     getChatMessagesData: async (chatId) => {
         console.log('(chatId: ' + chatId + ') => { 請改寫這個方法, 並回傳符合格式的數據陣列才能正常運作 }');
         return [];
@@ -473,6 +477,10 @@ export class WeienChat {
         return this._preMessage;
     }
 
+    getActiveChatId() {
+        return this.state.value.activeChatId;
+    }
+
     /**
      * 將聊天室新增到聊天列表尾端
      * @param {object} chatRoom
@@ -500,10 +508,23 @@ export class WeienChat {
 
         chatRoom._lastActivity = new Date(); // 新增資料時間戳
         let chat = new Binder(chatRoom);
-        this._chatRoomsData.unshift(chat); // 加進聊天室陣列資料中
-
         let chatCard = this._createChatCard(chat);
-        listContainer.prepend(chatCard);
+
+        if (chat.value.pinned) {
+            this._chatRoomsData.unshift(chat); // 加進聊天室陣列資料中
+            listContainer.prepend(chatCard);
+        } else {
+            // 修改成置頂之下的第一筆
+            const lastPinnedIndex = this._chatRoomsData.findIndex(item => !item.value.pinned);
+
+            if (lastPinnedIndex === -1) {
+                this._chatRoomsData.push(chat);
+                listContainer.append(chatCard);
+            } else {
+                this._chatRoomsData.splice(lastPinnedIndex, 0, chat);
+                listContainer.insertBefore(chatCard, listContainer.children[lastPinnedIndex]);
+            }
+        }
         this._resizeScrollbar(listContainer);
     }
 
@@ -521,7 +542,7 @@ export class WeienChat {
         let messageCard = this._createMessageCard(message);
 
         if (this._lastMessageCard && this._lastMessage.value.senderId !== message.value.senderId) {
-            this._lastMessageCard.classList.add('weien-header-message');
+            messageCard.classList.add('weien-header-message');
         }
 
         this._lastMessage = message;
@@ -576,6 +597,76 @@ export class WeienChat {
         listContainer.prepend(messageCard);
         this._resizeScrollbar(listContainer);
     }
+
+    async updateChatListInfo(chatId, message) {
+        let flag = false;
+        this._chatRoomsData.forEach(chat => {
+            if (chat.value.chatId === chatId) {
+                flag = true;
+                if (this.state.value.activeChatId === chatId) {
+                    chat.value.unreadMessages = 0;
+                } else {
+                    chat.value.unreadMessages++;
+                }
+                chat.value.lastMessage = message.content ? message.content : '圖片';
+                chat.value.lastMessageAt = message.timestamp;
+                this.moveChatToTopOrBelowPinned(chatId);
+                return;
+            }
+        });
+        if (flag) return;
+        // 代表這筆聊天室資料尚未被讀取到前端中
+        let chatRoom = await actionHandlers.getChatRoomDataByChatId(chatId);
+        this.prependChat(chatRoom);
+    }
+
+    updateReadingAtByChatIdAndAuthorId(chatId, authorId) {
+        this._chatRoomsData.forEach(chat => {
+            if (chat.value.chatId === chatId) {
+                chat.value.participants.forEach(participant => {
+                    if (participant.userId === authorId) {
+                        participant.lastReadingAt = new Date().toISOString();
+
+                    }
+                });
+                chat.value._lastActivity = new Date();
+            }
+        });
+    }
+
+    moveChatToTopOrBelowPinned(chatId) {
+        let listContainer = this.chatContainerElement.querySelector('.chat-room-list');
+        const chatIndex = this._chatRoomsData.findIndex(chat => chat.value.chatId === chatId);
+
+        if (chatIndex === -1) {
+            // 老實說不可能發生
+            console.error('Chat not found');
+            return;
+        }
+
+        // 先將原始資料從陣列中移除
+        const [chat] = this._chatRoomsData.splice(chatIndex, 1);
+
+        if (chat.value.pinned) {
+            // 如果釘選中就直接放到頂部
+            this._chatRoomsData.unshift(chat);
+            listContainer.prepend(document.querySelector(`#chat-card-${chatId}`));
+        } else {
+            // 非釘選狀態, 先找到第一個非釘選的位置
+            const lastPinnedIndex = this._chatRoomsData.findIndex(item => !item.value.pinned);
+
+            if (lastPinnedIndex === -1) {
+                // 找不到非釘選的聊天室, 直接加到底部
+                this._chatRoomsData.push(chat);
+                listContainer.append(document.querySelector(`#chat-card-${chatId}`));
+            } else {
+                // 將資料放到最後一個釘選的聊天室之後
+                this._chatRoomsData.splice(lastPinnedIndex, 0, chat);
+                listContainer.insertBefore(document.querySelector(`#chat-card-${chatId}`), listContainer.children[lastPinnedIndex]);
+            }
+        }
+    }
+
 
     // 初始化訊息紀錄 (渲染用)
     _resetMessage() {
@@ -898,7 +989,6 @@ export class WeienChat {
                             if (lastRead >= messageTime) count++;
                         }
                     })
-
                     if (count > 0) {
                         el.textContent = `已讀 ${count > 1 ? count : ''}`;
                     }
@@ -1151,7 +1241,7 @@ export class WeienChat {
 
                             let preContentHeight = contentHeight;
                             dataArray.forEach(message => {
-                                this.appendMessage(message);
+                                this.prependMessage(message);
                             });
                             content.scrollTop = content.scrollHeight - preContentHeight;
                         }
@@ -1173,7 +1263,7 @@ export class WeienChat {
 
                             let preContentHeight = contentHeight;
                             dataArray.forEach(chat => {
-                                this.appendChat(chat);
+                                this.prependChat(chat);
                             });
                             content.scrollTop = content.scrollHeight - preContentHeight;
                         }
@@ -1239,6 +1329,7 @@ export class WeienChat {
 
     _createChatCard(chat) {
         let chatCard = document.createElement('div');
+        chatCard.id = `chat-card-${chat.value.chatId}`
         chatCard.classList.add('chat-room-card');
         chatCard.addEventListener('click', () => {
             this.state.value.activeChatId = chat.value.chatId;
