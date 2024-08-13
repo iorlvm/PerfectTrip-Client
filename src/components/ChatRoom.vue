@@ -1,15 +1,17 @@
 <script setup>
 import { onMounted } from 'vue';
 import { WeienChat, actionHandlers } from './chat/weien-chat';
-import { getChatRoomsAPI, getUidAPI, getMessagesAPI } from '@/apis/chat';
+import { getChatRoomsAPI, getUidAPI, getMessagesAPI, updateChatRoomNotifyAPI, updateChatRoomPinnedAPI } from '@/apis/chat';
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();
 
 let webSocket;
 
-actionHandlers.handler2 = () => {
-    console.log('handler2外部定義方法');
+actionHandlers.pinnedToggle = async (binder) => {
+    binder.value.pinned = !binder.value.pinned
+    await updateChatRoomPinnedAPI(binder.value.chatId, binder.value.pinned);
+    chat.moveChatToTopOrBelowPinned(binder.value.chatId);
 }
 
 actionHandlers.getUID = async () => {
@@ -25,8 +27,6 @@ actionHandlers.getChatRoomsData = async () => {
 
 actionHandlers.getChatMessagesData = async (chatId) => {
     const res = await getMessagesAPI(chatId);
-    // console.log(res.data);
-
     return res.data;
 }
 
@@ -70,12 +70,43 @@ actionHandlers.filterUnread = async () => {
     }
 }
 
+actionHandlers.updateNotifySettings = async (chatId, state) => {
+    let res = await updateChatRoomNotifyAPI(chatId, state);
+    if (res.success) return state;
+}
+
+actionHandlers.readChatMessages = (chatId) => {
+    if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify({
+            chatId: chatId,
+            action: 'read-message'
+        }));
+    } else {
+        webSocket.addEventListener('open', () => {
+            webSocket.send(JSON.stringify({
+                chatId: chatId,
+                action: 'read-message'
+            }));
+        }, { once: true });
+    }
+}
+
 actionHandlers.sendMessage = (message) => {
-    webSocket.send(JSON.stringify({
-        chatId: message.chatId,
-        action: 'send-message',
-        content: JSON.stringify(message)
-    }));
+    if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify({
+            chatId: message.chatId,
+            action: 'send-message',
+            content: JSON.stringify(message)
+        }));
+    } else {
+        webSocket.addEventListener('open', () => {
+            webSocket.send(JSON.stringify({
+                chatId: message.chatId,
+                action: 'send-message',
+                content: JSON.stringify(message)
+            }));
+        }, { once: true });
+    }
 }
 
 const handleSendMessage = (payload) => {
@@ -84,16 +115,18 @@ const handleSendMessage = (payload) => {
     chat.updateChatListInfo(payload.chatId, message);
 
     // 接到訊息時利用authorId, chatId更新已讀時間
-    chat.updateReadingAtByChatIdAndAuthorId(payload.chatId, payload.authorId)
+    chat.updateReadingAtByChatIdAndAuthorId(payload.chatId, payload.authorId);
 
     let activeChatId = chat.getActiveChatId();
     if (activeChatId === payload.chatId) {
         chat.appendMessage(message);
-        // TODO: 重新送出一個已讀操作
+        // 重新送出一個已讀操作
+        actionHandlers.readChatMessages(activeChatId);
     }
 };
 
 const handleReadMessage = (payload) => {
+    chat.updateReadingAtByChatIdAndAuthorId(payload.chatId, payload.authorId);
 };
 
 const handleUpdateUserInfo = (payload) => {
@@ -101,13 +134,6 @@ const handleUpdateUserInfo = (payload) => {
 
 const handleUpdateRoomInfo = (payload) => {
 };
-
-const handleUpdateNotify = (payload) => {
-};
-
-const handleUpdatePinned = (payload) => {
-};
-
 
 const onChatRoomConnected = e => {
 }
@@ -126,12 +152,6 @@ const onMessageReceived = e => {
             break;
         case 'update-room-info':
             handleUpdateRoomInfo(payload);
-            break;
-        case 'update-notify':
-            handleUpdateNotify(payload);
-            break;
-        case 'update-pinned':
-            handleUpdatePinned(payload);
             break;
     }
 }
@@ -159,13 +179,6 @@ onMounted(async () => {
     webSocket.addEventListener('close', onChatRoomClosed);
 
     webSocket.addEventListener('error', onChatRoomError);
-
-    // const input = document.querySelector('input');
-    // document.querySelector('#sendBtn').addEventListener('click', () => {
-    //     webSocket.send(input.value);
-    //     input.value = '';
-    // });
-
 })
 
 

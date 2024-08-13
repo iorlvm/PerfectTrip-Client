@@ -29,3 +29,23 @@ export const getMessagesAPI = (chatId, messageId, size) => {
         }
     })
 }
+
+export const updateChatRoomNotifyAPI = (chatId, notifySettings) => {
+    return httpInstance({
+        url: `chat/rooms/${chatId}/notify`,
+        method: 'PUT',
+        data: {
+            notifySettings
+        }
+    })
+}
+
+export const updateChatRoomPinnedAPI = (chatId, pinned) => {
+    return httpInstance({
+        url: `chat/rooms/${chatId}/pinned`,
+        method: 'PUT',
+        data: {
+            pinned
+        }
+    })
+}

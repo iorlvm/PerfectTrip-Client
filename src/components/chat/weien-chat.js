@@ -256,18 +256,20 @@ const textareaSettings = () => {
 }
 
 export const actionHandlers = {
+    // 自定義選項對應方法
     pinnedToggle: (binder) => {
         binder.value.pinned = !binder.value.pinned;
     },
-    nofifToggle: (chatId, state) => {
+    handler1: (binder, e) => {
+        console.log(binder);
+        console.log(e.target);
+    },
+    handler2: () => {
+        console.log('handler2預設方法');
+    },
+    // 需外部串接的方法區
+    updateNotifySettings: async (chatId, state) => {
         console.log(`聊天室編號: ${chatId}  目標提醒設定: ${state}`);
-        if (state === 'on') {
-            return 'off';
-        } else if (state === 'off') {
-            return 'on';
-        } else {
-            return 'none';
-        }
     },
     getUID: async () => {
         console.log('請改寫這個方法, 取得登入用戶的id');
@@ -302,7 +304,7 @@ export const actionHandlers = {
                     },
                     // ...更多參與者
                 ], // 參與者列表 可大於2個人
-                notifSettings: 'on', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
+                notifySettings: 'on', // 'on', 'off' , 不傳遞(或非上述兩個值)則不顯示
                 pinned: true,
                 // _lastActivity: 'new Data()' (程式額外添加的欄位, 用於偵測更新時間)
             },
@@ -333,6 +335,9 @@ export const actionHandlers = {
         console.log('送出訊息: ' + message.content);
         console.log(message);
     },
+    readChatMessages: (chatId) => {
+        console.log(chatId);
+    },
     filterUnread: async (e) => {
         console.log(e);
         return [];
@@ -344,13 +349,6 @@ export const actionHandlers = {
     filterQuery: async (query) => {
         console.log(query);
         // return [];  // 如果想做輸入篩選回傳陣列
-    },
-    handler1: (binder, e) => {
-        console.log(binder);
-        console.log(e.target);
-    },
-    handler2: () => {
-        console.log('handler2預設方法');
     }
 };
 
@@ -543,6 +541,13 @@ export class WeienChat {
 
         if (this._lastMessageCard && this._lastMessage.value.senderId !== message.value.senderId) {
             messageCard.classList.add('weien-header-message');
+        }
+
+        if (this._lastMessageCard && !this._isSameDay(message.value.timestamp, this._lastMessage.value.timestamp)) {
+            let dateTag = document.createElement('div');
+            dateTag.classList.add('weien-message-date-tag');
+            dateTag.innerHTML = `<span>${formatMessagesDate(this._preMessage.value.timestamp)}</span>`;
+            listContainer.append(dateTag);
         }
 
         this._lastMessage = message;
@@ -781,6 +786,10 @@ export class WeienChat {
                 return;
             }
         });
+        if (res.value.unreadMessages > 0) {
+            res.value.unreadMessages = 0;
+            actionHandlers.readChatMessages(chatId);
+        }
         return res;
     }
 
@@ -891,7 +900,7 @@ export class WeienChat {
 
         let notif = chatingHeader.querySelector('.weien-notif-icon');
         this._chatSessionData.bindElement(
-            'notifSettings',
+            'notifySettings',
             notif,
             (el, value) => {
                 if (value === 'on') {
@@ -904,8 +913,19 @@ export class WeienChat {
             }
         );
 
-        notif.addEventListener('click', () => {
-            this._chatSessionData.value.notifSettings = actionHandlers.nofifToggle(this._chatSessionData.value.chatId, this._chatSessionData.value.notifSettings);
+        notif.addEventListener('click', async () => {
+            let state = this._chatSessionData.value.notifySettings;
+
+            if (state === 'on') {
+                this._chatSessionData.value.notifySettings = 'off';
+            } else if (state === 'off') {
+                this._chatSessionData.value.notifySettings = 'on';
+            } else {
+                this._chatSessionData.value.notifySettings = 'none';
+            }
+
+            state = await actionHandlers.updateNotifySettings(this._chatSessionData.value.chatId, this._chatSessionData.value.notifySettings);
+            if (state) this._chatSessionData.value.notifySettings = state;
         })
 
         let dropdownBlock = chatingHeader.querySelector('.weien-chating-dropdown');
