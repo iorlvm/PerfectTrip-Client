@@ -28,7 +28,18 @@ const notifIcon = () => {
  */
 const formatChatDate = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' });
+    const now = new Date();
+
+    const isToday = date.toDateString() === now.toDateString();
+    const isYesterday = new Date(date.setDate(date.getDate() + 1)).toDateString() === now.toDateString();
+
+    if (isToday) {
+        return '今天';
+    } else if (isYesterday) {
+        return '昨天';
+    } else {
+        return date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' });
+    }
 };
 
 /**
@@ -48,7 +59,19 @@ const formatMessagesTime = (dateStr) => {
  */
 const formatMessagesDate = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' });
+    const now = new Date();
+
+    const isToday = date.toDateString() === now.toDateString();
+    const isYesterday = new Date(date.setDate(date.getDate() + 1)).toDateString() === now.toDateString();
+
+    if (isToday) {
+        return '今天';
+    } else if (isYesterday) {
+        return '昨天';
+    } else {
+        return date.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' });
+    }
+
 };
 
 
@@ -546,7 +569,7 @@ export class WeienChat {
         if (this._lastMessageCard && !this._isSameDay(message.value.timestamp, this._lastMessage.value.timestamp)) {
             let dateTag = document.createElement('div');
             dateTag.classList.add('weien-message-date-tag');
-            dateTag.innerHTML = `<span>${formatMessagesDate(this._preMessage.value.timestamp)}</span>`;
+            dateTag.innerHTML = `<span>${formatMessagesDate(message.value.timestamp)}</span>`;
             listContainer.append(dateTag);
         }
 

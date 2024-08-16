@@ -83,10 +83,7 @@ actionHandlers.readChatMessages = (chatId) => {
         }));
     } else {
         webSocket.addEventListener('open', () => {
-            webSocket.send(JSON.stringify({
-                chatId: chatId,
-                action: 'read-message'
-            }));
+            actionHandlers.readChatMessages(chatId);
         }, { once: true });
     }
 }
@@ -100,11 +97,7 @@ actionHandlers.sendMessage = (message) => {
         }));
     } else {
         webSocket.addEventListener('open', () => {
-            webSocket.send(JSON.stringify({
-                chatId: message.chatId,
-                action: 'send-message',
-                content: JSON.stringify(message)
-            }));
+            actionHandlers.sendMessage(message);
         }, { once: true });
     }
 }
