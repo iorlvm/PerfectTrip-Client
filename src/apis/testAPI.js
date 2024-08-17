@@ -5,9 +5,3 @@ export const getExample = (id) => {
         url: `example/${id}`
     })
 }
-
-export const testLogin = () => {
-    return httpInstance({
-        url: `chat/rooms`
-    })
-}
