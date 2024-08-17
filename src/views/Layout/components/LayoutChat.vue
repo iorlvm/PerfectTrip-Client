@@ -28,13 +28,6 @@ const closeChatRoom = () => {
         isOpen.value = false;
     }, 180);
 }
-
-// onBeforeMount(() => {
-//     if (!authStore.isAuth) {
-//         authStore.authToken();
-//     }
-// });
-
 </script>
 
 <template>
