@@ -5,9 +5,10 @@ import { authAPI } from '@/apis/auth';
 
 export const useAuthStore = defineStore('auth', () => {
     const isAuth = ref(false);
+    let isDoing = false;
     const authToken = async () => {
-        if (isAuth.value) return;
-        isAuth.value = true;
+        if (isAuth.value || isDoing) return;
+        isDoing = true;
 
         const userStore = useUserStore();
         if (userStore.userInfo.token) {
@@ -16,6 +17,9 @@ export const useAuthStore = defineStore('auth', () => {
                 userStore.clearUserInfo();
             }
         }
+
+        isAuth.value = true;
+        isDoing = false;
     };
 
     return {

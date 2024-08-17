@@ -9,68 +9,134 @@ const form = ref({
     passwordCheck: '',
     address: '',
     manager: '',
+    regionNumber:'',
     contactNumber: '',
     tax_ID: '',
 });
+// const formData = ref({
+//     application: '',
+//     publishName: '',
+//     email: '',
+//     password: '',
+//     passwordCheck: '',
+//     address: '',
+//     manager: '',
+//     regionNumber:'',
+//     contactNumber: '',
+//     tax_ID: '',
+// });
+
+const rules = {
+    application: [
+        { required: true, message: '請輸入申請者名稱', trigger: 'blur' }
+    ],
+    publishName: [
+        { required: true, message: '請輸入刊登名稱', trigger: 'blur' }
+    ],
+    email: [
+        { required: true, message: '請輸入電子信箱', trigger: 'blur' },
+        { type: 'email', message: '請輸入正確的電子信箱格式', trigger: ['blur', 'change'] }
+    ],
+    password: [
+        { required: true, message: '請輸入密碼', trigger: 'blur' }
+    ],
+    password_check: [
+        { required: true, message: '再次輸入密碼', trigger: 'blur' }
+    ],
+    address: [
+        { required: true, message: '請輸入地址', trigger: 'blur' }
+    ],
+    manager: [
+        { required: true, message: '請輸入地址', trigger: 'change' }
+    ],
+    
+    contactNumber: [
+        { required: true, message: '請輸入電話/手機', trigger: 'blur' },
+        { pattern: /^\d{8}$/, message: '請輸入正確的電話/手機格式', trigger: ['blur', 'change'] }
+    ],
+    regionNumber: [
+        { required: true, message: '請輸入區碼', trigger: 'blur' },
+        { pattern: /^\d{3}$/, message: '請輸入正確的區碼', trigger: ['blur', 'change'] }
+    ],
+    tax_ID: [
+        { required: true, message: '請輸入統一編號', trigger: 'blur' },
+        { pattern: /^\d{8}$/, message: '請輸入正確的統一編號(8位數字)', trigger: ['blur', 'change'] }
+    ],
+};
+
+const ruleFormRef = ref(null);
+
+// const isVisible = () => {
+//     return props.active === 1;
+// }
 </script>
 
 <template>
     <div>
         <div class="form_container">
             <div class="storeregister">
-                <el-form :model="form" label-width="auto" style="max-width: 600px">
+                <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px" 
+                    :status-icon="true" :scroll-to-error="true">
                     <el-form-item label="申請者名稱" prop="application">
                         <div>
                             <el-input type="text" placeholder="請輸入申請者名稱" v-model="form.application" required></el-input>
                         </div>
+                       
                     </el-form-item>
                     <el-form-item label="刊登名稱" prop="publishName">
                         <div>
-                            <el-input type="text" placeholder="請輸入刊登名稱" v-model="publishName" required></el-input>
+                            <el-input type="text" placeholder="請輸入刊登名稱" v-model="form.publishName" required></el-input>
                         </div>
                     </el-form-item>
                     <el-form-item label="電子信箱" prop="email">
                         <div>
-                            <el-input class="mail" type="text" placeholder="電子信箱即為登入帳號" v-model="email"
+                            <el-input class="mail" type="text" placeholder="電子信箱即為登入帳號" v-model="form.email"
                                 required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="登入密碼" prop="p@ssword">
+                    <el-form-item label="登入密碼" prop="password">
                         <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="password" required></el-input>
+                            <el-input type="text" placeholder="請輸入密碼" v-model="form.password" required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="再次輸入密碼" prop="p@ssword_check">
+                    <el-form-item label="再次輸入密碼" prop="password_check">
                         <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="passwordCheck" required></el-input>
+                            <el-input type="text" placeholder="請輸入密碼" v-model="form.passwordCheck" required></el-input>
                         </div>
                     </el-form-item>
                     <el-form-item label="營業地址" prop="address">
                         <div>
-                            <el-input type="text" class="address" placeholder="請輸入營業地址" v-model="address"
+                            <el-input type="text" class="address" placeholder="請輸入營業地址" v-model="form.address"
                                 required></el-input>
                         </div>
                     </el-form-item>
                     <el-form-item label="負責人姓名" prop="manager">
                         <div>
-                            <el-input type="text" placeholder="請輸入負責人名稱" required></el-input>
+                            <el-input type="text" placeholder="請輸入負責人名稱" v-model="form.manager"  required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="連絡電話" prop="contactNumber">
-                        <div class="phone">
-                            <div class="country_code">
-                                <el-input type="text" placeholder="+886" required></el-input>
-                            </div>
-                            <div>
-                                <el-input type="text" placeholder="請輸入電話" required></el-input>
-                            </div>
 
-                        </div>
-                    </el-form-item>
+                    <div class="phone" style="display: flex; align-items: center;">
+                        
+                        <el-form-item label="連絡電話" prop="regionNumber">
+                        
+                                <div class="country_code" style="display: flex; align-items: center;">
+                                <div>+</div>  
+                                <el-input type="text" placeholder="886" v-model="form.regionNumber" required></el-input>
+                                </div>
+                        
+                        </el-form-item>
+                       
+                        <el-form-item label="" prop="contactNumber" style="display: flex; align-items: center;">
+                                <div>
+                                    <el-input type="text" placeholder="請輸入電話" v-model="form.contactNumber" required></el-input>
+                                </div>
+                        </el-form-item>
+                    </div>
+
                     <el-form-item label="統一編號" prop="tax_ID">
                         <div>
-                            <el-input type="text" placeholder="請輸入統一編號" required></el-input>
-
+                            <el-input type="text" placeholder="請輸入統一編號" v-model="form.tax_ID" required></el-input>
                         </div>
                     </el-form-item>
                 </el-form>
@@ -109,13 +175,11 @@ const form = ref({
     box-shadow: 0 1px 3px -1px #00000020;
 
     .phone {
-        display: flex;
-
-
+        display:flex;
     }
 
     .country_code {
-        width: 60px;
+        width: 80px;
     }
 
     .address {
@@ -140,6 +204,14 @@ const form = ref({
         display: flex;
     }
 
+    .check-value {
+        color: #3f5976 !important;
+        font-size: 1.1em !important;
+        font-weight: bold;
+        padding: 5px 12px;
+        background-color: #f4f0f0;
+        border-radius: 10px;
+    }
 
 
 }
