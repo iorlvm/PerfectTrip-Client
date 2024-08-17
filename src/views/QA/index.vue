@@ -20,21 +20,10 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="loading-with-icon">
                             <i class="bi bi-house-door"></i>
-                            <span>住宿</span>
+                            <span style="font-size: 12px;">住宿</span>
                         </div>
                     </template>
                     <div class="lodging">
-                        <!-- <el-collapse style="padding: 0 20px;">
-                            <el-collapse-item title="1. 取消單" name="1">
-                                <template #title>
-                                    <div style="font-size: 1.15em; font-weight: bold;">1. 取消單</div>
-                                </template>
-                                <div class="inner_block">
-                                    沒問題！所有取消費用均由住宿方設置，且均註明在您的訂房取消政策內。所有額外產生的取消費用均由住宿方收取。
-                                </div>
-                            </el-collapse-item>
-                        </el-collapse> -->
-
 
                         <div class="lodging1">
                             <el-collapse>
@@ -48,7 +37,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging2">
                             <el-collapse>
                                 <el-collapse-item title="2. 支付情況" name="2">
@@ -84,7 +72,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging4">
                             <el-collapse>
                                 <el-collapse-item title="4. 住客溝通聯繫" name="4">
@@ -111,7 +98,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging5">
                             <el-collapse>
                                 <el-collapse-item title="5. 客房類型" name="3">
@@ -124,7 +110,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging6">
                             <el-collapse>
                                 <el-collapse-item title="6. 價目" name="3">
@@ -137,7 +122,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging7">
                             <el-collapse>
                                 <el-collapse-item title=" 7. 信用卡" name="3">
@@ -150,7 +134,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging8">
                             <el-collapse>
                                 <el-collapse-item title="8. 住宿政策規定" name="3">
@@ -174,7 +157,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging9">
                             <el-collapse>
                                 <el-collapse-item title="  9. 額外設施" name="3">
@@ -189,7 +171,6 @@ const handleClick = (tab, event) => {
                                 </el-collapse-item>
                             </el-collapse>
                         </div>
-
                         <div class="lodging10">
                             <el-collapse>
                                 <el-collapse-item title=" 10. 安全宣導" name="3">
@@ -222,7 +203,7 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="car-rent-icon">
                             <i class="bi bi-car-front-fill"></i>
-                            <span>租車</span>
+                            <span style="font-size: 12px;">租車</span>
                         </div>
                     </template>
                     <div class="car-rent">
@@ -470,7 +451,7 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="air-ticket-icon">
                             <i class="bi bi-airplane"></i>
-                            <span> 機票</span>
+                            <span style="font-size: 12px;"> 機票</span>
                         </div>
                     </template>
                     <div class="air-ticket">
@@ -590,11 +571,16 @@ const handleClick = (tab, event) => {
                                         <div style="font-size: 1.15em; font-weight: bold;">5. 機票確認函</div>
                                     </template>
                                     <div class="inner_block">
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
+                                        <h4>找不到確認函怎麼辦？</h4>
+                                        您的確認函會發送到預訂時提供的電子信箱。請記得前往查看您的電子信箱收件匣、廣告信和垃圾信件匣。
+                                        您也可以在訂單詳細資訊的頁面重新發送確認函給自己。
+                                        若您仍無法找到確認函或是預訂失敗，請與我們聯絡，我們會協助您。
+                                        <h4>哪裡可以找到我的機票？</h4>
+                                        我們目前沒有發送機票訂單的票券或電子機票，不過您會收到兩封郵件，其功能與電子機票相同：
+                                        <br>確認函：這是您的訂單已確認的證明。
+                                        <br>訂單資訊信件：這包含了所有訂單資訊，像是航空公司／航班訂單編號、辦理登機的信件，以及電子機票號碼（如適用）。此封信件裡面的資訊包含所有辦理登機需要的資訊。
+                                        <br>這些信件是分開發送，而訂單詳情的信件可能需要幾天的時間才會發送至您的收件匣。若您在電子信箱的收件匣找不到信件，請檢查您的垃圾信件匣。您也可以與我們聯絡尋求進一步協助。
+
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
@@ -648,11 +634,16 @@ const handleClick = (tab, event) => {
                                         <div style="font-size: 1.15em; font-weight: bold;">8. 旅客資料</div>
                                     </template>
                                     <div class="inner_block">
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
+                                        <h4>如何為嬰兒訂票？</h4>
+                                        如果要幫嬰兒訂票，請在搜尋機票時新增孩童旅客。請注意，若嬰兒人數比成人人數多，則無法預訂。因為基於安全緣故，每位嬰孩都必須有成人陪同。
+                                        在飛行期間，嬰兒應坐在成人的腿上，因此無法為嬰兒預訂座位。由於帶嬰兒搭機乘坐位置會有相關規範限制，因此通常會由航空公司安排座位。
+                                        <h4>我把旅客姓名打錯了，可以修正嗎？</h4>
+                                        大部分的航空公司不允許修改或更正旅客姓名。但您可以與我們聯繫，我們會協助您了解情況。
+                                        若航空公司允許變更，他們可能會收取行政手續費。在完成變更之前，我們會通知您。
+                                        <h4>請問如何提出特殊協助的要求？</h4>
+                                        當您的訂單確認後，請與我們聯繫，我們會協助安排。
+                                        如需輪椅協助，並會使用自己的輪椅旅行，請告知我們長度、寬度、高度、電池動力要求（如適用），以及是否可以摺疊。這些資訊可以幫助航空公司做出所需的安排。
+
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
@@ -665,11 +656,19 @@ const handleClick = (tab, event) => {
                                         <div style="font-size: 1.15em; font-weight: bold;">9. 新型冠狀病毒疫情相關支援</div>
                                     </template>
                                     <div class="inner_block">
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
-                                        <h4></h4>
+                                        <h4>我可以獲得退款嗎？</h4>
+                                        須視航空公司的政策而定。請前往您的航空公司網站查看目前實施的退款政策為何。部分航空公司會提供兌換券或讓旅客選擇重新預訂。儘管我們需遵循不同航空公司的規定，我們仍將會盡力為您提供協助
+                                        <h4>處理退款需要多少時間？</h4>
+                                        提醒您，受到目前情況影響，退款處理時間會比以往來得長。由於每間航空公司的業務量也極為龐大，我們無法告訴您處理退款所需的確切時間，但我們一定會竭盡所能盡快讓您收到退款。待您的退款處理完畢後，您將會收到
+                                        Email 通知，因此還請您耐心等候。
+                                        <h4>我會如何收到關於退款的最新消息？</h4>
+                                        在您的變更或退款處理完成後，您將會收到一封 Email。請您不要聯繫我們詢問最新情況，並請您耐心等候 Email 通知，信中將含有更多資訊。
+                                        <h4>我可以在哪裡取消或更改機票？</h4>
+                                        首先，請先向航空公司確認您的航班適用於不可抗力規定。提醒您，並非所有航空公司都實施相同的退款及重新預訂政策，而不論在哪一種情況下，本站都會遵循每間航空公司的規定。
+                                        <h4>可以幫我向我預訂機票的航空公司申請退款嗎？</h4>
+                                        由於新冠肺炎疫情爆發，航空業正面臨著特殊情況，需處理大量的機票取消單與退款要求。若您想要更改或取消機票訂單，我們將能代您聯繫航空公司來更改機票內容，如航空公司願意提供退款或兌換券，我們收到後也會轉交給您，實際情況需視目前適用的航空公司政策而定。由於航空公司持續在評估並修改退款政策，因此我們無法保證您能獲得退款。我們為您處理此特殊情形的費用為每筆訂單
+                                        30
+                                        歐元，可預先付款。提醒您，我們會以收到要求的順序來處理所有退款或更改機票事宜。受到目前情況及漸增的業務量影響，預估處理時間會比以往來得長。我們會竭盡所能盡快為您提供協助，但如有任何耽誤情形，恕我們無法負責。
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
@@ -681,7 +680,7 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="airport-taxi-icon">
                             <i class="bi bi-taxi-front"></i>
-                            <span>機場計程車</span>
+                            <span style="font-size: 12px;">機場計程車</span>
                         </div>
                     </template>
                     <div class="ariport-taxi">
@@ -850,7 +849,7 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="insurance-icon">
                             <i class="bi bi-shield-check"></i>
-                            <span>保險</span>
+                            <span style="font-size: 12px;">保險</span>
                         </div>
                     </template>
                     <div class="insurance">
@@ -970,7 +969,7 @@ const handleClick = (tab, event) => {
                     <template #label>
                         <div class="other-icon">
                             <i class="bi bi-three-dots"></i>
-                            <span>其他</span>
+                            <span style="font-size: 12px;">其他</span>
                         </div>
                     </template>
                     <div class="others">
@@ -1015,13 +1014,17 @@ const handleClick = (tab, event) => {
 .allaroundyou {
     padding: 20px 70px;
 
+
+
     .commonquestion {
         font-size: 24px;
         padding: 10px;
+
     }
 
     .question1 {
-        border: 1px solid #ccc;
+        // border: 1px solid #ccc;
+
     }
 
     .loading-with-icon {
@@ -1041,16 +1044,19 @@ const handleClick = (tab, event) => {
         // padding: 10px 20px;
         border-radius: 8px;
 
+
         .lodgingA {
             font-size: 18px;
             line-height: 50px;
             padding: 20px;
             // margin: 15px auto;
+
         }
 
         .lodging1 {
-            border: 1px solid #0000002a;
+            // border: 1px solid #0000002a;
             padding: 10px 20px;
+
 
             .switch_btn {
                 float: right;
@@ -1066,6 +1072,8 @@ const handleClick = (tab, event) => {
 
         .lodging2 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1082,6 +1090,8 @@ const handleClick = (tab, event) => {
 
         .lodging3 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1098,6 +1108,8 @@ const handleClick = (tab, event) => {
 
         .lodging4 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1114,6 +1126,8 @@ const handleClick = (tab, event) => {
 
         .lodging5 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1130,6 +1144,8 @@ const handleClick = (tab, event) => {
 
         .lodging6 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1146,6 +1162,8 @@ const handleClick = (tab, event) => {
 
         .lodging7 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1162,6 +1180,8 @@ const handleClick = (tab, event) => {
 
         .lodging8 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1178,6 +1198,8 @@ const handleClick = (tab, event) => {
 
         .lodging9 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1194,6 +1216,8 @@ const handleClick = (tab, event) => {
 
         .lodging10 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1210,6 +1234,8 @@ const handleClick = (tab, event) => {
 
         .lodging11 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
 
             .switch_btn {
@@ -1249,51 +1275,71 @@ const handleClick = (tab, event) => {
 
         .car-rent1 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent2 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent3 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent4 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent5 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent6 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent7 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent8 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent9 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .car-rent10 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
     }
@@ -1323,46 +1369,64 @@ const handleClick = (tab, event) => {
 
         .air-ticket1 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket2 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket3 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket4 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket5 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket6 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket7 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket8 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .air-ticket9 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
     }
@@ -1380,31 +1444,43 @@ const handleClick = (tab, event) => {
 
         .ariport-taxi1 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .ariport-taxi2 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .ariport-taxi3 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .ariport-taxi4 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .ariport-taxi5 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .ariport-taxi6 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
     }
@@ -1446,21 +1522,29 @@ const handleClick = (tab, event) => {
 
         .insurance1 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .insurance2 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .insurance3 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
 
         .insurance4 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
     }
@@ -1490,6 +1574,8 @@ const handleClick = (tab, event) => {
 
         .others1 {
             border: 1px solid #0000002a;
+            border-right-color: transparent;
+            border-left-color: transparent;
             padding: 10px 20px;
         }
     }
