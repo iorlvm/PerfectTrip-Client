@@ -3,8 +3,15 @@ import { onMounted } from 'vue';
 import { WeienChat, actionHandlers } from './chat/weien-chat';
 import { getChatRoomsAPI, getUidAPI, getMessagesAPI, updateChatRoomNotifyAPI, updateChatRoomPinnedAPI } from '@/apis/chat';
 import { useUserStore } from '@/stores/user';
+import { ref, defineEmits, watch } from 'vue';
 
 const userStore = useUserStore();
+
+const emit = defineEmits(['updateUnreads']);
+const unreads = ref(0);
+watch(unreads, (newValue) => {
+    emit('updateUnreads', newValue);
+});
 
 let webSocket;
 
@@ -16,7 +23,8 @@ actionHandlers.pinnedToggle = async (binder) => {
 
 actionHandlers.getUID = async () => {
     const res = await getUidAPI();
-    return res.data;
+    unreads.value = Number(res.data[1]);
+    return res.data[0];
 }
 
 
@@ -75,7 +83,7 @@ actionHandlers.updateNotifySettings = async (chatId, state) => {
     if (res.success) return state;
 }
 
-actionHandlers.readChatMessages = (chatId) => {
+actionHandlers.readChatMessages = (chatId, chatUnreads) => {
     if (webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify({
             chatId: chatId,
@@ -86,6 +94,7 @@ actionHandlers.readChatMessages = (chatId) => {
             actionHandlers.readChatMessages(chatId);
         }, { once: true });
     }
+    unreads.value -= chatUnreads;
 }
 
 actionHandlers.sendMessage = (message) => {
@@ -106,6 +115,7 @@ const handleSendMessage = (payload) => {
     let message = JSON.parse(payload.content);
     // 更新chat room list中的資料
     chat.updateChatListInfo(payload.chatId, message);
+    unreads.value++;
 
     // 接到訊息時利用authorId, chatId更新已讀時間
     chat.updateReadingAtByChatIdAndAuthorId(payload.chatId, payload.authorId);

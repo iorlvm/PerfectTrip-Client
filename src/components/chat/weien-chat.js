@@ -358,8 +358,9 @@ export const actionHandlers = {
         console.log('送出訊息: ' + message.content);
         console.log(message);
     },
-    readChatMessages: (chatId) => {
-        console.log(chatId);
+    readChatMessages: (chatId, chatUnreads) => {
+        console.log('聊天室id： ' + chatId);
+        console.log('未讀數量： ' + chatUnreads)
     },
     filterUnread: async (e) => {
         console.log(e);
@@ -810,8 +811,8 @@ export class WeienChat {
             }
         });
         if (res.value.unreadMessages > 0) {
+            actionHandlers.readChatMessages(chatId, res.value.unreadMessages);
             res.value.unreadMessages = 0;
-            actionHandlers.readChatMessages(chatId);
         }
         return res;
     }
@@ -1147,6 +1148,19 @@ export class WeienChat {
                     this.state.value.textarea = '';
                 }
             }
+        });
+
+        messageIcon.addEventListener('click', (event) => {
+            event.preventDefault();
+            let message = this.state.value.textarea;
+            if (message.trim().length < 1) return;
+
+            actionHandlers.sendMessage({
+                chatId: this._chatSessionData.value.chatId,
+                senderId: this.chatUserId,
+                content: message,
+            });
+            this.state.value.textarea = '';
         });
 
         textareaSettings().options.forEach(option => {
