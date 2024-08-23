@@ -767,7 +767,7 @@ export class WeienChat {
             'filter',
             selected,
             (el, value) => {
-                el.innerHTML = `<p>${value}</p>${settings.icon}`;
+                el.innerHTML = `<div>${value}</div>${settings.icon}`;
             }
         )
         selected.addEventListener('click', e => {
