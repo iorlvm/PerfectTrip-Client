@@ -214,21 +214,21 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  if (to.matched.some(record => record.meta.requiresRole)) {
-    const requiredRole = to.matched.find(record => record.meta.requiresRole).meta.requiresRole;
-    if (role !== requiredRole) {
-      switch (requiredRole) {
-        case 'user':
-          next({ path: '/login' });
-          return;
-        case 'company':
-          next({ path: '/store/login' });
-          return;
-      }
-      next(false);
-      return;
-    }
-  }
+  // if (to.matched.some(record => record.meta.requiresRole)) {
+  //   const requiredRole = to.matched.find(record => record.meta.requiresRole).meta.requiresRole;
+  //   if (role !== requiredRole) {
+  //     switch (requiredRole) {
+  //       case 'user':
+  //         next({ path: '/login' });
+  //         return;
+  //       case 'company':
+  //         next({ path: '/store/login' });
+  //         return;
+  //     }
+  //     next(false);
+  //     return;
+  //   }
+  // }
 
   next();
 });
