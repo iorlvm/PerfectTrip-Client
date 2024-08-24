@@ -1,11 +1,33 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const activeName = ref('first')
 
 const handleClick = (tab, event) => {
     console.log(tab, event)
 }
+
+const qaList = ref([]);
+
+
+const getQAsAPI = async () => {
+    return fetch("http://localhost:8080/QAs", { method: 'GET' }).then(function (response) { // 接收到回傳的物件
+        if (!response.ok) {
+            throw new Error();
+        }
+        return response.json();
+    }).then(function (res) {
+        if (!res.success) throw new Error();
+        return res.data;
+    }).catch(function (error) {
+        console.log(error);
+    })
+}
+
+onMounted(async () => {
+    qaList.value = await getQAsAPI();
+
+})
 
 </script>
 
@@ -24,8 +46,20 @@ const handleClick = (tab, event) => {
                         </div>
                     </template>
                     <div class="lodging">
-
-                        <div class="lodging1">
+                        <div class="lodging2" v-for="(qa, index) in qaList.filter(item => item.qaType === '住宿')"
+                            :key="index">
+                            <el-collapse>
+                                <el-collapse-item :name=index>
+                                    <template #title>
+                                        <div style="font-size: 1.15em; font-weight: bold;">{{ (index + 1) + '. ' +
+                                            qa.qaTitle }}
+                                        </div>
+                                    </template>
+                                    <div class="inner_block" v-html="qa.qaContent"> </div>
+                                </el-collapse-item>
+                            </el-collapse>
+                        </div>
+                        <!-- <div class="lodging1">
                             <el-collapse>
                                 <el-collapse-item title="1. 取消單" name="1">
                                     <template #title>
@@ -196,7 +230,7 @@ const handleClick = (tab, event) => {
                                     </div>
                                 </el-collapse-item>
                             </el-collapse>
-                        </div>
+                        </div> -->
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="租車" name="second">
@@ -1045,194 +1079,7 @@ const handleClick = (tab, event) => {
         border-radius: 8px;
 
 
-        .lodgingA {
-            font-size: 18px;
-            line-height: 50px;
-            padding: 20px;
-            // margin: 15px auto;
-
-        }
-
-        .lodging1 {
-            // border: 1px solid #0000002a;
-            padding: 10px 20px;
-
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
         .lodging2 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging3 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging4 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging5 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging6 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging7 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging8 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging9 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging10 {
-            border: 1px solid #0000002a;
-            border-right-color: transparent;
-            border-left-color: transparent;
-            padding: 10px 20px;
-
-            .switch_btn {
-                float: right;
-                background: none;
-                border: 0;
-                font-size: 24px;
-
-                .-minus {
-                    display: none;
-                }
-            }
-        }
-
-        .lodging11 {
             border: 1px solid #0000002a;
             border-right-color: transparent;
             border-left-color: transparent;
