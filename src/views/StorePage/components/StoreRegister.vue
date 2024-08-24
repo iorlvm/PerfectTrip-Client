@@ -65,6 +65,19 @@ const rules = {
 };
 
 const ruleFormRef = ref(null);
+const checkForm = async (formEl) => {
+    if (!formEl) return;
+
+    await formEl.validate((valid, fields) => {
+        if (valid) {
+            // console.log('表單驗證通過！', formData.value);
+
+            // nextStep();
+        } else {
+            console.log('表單驗證失敗！', fields);
+        }
+    });
+};
 
 // const isVisible = () => {
 //     return props.active === 1;
@@ -127,8 +140,8 @@ const ruleFormRef = ref(null);
                         
                         </el-form-item>
                        
-                        <el-form-item label="" prop="contactNumber" style="display: flex; align-items: center;">
-                                <div>
+                        <el-form-item label="" prop="contactNumber" >
+                                <div style="display: flex; align-items: center;">
                                     <el-input type="text" placeholder="請輸入電話" v-model="form.contactNumber" required></el-input>
                                 </div>
                         </el-form-item>
@@ -139,12 +152,14 @@ const ruleFormRef = ref(null);
                             <el-input type="text" placeholder="請輸入統一編號" v-model="form.tax_ID" required></el-input>
                         </div>
                     </el-form-item>
+
+                     <div button>
+                        <el-button type="danger" >清除</el-button>
+                        <el-button type="primary" @click="checkForm(ruleFormRef)" >註冊</el-button>
+                    </div>
                 </el-form>
 
-                <div button>
-                    <el-button type="danger">清除</el-button>
-                    <el-button type="primary">註冊</el-button>
-                </div>
+               
             </div>
         </div>
     </div>
