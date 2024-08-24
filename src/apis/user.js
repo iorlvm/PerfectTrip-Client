@@ -1,5 +1,6 @@
 import httpInstance from "@/utils/axiosInit";
 
+//會員登入
 export const userLoginAPI = ({ username, password }) => {
     return httpInstance({
         url: '/users/login',
@@ -11,7 +12,7 @@ export const userLoginAPI = ({ username, password }) => {
     });
 }
 
-
+//商家登入
 export const companyLoginAPI = ({ username, password }) => {
     return httpInstance({
         url: '/store/login',
