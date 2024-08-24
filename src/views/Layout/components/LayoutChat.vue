@@ -3,7 +3,7 @@ import ChatRoom from '@/components/ChatRoom.vue'
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useAuthStore } from '@/stores/auth';
-const newMessage = ref(9);
+const newMessage = ref(0);
 const isOpen = ref(false);
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -28,13 +28,6 @@ const closeChatRoom = () => {
         isOpen.value = false;
     }, 180);
 }
-
-// onBeforeMount(() => {
-//     if (!authStore.isAuth) {
-//         authStore.authToken();
-//     }
-// });
-
 </script>
 
 <template>
@@ -60,7 +53,7 @@ const closeChatRoom = () => {
                     </div>
                 </div>
                 <div class="room-height">
-                    <ChatRoom />
+                    <ChatRoom @updateUnreads="newMessage = $event" />
                 </div>
             </div>
         </div>

@@ -3,14 +3,16 @@ import SearchBar from "@/components/SearchBar.vue";
 import AdvancedSearch from "./components/AdvancedSearch.vue";
 import ResultList from "./components/ResultList.vue";
 import SearchResult from "./components/SearchResult.vue";
-import { useRoute } from "vue-router";
 import { onMounted } from "vue";
+import { useSearchStore } from "@/stores/search";
 
-const route = useRoute();
+
+const searchStore = useSearchStore();
 
 
 onMounted(() => {
-  console.log(route.query);
+  console.log(searchStore.searchQuery);
+
 })
 
 </script>
