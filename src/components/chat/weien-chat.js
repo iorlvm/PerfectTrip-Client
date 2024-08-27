@@ -503,6 +503,10 @@ export class WeienChat {
         return this.state.value.activeChatId;
     }
 
+    getChatRoomByChatId(chatId) {
+        return this._chatRoomsData.find(room => room.value.chatId === chatId);
+    }
+
     /**
      * 將聊天室新增到聊天列表尾端
      * @param {object} chatRoom
