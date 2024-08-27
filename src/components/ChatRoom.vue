@@ -24,6 +24,16 @@ actionHandlers.pinnedToggle = async (binder) => {
     chat.moveChatToTopOrBelowPinned(binder.value.chatId);
 }
 
+actionHandlers.notifyToggle = async (binder) => {
+    const chatId = binder.value.chatId;
+    if (binder.value.notifySettings === 'on') {
+        binder.value.notifySettings = 'off';
+    } else if (binder.value.notifySettings === 'off') {
+        binder.value.notifySettings = 'on';
+    }
+    await updateChatRoomNotifyAPI(chatId, binder.value.notifySettings);
+}
+
 actionHandlers.getUID = async () => {
     const res = await getUidAPI();
     unreads.value = Number(res.data[1]);

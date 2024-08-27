@@ -100,18 +100,6 @@ const chatListSettings = () => {
         padding: '12px 10px 12px 12px',    // 未指定時的預設值: padding: '10px';
         options: [
             {
-                text: '釘選',
-                click: actionHandlers.pinnedToggle, // 請於下方的actionHandlers進行定義
-                bind: {
-                    property: 'pinned',
-                    text: ['對話置頂', '取消置頂'],
-                    condition: (binder) => {
-                        return !binder.value.pinned;
-                    }
-                },
-                slider: 'pinned' // 可以與bind同時使用 (如果有需要的話)
-            },
-            {
                 // text: '釘選',  // bind設定成功時, 無傳入text也可以正常運作
                 click: actionHandlers.pinnedToggle,
                 bind: {
@@ -120,11 +108,11 @@ const chatListSettings = () => {
                         // 可以直接使用行內樣式做微調 
                         `
                             <i class="bi bi-pin" style="margin-right: 8px; transform: translateY(1px); font-size:16px"></i>
-                            <span>對話置頂</span>
+                            <p>對話置頂</p>
                         `,
                         `
                             <i class="bi bi-pin-angle" style="margin-right: 8px; transform: translateY(-1px); font-size:16px"></i>
-                            <span>取消置頂</span>
+                            <p>取消置頂</p>
                         `
                     ],
                     condition: (binder) => {
@@ -133,12 +121,24 @@ const chatListSettings = () => {
                 }
             },
             {
-                text: 'log回傳值',
-                click: actionHandlers.handler1
-            },
-            {
-                text: '外部定義測試',
-                click: actionHandlers.handler2
+                // text: '通知',  // bind設定成功時, 無傳入text也可以正常運作
+                click: actionHandlers.notifyToggle,
+                bind: {
+                    property: 'notifySettings',
+                    text: [
+                        `
+                            <i class="bi bi-bell-fill" style="margin-right: 8px; transform: translateY(1px); font-size:16px"></i>
+                            <span>取消通知</span>
+                        `,
+                        `
+                            <i class="bi bi-bell-slash-fill" style="margin-right: 8px; transform: translateY(-1px); font-size:16px"></i>
+                            <span>開啟通知</span>
+                        `
+                    ],
+                    condition: (binder) => {
+                        return binder.value.notifySettings === 'on';
+                    }
+                }
             },
         ],
         scrollEvent: {
@@ -167,41 +167,24 @@ const chatingSettings = () => {
                 click: actionHandlers.pinnedToggle, // 請於下方的actionHandlers進行定義
                 bind: {
                     property: 'pinned',
-                    text: ['對話置頂', '取消置頂'],
+                    text: ['取消置頂', '對話置頂'],
                     condition: (binder) => {
-                        return !binder.value.pinned;
+                        return binder.value.pinned;
                     }
                 },
                 slider: 'pinned' // 可以與bind同時使用 (如果有需要的話)
             },
             {
-                // text: '釘選',  // bind設定成功時, 無傳入text也可以正常運作
-                click: actionHandlers.pinnedToggle,
+                text: '通知',
+                click: actionHandlers.notifyToggle, // 請於下方的actionHandlers進行定義
                 bind: {
-                    property: 'pinned',
-                    text: [
-                        // 可以直接使用行內樣式做微調 
-                        `
-                            <i class="bi bi-pin" style="margin-right: 8px; transform: translateY(1px); font-size:16px"></i>
-                            <p>對話置頂</p>
-                        `,
-                        `
-                            <i class="bi bi-pin-angle" style="margin-right: 8px; transform: translateY(-1px); font-size:16px"></i>
-                            <p>取消置頂</p>
-                        `
-                    ],
+                    property: 'notifySettings',
+                    text: ['取消通知', '開啟通知'],
                     condition: (binder) => {
-                        return !binder.value.pinned;
+                        return binder.value.notifySettings === 'on';
                     }
-                }
-            },
-            {
-                text: 'log回傳值',
-                click: actionHandlers.handler1
-            },
-            {
-                text: '外部定義測試',
-                click: actionHandlers.handler2
+                },
+                slider: 'notifySettings' // 可以與bind同時使用 (如果有需要的話)
             },
         ],
         scrollEvent: {
@@ -282,6 +265,13 @@ export const actionHandlers = {
     // 自定義選項對應方法
     pinnedToggle: (binder) => {
         binder.value.pinned = !binder.value.pinned;
+    },
+    notifyToggle: (binder) => {
+        if (binder.value.notifySettings === 'on') {
+            binder.value.notifySettings = 'off';
+        } else if (binder.value.notifySettings === 'off') {
+            binder.value.notifySettings = 'on';
+        }
     },
     handler1: (binder, e) => {
         console.log(binder);
@@ -1679,10 +1669,18 @@ export class WeienChat {
                     option.slider,
                     slider,
                     (el, value) => {
-                        if (value) {
-                            el.classList.add('chat-room-slider-on');
+                        if (option.bind) {
+                            if (option.bind.condition(binder)) {
+                                el.classList.add('chat-room-slider-on');
+                            } else {
+                                el.classList.remove('chat-room-slider-on');
+                            }
                         } else {
-                            el.classList.remove('chat-room-slider-on');
+                            if (value) {
+                                el.classList.add('chat-room-slider-on');
+                            } else {
+                                el.classList.remove('chat-room-slider-on');
+                            }
                         }
                     }
                 )
