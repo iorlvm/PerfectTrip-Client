@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { userLoginAPI } from '@/apis/user';
-import {companyLoginAPI} from '@/apis/user'
+import {companyLoginAPI} from '@/apis/company'
 
 //會員登入//商家登入
 export const useUserStore = defineStore('user', () => {

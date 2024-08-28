@@ -3,31 +3,35 @@ import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { ref } from 'vue';
+// import axios from 'axios';
 
 const companyStore = useUserStore();
 const router = useRouter();
 
 const formData = ref({
-  username:'',
-  password:''
+  username: '',
+  password: ''
 })
 
-const login = async(e) =>{
+const login = async (e) => {
   e.preventDefault();
-  
-  if(formData.value.username === '' || formData.value.password === ''){
+
+  if (formData.value.username === '' || formData.value.password === '') {
     ElMessage({
-      type:'warning',
-      message:"帳號不能是空的"
+      type: 'warning',
+      message: "帳號不能是空的"
     });
     return;
   }
+
+
   let username = formData.value.username;
   let password = formData.value.password;
-  await companyStore.getCompanyInfo({ username,password });
-  // console.log({username,password});
-  
-  router.go(-1);
+  await companyStore.getCompanyInfo({ username, password });
+  if (companyStore.userInfo.role) {
+    router.push('/store/manage'); //router.push('/store/manage');也可以唷
+  }
+  console.log({ username, password });
 }
 
 
