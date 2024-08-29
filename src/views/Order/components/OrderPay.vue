@@ -4,16 +4,26 @@ import OrderInfo from './OrderInfo.vue';
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from '@/stores/user';
+import { paymentAPI } from '@/apis/pay';
 
 const isVisible = ref(false);
 const isProcessing = ref(false);
-
+const userStore = useUserStore();
 
 const props = defineProps([
     'active'
 ])
 
 const orderId = ref('');
+
+
+
+const cardholder = ref({
+    phoneNumber: userStore.userInfo.phoneNumber,
+    name: userStore.userInfo.firstName + userStore.userInfo.lastName,
+    email: userStore.userInfo.username
+});
 
 const emit = defineEmits([
     'nextActive', 'backActive'
@@ -35,13 +45,30 @@ const payProcess = () => {
             return;
         }
         // TODO: 使用取得的 Prime 進行後續的付款流程
-        console.log('取得的 Prime: ', result.card.prime);
 
-
-        // 跳轉到訂單完成畫面
-        router.push(`/order/created/${orderId.value}`);
+        sendPayment(result.card.prime);
     });
 };
+
+const sendPayment = async (prime) => {
+    const res = await paymentAPI(
+        orderId.value,
+        prime,
+        'Test',
+        cardholder.value.name,
+        cardholder.value.phoneNumber,
+        cardholder.value.email
+    );
+
+    if (res.success && res.data.status === 0) {
+        // 跳轉到訂單完成畫面
+        router.push(`/order/created/${orderId.value}`);
+    } else {
+        // 跳出錯誤訊息
+        ElMessage.error(res.errorMsg);
+        isProcessing.value = false;
+    }
+}
 
 const initTPDirect = () => {
     // 編輯器看不到所以顯示紅字, 但其實沒有錯誤
@@ -152,15 +179,34 @@ onMounted(() => {
             <!-- 支付表單 -->
             <div class="payment-form">
                 <h2>信用卡支付</h2>
+                <div class="full">
+                    <label for="cardholder-name" class="input-label">持卡人姓名</label>
+                    <el-input id="cardholder-name" v-model="cardholder.name" placeholder="持卡人姓名" size="large" clearable
+                        class="input-custom" />
+                </div>
+                <div class="full">
+                    <label class="input-label" for="card-number">卡號</label>
+                    <div class="tpfield" id="card-number"></div>
+                </div>
 
-                <label for="card-number">卡號</label>
-                <div class="tpfield" id="card-number"></div>
-
-                <label for="card-expiration-date">有效日期</label>
-                <div class="tpfield" id="card-expiration-date"></div>
-
-                <label for="card-ccv">安全碼 (CVV)</label>
-                <div class="tpfield" id="card-ccv"></div>
+                <div class="half">
+                    <label class="input-label" for="card-expiration-date">有效日期</label>
+                    <div class="tpfield" id="card-expiration-date"></div>
+                </div>
+                <div class="half">
+                    <label class="input-label" for="card-ccv">安全碼 (CVV)</label>
+                    <div class="tpfield" id="card-ccv"></div>
+                </div>
+                <div class="full">
+                    <label for="cardholder-phone" class="input-label">手機</label>
+                    <el-input id="cardholder-phone" v-model="cardholder.phoneNumber" placeholder="手機" size="large"
+                        clearable class="input-custom" />
+                </div>
+                <div class="full">
+                    <label for="cardholder-email" class="input-label">電子信箱</label>
+                    <el-input id="cardholder-email" v-model="cardholder.email" placeholder="電子信箱" size="large" clearable
+                        class="input-custom" />
+                </div>
 
                 <el-button type="primary" size="large" @click="payProcess" :disabled="isProcessing">提交支付</el-button>
             </div>
@@ -250,16 +296,27 @@ onMounted(() => {
         .payment-form {
             width: 45%;
             padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
 
-            h2 {
-                font-size: 20px;
-                margin-bottom: 20px;
+            .full {
+                width: 90%;
+                flex-grow: 1;
+            }
+
+            .half {
+                width: 45%;
+                flex-grow: 1;
+            }
+
+            .input-label {
+                display: block;
+                margin-bottom: 10px;
                 color: #333;
+                font-weight: bold;
             }
 
-            .form-label {
-                padding-bottom: 10px;
-            }
 
             .tpfield {
                 width: 100%;
@@ -269,14 +326,13 @@ onMounted(() => {
                 padding: 8px 12px;
                 background-color: white;
                 margin-top: 10px;
-                margin-bottom: 20px;
                 transition: border-color 0.3s ease;
             }
         }
     }
 
     .el-button {
-        margin: 0 15px;
+        margin: 20px 15px 0px;
         font-weight: bold;
     }
 
@@ -296,6 +352,5 @@ onMounted(() => {
         --el-button-disabled-border-color: #fbe288;
         font-weight: bold;
     }
-
 }
 </style>

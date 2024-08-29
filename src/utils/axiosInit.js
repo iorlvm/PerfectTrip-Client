@@ -36,22 +36,12 @@ httpInstance.interceptors.request.use(
 httpInstance.interceptors.response.use(
     response => {
         // 響應數據時
-        const resData = response.data;
-        if (resData) {
-            if (!resData.success) {
-                // 伺服器成功回應 但操作不成功
-                // 雖然很扯 但這個東西的解法就是不理這個紅字  手動import了反而會錯
-                ElMessage({
-                    type: 'warning',
-                    message: resData.errorMsg
-                })
-            }
-            return resData;
-        }
-        return response;
+        return response.data;
     },
     error => {
         // 響應錯誤時
+        console.log(error);
+
         if (error.response.status === 401) {
             ElMessage({
                 type: 'warning',
@@ -60,6 +50,8 @@ httpInstance.interceptors.response.use(
             const userStore = useUserStore();
             userStore.clearUserInfo();
             router.push('/login');
+        } else {
+            ElMessage.error(error.response.data.message);
         }
         return Promise.reject(error);
     }
