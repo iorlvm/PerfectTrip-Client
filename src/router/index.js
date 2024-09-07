@@ -34,7 +34,7 @@ import HotelInfoEdit from "@/views/StoreManageCenter/components/HotelInfoEdit.vu
 import StoreAccount from "@/views/StoreManageCenter/components/StoreAccount.vue";
 import QA from "@/views/QA/index.vue";
 import StoreRegister from "@/views/StorePage/components/StoreRegister.vue"
-
+import MemberRegister from "@/views/Member/components/MemberRegister.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -57,6 +57,10 @@ const router = createRouter({
         {
           path: "company/:id",
           component: Product,
+        },
+        {
+          path: "/register",
+          component: MemberRegister,
         },
         {
           path: "order/",

@@ -1,9 +1,5 @@
 import httpInstance from "@/utils/axiosInit";
 
-//會員註冊
-
-
-
 //商家註冊
 export const companyRegisterAPI = ({username, password, companyName, vatNumber, address,telephone, manager}) => {
     return httpInstance({
