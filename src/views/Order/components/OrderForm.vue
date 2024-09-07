@@ -79,8 +79,6 @@ const checkForm = async (formEl) => {
 
     await formEl.validate((valid, fields) => {
         if (valid) {
-            // console.log('表單驗證通過！', formData.value);
-
             nextStep();
         } else {
             console.log('表單驗證失敗！', fields);
@@ -89,7 +87,7 @@ const checkForm = async (formEl) => {
 };
 
 const isVisible = () => {
-    return props.active === 1;
+    return props.active === 0;
 }
 
 const route = useRoute();
@@ -98,13 +96,14 @@ const submitForm = () => {
     const orderId = route.params.id;
     // 把資料送給後端伺服器
     nextStep();
-    console.log('真的把資料送出去啦!');
-    router.push(`/order/created/${orderId}`);
+    console.log('前往付款啦!');
+    // 轉往付款頁面
+    router.push(`/order/pay/${orderId}`);
 }
 
 
 onMounted(() => {
-    //const orderId = route.params.id;
+    const orderId = route.params.id;
     //TODO 利用這個值去撈資料
 });
 
@@ -155,7 +154,7 @@ onMounted(() => {
                 <p>已選擇：</p>
                 <div class="selected">
                     <el-collapse v-model="selectedActive">
-                        <el-collapse-item :name="1" :disabled="active !== 1">
+                        <el-collapse-item :name="1" :disabled="active !== 0">
                             <template #title>
                                 <div class="title" style="color: black;">5 間客房 ( 10 位成人 )</div>
                             </template>
@@ -164,7 +163,7 @@ onMounted(() => {
                             <p>1 x 豪華雙人或雙床房</p>
                         </el-collapse-item>
                     </el-collapse>
-                    <el-link type="primary" @click="$router.go(-1)" v-if="active === 1"><span>更改選擇</span></el-link>
+                    <el-link type="primary" @click="$router.go(-1)" v-if="active === 0"><span>更改選擇</span></el-link>
                 </div>
             </div>
             <div class="info-card total-price">
@@ -338,19 +337,19 @@ onMounted(() => {
                         </div>
                     </div>
                     <div class="button-block">
-                        <template v-if="active === 1">
+                        <template v-if="isVisible()">
                             <el-button @click="checkForm(ruleFormRef)" size="large"
                                 type="primary">下一步：最後資料確認&nbsp;<el-icon>
                                     <ArrowRightBold />
                                 </el-icon></el-button>
                         </template>
-                        <template v-else-if="active === 2">
+                        <template v-else>
                             <el-button @click="goback" size="large" type="info" plain><el-icon>
                                     <ArrowLeftBold />
                                 </el-icon>再次確認個人資料&nbsp;</el-button>
                             <el-button @click="submitForm" size="large" type="primary"><el-icon>
                                     <Lock />
-                                </el-icon>&nbsp;完成訂房</el-button>
+                                </el-icon>&nbsp;前往付款</el-button>
                         </template>
                     </div>
                 </el-form>

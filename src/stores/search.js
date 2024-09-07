@@ -26,7 +26,7 @@ export const useSearchStore = defineStore('Search', () => {
         searchQuery.value.adultCount = query.adultCount;
         searchQuery.value.childCount = query.childCount;
         searchQuery.value.roomCount = query.roomCount;
-        // TODO: 搜尋 並且 將回傳結果存到productList
+        // TODO: 搜尋 並且 將回傳結果存到resultList
     }
     return { resultList, searchQuery, getProductList }
 

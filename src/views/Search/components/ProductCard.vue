@@ -11,7 +11,7 @@ const convertedScore = computed(() => {
 
 const routeToProduct = (id) => {
   router.push(
-    `/product/${id}`
+    `/company/${id}`
   )
 }
 

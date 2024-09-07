@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-const active = ref(1)
+const active = ref(0)
 
 const nextStep = () => {
     active.value += 1;
@@ -16,8 +16,9 @@ const backStep = () => {
     <div class="space"></div>
     <div class="container">
         <el-steps class="step" :active="active" process-status="finish" finish-status="success" align-center>
-            <el-step title="您的選項" />
-            <el-step title="您的資料" />
+            <el-step title="填寫資料" />
+            <el-step title="確認訂單" />
+            <el-step title="前往付款" />
             <el-step title="完成預定" />
         </el-steps>
         <el-divider class="divider" />

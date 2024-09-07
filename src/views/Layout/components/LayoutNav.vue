@@ -24,7 +24,9 @@ const userStore = useUserStore();
           <router-link to="/qa"><i class="bi bi-question-circle"></i></router-link>
         </li>
         <template v-if="userStore.userInfo.role !== 'user'">
+          <router-link  to="/register">
           <li>註冊</li>
+          </router-link>
           <router-link to="/login">
             <li>登入</li>
           </router-link>

@@ -8,6 +8,7 @@ import Search from "@/views/Search/index.vue";
 import Product from "@/views/Product/index.vue";
 import Order from "@/views/Order/index.vue";
 import OrderForm from "@/views/Order/components/OrderForm.vue";
+import OrderPay from "@/views/Order/components/OrderPay.vue";
 import OrderCreated from "@/views/Order/components/OrderCreated.vue";
 import Member from "@/views/Member/index.vue";
 import MemberInfo from "@/views/Member/components/MemberInfo.vue";
@@ -33,7 +34,7 @@ import HotelInfoEdit from "@/views/StoreManageCenter/components/HotelInfoEdit.vu
 import StoreAccount from "@/views/StoreManageCenter/components/StoreAccount.vue";
 import QA from "@/views/QA/index.vue";
 import StoreRegister from "@/views/StorePage/components/StoreRegister.vue"
-
+import MemberRegister from "@/views/Member/components/MemberRegister.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -54,8 +55,12 @@ const router = createRouter({
           component: Login,
         },
         {
-          path: "product/:id",
+          path: "company/:id",
           component: Product,
+        },
+        {
+          path: "/register",
+          component: MemberRegister,
         },
         {
           path: "order/",
@@ -66,6 +71,11 @@ const router = createRouter({
               path: "form/:id",
               component: OrderForm,
               name: "orderForm",
+            },
+            {
+              path: "pay/:id",
+              component: OrderPay,
+              name: "orderPay",
             },
             {
               path: "created/:id",
@@ -208,27 +218,30 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   const { role } = userStore.userInfo;
 
-  if (from.name === "orderCreated" && to.name === "orderForm") {
-    // 防止從完成頁面返回到表單頁面
+  if (
+    (from.name === "orderCreated" && to.name === "orderPay") ||
+    (from.name === "orderPay" && to.name === "orderForm")
+  ) {
+    // 防止從完成頁面返回到付款頁面 或是 付款頁面回到表單頁面
     next(false);
     return;
   }
 
-  // if (to.matched.some(record => record.meta.requiresRole)) {
-  //   const requiredRole = to.matched.find(record => record.meta.requiresRole).meta.requiresRole;
-  //   if (role !== requiredRole) {
-  //     switch (requiredRole) {
-  //       case 'user':
-  //         next({ path: '/login' });
-  //         return;
-  //       case 'company':
-  //         next({ path: '/store/login' });
-  //         return;
-  //     }
-  //     next(false);
-  //     return;
-  //   }
-  // }
+  if (to.matched.some(record => record.meta.requiresRole)) {
+    const requiredRole = to.matched.find(record => record.meta.requiresRole).meta.requiresRole;
+    if (role !== requiredRole) {
+      switch (requiredRole) {
+        case 'user':
+          next({ path: '/login' });
+          return;
+        case 'company':
+          next({ path: '/store/login' });
+          return;
+      }
+      next(false);
+      return;
+    }
+  }
 
   next();
 });

@@ -1,26 +1,25 @@
 <script setup>
+
 import { ref } from 'vue'
-import { useRouter } from 'vue-router';
-import { companyRegisterAPI } from '@/apis/company';
-
-const router = useRouter();
-
-//company_name=email
+import { userRegisterAPI } from '@/apis/user'
 const form = ref({
-    companyName: '',
+    firstName: '',
+    lastName: '',
+    nickName: '',
+    gender: '',
     username: '',
     password: '',
     password_check: '',
     address: '',
-    manager: '',
-    regionNumber: '',
-    telephone: '',
-    vatNumber: '',
+    phoneNamber: '',
+    taxId: '',
+    birthday: ''
 });
 
 
 const validatePasswordCheck = (rule, value, callback) => {
-    if (form.value.password_check !== form.value.password) {
+    // 確保 password_check 與 password 比較時使用的值是最新的
+    if (value !== form.value.password) {
         callback(new Error('兩次輸入的密碼不一致'));
     } else {
         callback();
@@ -29,8 +28,11 @@ const validatePasswordCheck = (rule, value, callback) => {
 
 const rules = {
 
-    companyName: [
-        { required: true, message: '請輸入刊登名稱', trigger: 'blur' }
+    firstName: [
+        { required: true, message: '請輸入姓名', trigger: 'blur' }
+    ],
+    lastName: [
+        { required: true, message: '請輸入姓名', trigger: 'blur' }
     ],
     username: [
         { required: true, message: '請輸入電子信箱', trigger: 'blur' },
@@ -43,24 +45,18 @@ const rules = {
         { required: true, message: '再次輸入密碼', trigger: 'blur' },
         { validator: validatePasswordCheck, trigger: ['blur', 'change'] }
     ],
-    address: [
-        { required: true, message: '請輸入地址', trigger: 'blur' }
-    ],
-    manager: [
-        { required: true, message: '請輸入負責人', trigger: 'change' }
+
+    birthday: [
+        { required: true, message: '請選擇生日', trigger: 'blur' }
     ],
 
-    telephone: [
-        { required: true, message: '請輸入電話', trigger: 'blur' },
-        { pattern: /^\d{7}$/, message: '請輸入正確的電話', trigger: ['blur', 'change'] }
+    phoneNumber: [
+        { required: true, message: '請輸入電話/手機', trigger: 'blur' },
     ],
-    regionNumber: [
-        { required: true, message: '請輸入區碼', trigger: 'blur' },
-        { pattern: /^\d{2}$/, message: '請輸入區碼', trigger: ['blur', 'change'] }
-    ],
-    vatNumber: [
-        { required: true, message: '請輸入統一編號', trigger: 'blur' },
-        { pattern: /^\d{8}$/, message: '請輸入正確的統一編號(8位數字)', trigger: ['blur', 'change'] }
+    //TODO身分證驗證
+    taxId: [
+        { required: true, message: '請輸入身分證', trigger: 'blur' },
+        
     ],
 };
 
@@ -69,29 +65,33 @@ const ruleFormRef = ref(null);
 const resetForm = () => {
     if (ruleFormRef.value) {
         ruleFormRef.value.resetFields(); // 重設所有欄位
+        form.value.birthday = ''; // 手動清空生日欄位
+        form.value.gender = '';
     }
 };
 
 const register = async (e) => {
     e.preventDefault();//阻止表單進行自動刷新或導航到新的頁面
 
-    let companyName = form.value.companyName;
+    let firstName = form.value.firstName;
+    let lastName = form.value.lastName;
+    let nickName = form.value.nickName;
+    let gender = form.value.gender;
     let username = form.value.username;
     let password = form.value.password;
-    let address = form.value.address;
-    let manager = form.value.manager;
-    let telephone = form.value.regionNumber + form.value.telephone;
-    let vatNumber = form.value.vatNumber
-    // console.log({username, password, companyName, vatNumber, address, telephone})
-    await companyRegisterAPI({ username, password, companyName, vatNumber, address, manager, telephone });
-    // console.log({username, password, companyName, vatNumber, address, telephone})
-
-    router.go('views/Home/index.vue');
+    let address = form.value.address
+    let phoneNumber = form.value.phoneNumber;
+    let taxId = form.value.taxId;
+    let birthday = form.value.birthday
+    await userRegisterAPI({ firstName, lastName, nickName, gender, username, password, address, phoneNumber, taxId, birthday })
+    // router.go('views/');
 }
 
 
 
+
 </script>
+
 
 <template>
     <div>
@@ -100,17 +100,44 @@ const register = async (e) => {
                 <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"
                     :status-icon="true" :scroll-to-error="true">
 
-                    <el-form-item label="刊登名稱" prop="companyName">
+                    <div class="name" style="display: flex; align-items: center;">
+                        <el-form-item label="姓名" class="firstName" prop="firstName">
+                            <div>
+                                <el-input type="text" placeholder="姓氏" v-model="form.firstName" clearable
+                                    required></el-input>
+                            </div>
+                        </el-form-item>
+                        <el-form-item label="" prop="lastName">
+                            <div>
+                                <el-input type="text" placeholder="名子" v-model="form.lastName" required></el-input>
+                            </div>
+                        </el-form-item>
+
+                    </div>
+                    <el-form-item label="暱稱" prop="nickName">
                         <div>
-                            <el-input type="text" placeholder="請輸入刊登名稱" v-model="form.companyName" required></el-input>
+                            <el-input type="text" placeholder="暱稱" v-model="form.nickName" required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="電子信箱" prop="username">
+                    <el-form-item label="生日" prop="birthday">
+                        <el-date-picker v-model="form.birthday" type="date" placeholder="選擇日期" clearable required />
+                    </el-form-item>
+
+                    <el-form-item class="gender" label="性別">
+                        <el-select v-model="form.gender" placeholder="選單" clearable>
+                            <el-option label="男姓" value="男姓" />
+                            <el-option label="女性" value="女性" />
+                            <el-option label="LBGT" value="LBGT" />
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="電子信箱(登入帳號)" prop="username">
                         <div>
                             <el-input class="username" type="text" placeholder="電子信箱即為登入帳號" v-model="form.username"
                                 required></el-input>
                         </div>
                     </el-form-item>
+
                     <el-form-item label="登入密碼" prop="password">
                         <div>
                             <el-input type="text" placeholder="請輸入密碼" v-model="form.password" required></el-input>
@@ -121,46 +148,29 @@ const register = async (e) => {
                             <el-input type="text" placeholder="請輸入密碼" v-model="form.password_check" required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="營業地址" prop="address">
+                    <el-form-item label="身分證號" prop="taxId">
                         <div>
-                            <el-input type="text" class="address" placeholder="請輸入營業地址" v-model="form.address"
+                            <el-input type="text" placeholder="請輸入身分證字號" v-model="form.taxId" required></el-input>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="手機" prop="phoneNumber">
+                        <div>
+                            <el-input type="text" placeholder="請輸入連絡電話" v-model="form.phoneNumber" required></el-input>
+                        </div>
+                    </el-form-item>
+
+                    <el-form-item label="聯絡地址" prop="address">
+                        <div>
+                            <el-input type="text" class="address" placeholder="請輸入地址" v-model="form.address"
                                 required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="負責人姓名" prop="manager">
-                        <div>
-                            <el-input type="text" placeholder="請輸入負責人名稱" v-model="form.manager" required></el-input>
-                        </div>
-                    </el-form-item>
 
-                    <div class="phone" style="display: flex; align-items: center;">
 
-                        <el-form-item label="連絡電話" prop="regionNumber">
-
-                            <div class="country_code" style="display: flex; align-items: center;">
-                                <div> </div>
-                                <el-input type="text" placeholder="ex:03" v-model="form.regionNumber"
-                                    required></el-input>
-                            </div>
-
-                        </el-form-item>
-
-                        <el-form-item label="" prop="telephone">
-                            <div style="display: flex; align-items: center;">
-                                <el-input type="text" placeholder="請輸入電話" v-model="form.telephone" required></el-input>
-                            </div>
-                        </el-form-item>
-                    </div>
-
-                    <el-form-item label="統一編號" prop="vatNumber">
-                        <div>
-                            <el-input type="text" placeholder="請輸入統一編號" v-model="form.vatNumber" required></el-input>
-                        </div>
-                    </el-form-item>
 
 
                 </el-form>
-                <div class="button">
+                <div class="button-block">
                     <el-button type="danger" @click="resetForm()">清除</el-button>
                     <el-button type="primary" @click="register">註冊</el-button>
                 </div>
@@ -194,12 +204,20 @@ const register = async (e) => {
     border-radius: 8px;
     box-shadow: 0 1px 3px -1px #00000020;
 
-    .phone {
-        display: flex;
+    // .phone {
+    //     display: flex;
+    // }
+
+    .firstName {
+        width: 230px;
     }
 
     .country_code {
         width: 80px;
+    }
+
+    .gender {
+        width: 300px;
     }
 
     .address {
@@ -220,9 +238,10 @@ const register = async (e) => {
         font-weight: bold;
     }
 
-    .button {
+    .button-block {
         display: flex;
         justify-content: center;
+        // background-color: #3f5976;
     }
 
     .check-value {
@@ -233,6 +252,8 @@ const register = async (e) => {
         background-color: #f4f0f0;
         border-radius: 10px;
     }
+
+
 
 
 }

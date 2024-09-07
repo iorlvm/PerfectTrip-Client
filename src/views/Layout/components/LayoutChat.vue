@@ -1,8 +1,12 @@
 <script setup>
 import ChatRoom from '@/components/ChatRoom.vue'
 import { ref } from 'vue';
-const newMessage = ref(9);
+import { useUserStore } from '@/stores/user';
+import { useAuthStore } from '@/stores/auth';
+const newMessage = ref(0);
 const isOpen = ref(false);
+const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const roomStyle = ref([80, 40, 0.1]);
 
@@ -24,14 +28,11 @@ const closeChatRoom = () => {
         isOpen.value = false;
     }, 180);
 }
-
-// 聊天室想法: 再不點開的情況下每隔十五秒發送一次請求詢問是否有訊息更新
-// 點開以後進入組件才正式使用ws連線 ?
 </script>
 
 <template>
-    <div class="chat-layout">
-        <div :class="['chat-icon', { 'alert-new': newMessage > 0 }]" v-if="!isOpen" @click="openChatRoom">
+    <div class="chat-layout" v-if="authStore.isAuth && userStore.userInfo.token">
+        <div :class="['chat-icon', { 'alert-new': newMessage > 0 }, { 'display-none': isOpen }]" @click="openChatRoom">
             <el-icon class="icon">
                 <ChatLineSquare />
             </el-icon>
@@ -40,7 +41,7 @@ const closeChatRoom = () => {
                 <span>{{ newMessage < 100 ? newMessage : 99 }}</span>
             </div>
         </div>
-        <div v-else>
+        <div :class="{ 'display-none': !isOpen }">
             <div class="chat-room-container"
                 :style="{ width: roomStyle[0] + 'px', height: roomStyle[1] + 'px', opacity: roomStyle[2] }">
                 <div class="chat-room-bar">
@@ -52,7 +53,7 @@ const closeChatRoom = () => {
                     </div>
                 </div>
                 <div class="room-height">
-                    <ChatRoom />
+                    <ChatRoom @updateUnreads="newMessage = $event" />
                 </div>
             </div>
         </div>
@@ -62,6 +63,10 @@ const closeChatRoom = () => {
 
 <style lang="scss" scoped>
 .chat-layout {
+    .display-none {
+        display: none !important;
+    }
+
     position: fixed;
     z-index: 98;
     right: 15px;

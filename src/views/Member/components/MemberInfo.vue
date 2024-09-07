@@ -112,9 +112,9 @@ const addressClick = (e) => {
             </template>
             <template v-else>
                 <div class="afterclick">
-                    <div class="column">顯示名稱</div>
+                    <div class="column">暱稱</div>
                     <div class="input">
-                        <input class="text" type="text" placeholder="請輸入顯示名稱" v-model="userInfo.nickName" required>
+                        <input class="text" type="text" placeholder="請輸入暱稱" v-model="userInfo.nickName" required>
                     </div>
                     <div class="edit">
                         <a href="" @click="isNickNameEditClick">完成</a>
@@ -138,7 +138,7 @@ const addressClick = (e) => {
                         <el-radio-group v-model="userInfo.gender">
                             <el-radio :value="'女'">女性</el-radio>
                             <el-radio :value="'男'">男性 </el-radio>
-                            <el-radio :value="'不顯示'">不顯示</el-radio>
+                            <el-radio :value="'LBGT'">LBGT</el-radio>
                         </el-radio-group>
                     </div>
                     <div class="edit">
