@@ -9,7 +9,7 @@ import router from '@/router';
 const httpInstance = axios.create(
     {
         // 請求基礎路徑配置 (後端佈署後要更改)
-        baseURL: 'http://localhost:8080',
+        baseURL: 'http://localhost:8080/api',
         timeout: 5000,
     }
 )

@@ -86,7 +86,7 @@ const register = async (e) => {
     await companyRegisterAPI({ username, password, companyName, vatNumber, address, manager, telephone });
     // console.log({username, password, companyName, vatNumber, address, telephone})
 
-    router.go('views/Home/index.vue');
+    router.push('/store/manage');//討論導主頁?
 }
 
 
