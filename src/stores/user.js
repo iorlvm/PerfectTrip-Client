@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { userLoginAPI } from '@/apis/user';
-import {companyLoginAPI} from '@/apis/company'
+import { companyLoginAPI } from '@/apis/company'
 
 //會員登入//商家登入
 export const useUserStore = defineStore('user', () => {
@@ -13,9 +13,12 @@ export const useUserStore = defineStore('user', () => {
     const getCompanyInfo = async ({ username, password }) => {
         const res = await companyLoginAPI({ username, password });
         userInfo.value = res.data;
-        // console.log(res.data);
-        
+
     };
+
+    const updateInfo = (updateInfo) => {
+        userInfo.value = updateInfo.data;
+    }
 
     const clearUserInfo = () => {
         userInfo.value = {};
@@ -25,6 +28,7 @@ export const useUserStore = defineStore('user', () => {
         userInfo,
         getUserInfo,
         getCompanyInfo,
+        updateInfo,
         clearUserInfo
     }
 }, {
