@@ -11,8 +11,10 @@ export const useAuthStore = defineStore('auth', () => {
         isDoing = true;
 
         const userStore = useUserStore();
-        if (userStore.userInfo.token) {
-            const res = await authAPI();
+        const token = userStore.userInfo.refreshToken || userStore.userInfo.token;
+
+        if (token) {
+            const res = await authAPI(token);
             if (res.data.expired) {
                 userStore.clearUserInfo();
             }
@@ -25,5 +27,11 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         isAuth,
         authToken
+    }
+}, {
+    persist: {
+        enabled: true,
+        key: 'auth',
+        storage: sessionStorage,
     }
 });

@@ -1,7 +1,10 @@
 import httpInstance from "@/utils/axiosInit";
 
-export const authAPI = () => {
+export const authAPI = (token) => {
     return httpInstance({
-        url: '/auth-token'
+        url: '/auth-token',
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
     });
 }

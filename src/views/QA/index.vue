@@ -11,7 +11,7 @@ const qaList = ref([]);
 
 
 const getQAsAPI = async () => {
-    return fetch("http://localhost:8080/QAs", { method: 'GET' }).then(function (response) { // 接收到回傳的物件
+    return fetch("http://localhost:8080/api/faq", { method: 'GET' }).then(function (response) { // 接收到回傳的物件
         if (!response.ok) {
             throw new Error();
         }

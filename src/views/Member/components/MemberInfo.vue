@@ -1,17 +1,40 @@
 <script setup>
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+import { updateUserAPI } from '@/apis/user';
 
+const userStore = useUserStore();
+userStore.userInfo
 const userInfo = ref({
-    firstName: '宋',
-    lastName: '仲基',
-    nickName: '帥哥',
-    gender: '男',
-    username: '12345678@gmail.com',
-    phoneNumber: '091234567890',
-    country: '韓國',
-    birthday: '1993/07/13',
-    // address:'地址',
+    
+    firstName: userStore.userInfo.firstName,
+    lastName: userStore.userInfo.lastName,
+    nickname: userStore.userInfo.nickname,
+    gender: userStore.userInfo.gender,
+    username: userStore.userInfo.username,
+    phoneNumber: userStore.userInfo.phoneNumber,
+    birthday: userStore.userInfo.birthday,
+    address: userStore.userInfo.address,
+   
 });
+
+const save  = async (e) => {
+    e.preventDefault();
+    let  userId = userStore.userInfo.userId;
+    let  changeId = userStore.userInfo.changeId;
+   let firstName = userStore.userInfo.firstName;
+   let lastName =userStore.userInfo.lastName;
+   let nickname = userStore.userInfo.nickname;
+//    let gender = userStore.userInfo.gender;
+   let username = userStore.userInfo.username;
+   let phoneNumber = userStore.userInfo.phoneNumber;
+   let birthday = userStore.userInfo.birthday;
+   let address =userStore.userInfo.address;
+   await updateUserAPI({changeId,userId, firstName, lastName, nickname, username, phoneNumber, birthday, address})
+};
+
+
+
 const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     const year = date.getFullYear();
@@ -28,8 +51,9 @@ const gender = ref(false);
 const birthday = ref(false);
 const mail = ref(false);
 const tel = ref(false);
-const country = ref(false);
+// const country = ref(false);
 const address = ref(false);
+
 const nameEditClick = (e) => {
     e.preventDefault();
     isNameEdit.value = !isNameEdit.value;
@@ -54,10 +78,10 @@ const telClick = (e) => {
     e.preventDefault();
     tel.value = !tel.value
 }
-const countryClick = (e) => {
-    e.preventDefault();
-    country.value = !country.value
-}
+// const countryClick = (e) => {
+//     e.preventDefault();
+//     country.value = !country.value
+// }
 const addressClick = (e) => {
     e.preventDefault();
     address.value = !address.value
@@ -105,7 +129,7 @@ const addressClick = (e) => {
         <div class="row border-bottom">
             <template v-if="!isNickNameEdit">
                 <div class="column">顯示名稱</div>
-                <div class="info">{{ userInfo.nickName }}</div>
+                <div class="info">{{ userInfo.nickname }}</div>
                 <div class="edit">
                     <a href="" @click="isNickNameEditClick">編輯</a>
                 </div>
@@ -114,7 +138,7 @@ const addressClick = (e) => {
                 <div class="afterclick">
                     <div class="column">暱稱</div>
                     <div class="input">
-                        <input class="text" type="text" placeholder="請輸入暱稱" v-model="userInfo.nickName" required>
+                        <input class="text" type="text" placeholder="請輸入暱稱" v-model="userInfo.nickname" required>
                     </div>
                     <div class="edit">
                         <a href="" @click="isNickNameEditClick">完成</a>
@@ -136,8 +160,8 @@ const addressClick = (e) => {
                     <div class="column">性別</div>
                     <div class="input">
                         <el-radio-group v-model="userInfo.gender">
-                            <el-radio :value="'女'">女性</el-radio>
-                            <el-radio :value="'男'">男性 </el-radio>
+                            <el-radio :value="'FEMALE'">女性</el-radio>
+                            <el-radio :value="'MALE'">男性 </el-radio>
                             <el-radio :value="'LBGT'">LBGT</el-radio>
                         </el-radio-group>
                     </div>
@@ -223,15 +247,15 @@ const addressClick = (e) => {
         </div>
 
         <div class="row border-bottom">
-            <template v-if="!country">
+            <!-- <template v-if="!country">
                 <div class="column">國籍</div>
                 <div class="info">{{ userInfo.country }}</div>
                 <div class="edit">
                     <a href="" @click="countryClick">編輯</a>
                 </div>
-            </template>
-            <template v-else>
-                <div class="afterclick">
+            </template> -->
+            <!-- <template v-else> -->
+                <!-- <div class="afterclick">
                     <div class="column">國籍</div>
                     <div class="input">
                         <input class="text" type="text" placeholder="請輸入您的國籍" v-model="userInfo.country" required>
@@ -240,20 +264,20 @@ const addressClick = (e) => {
                         <a href="" @click="countryClick">完成</a>
                     </div>
                 </div>
-            </template>
+            </template> -->
         </div>
 
         <div class="row border-bottom"> <!--還沒做資料連動 -->
             <template v-if="!address">
                 <div class="column">地址</div>
-                <div class="info">韓國</div>
+                <div class="info">{{ userInfo.address }}</div>
                 <div class="edit"><a href="" @click="addressClick">編輯</a></div>
             </template>
             <template v-else>
                 <div class="afterclick">
                     <div class="column">地址</div>
                     <div class="input">
-                        <input class="text1" type="text" placeholder="請輸入您的地址" required>
+                        <input class="text1" type="text" placeholder="請輸入您的地址"  v-model="userInfo.address" required>
                     </div>
                     <div class="edit">
                         <a href="" @click="addressClick">完成</a>
@@ -263,7 +287,7 @@ const addressClick = (e) => {
 
         </div>
         <div class="save">
-            <el-button type="primary">儲存</el-button>
+            <el-button type="primary" @click="save" >儲存</el-button>
         </div>
 
 

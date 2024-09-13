@@ -1,20 +1,25 @@
 <script setup>
-
+import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import { userRegisterAPI } from '@/apis/user'
+
+const router = useRouter();
+
+
 const form = ref({
     firstName: '',
     lastName: '',
-    nickName: '',
+    nickname: '',
     gender: '',
+    address: '',
     username: '',
     password: '',
     password_check: '',
-    address: '',
-    phoneNamber: '',
+    phoneNumber: '',
     taxId: '',
     birthday: ''
 });
+
 
 
 const validatePasswordCheck = (rule, value, callback) => {
@@ -56,7 +61,7 @@ const rules = {
     //TODO身分證驗證
     taxId: [
         { required: true, message: '請輸入身分證', trigger: 'blur' },
-        
+        // { pattern: /^\d{10}$/, message: '請輸入正確的身分證', trigger: ['blur', 'change'] }只能驗證數字
     ],
 };
 
@@ -75,7 +80,7 @@ const register = async (e) => {
 
     let firstName = form.value.firstName;
     let lastName = form.value.lastName;
-    let nickName = form.value.nickName;
+    let nickname = form.value.nickname;
     let gender = form.value.gender;
     let username = form.value.username;
     let password = form.value.password;
@@ -83,8 +88,10 @@ const register = async (e) => {
     let phoneNumber = form.value.phoneNumber;
     let taxId = form.value.taxId;
     let birthday = form.value.birthday
-    await userRegisterAPI({ firstName, lastName, nickName, gender, username, password, address, phoneNumber, taxId, birthday })
-    // router.go('views/');
+    console.log({firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
+    await userRegisterAPI({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday })
+    console.log({firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
+    router.push('/');
 }
 
 
@@ -114,9 +121,9 @@ const register = async (e) => {
                         </el-form-item>
 
                     </div>
-                    <el-form-item label="暱稱" prop="nickName">
+                    <el-form-item label="暱稱" prop="nickname">
                         <div>
-                            <el-input type="text" placeholder="暱稱" v-model="form.nickName" required></el-input>
+                            <el-input type="text" placeholder="暱稱" v-model="form.nickname" required></el-input>
                         </div>
                     </el-form-item>
                     <el-form-item label="生日" prop="birthday">
@@ -125,8 +132,8 @@ const register = async (e) => {
 
                     <el-form-item class="gender" label="性別">
                         <el-select v-model="form.gender" placeholder="選單" clearable>
-                            <el-option label="男姓" value="男姓" />
-                            <el-option label="女性" value="女性" />
+                            <el-option label="男姓" value="MALE" />
+                            <el-option label="女性" value="FEMALE" />
                             <el-option label="LBGT" value="LBGT" />
                         </el-select>
                     </el-form-item>

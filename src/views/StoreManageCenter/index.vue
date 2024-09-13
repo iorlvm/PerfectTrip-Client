@@ -1,6 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { Menu as IconMenu, Message, Setting, List } from '@element-plus/icons-vue'
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const defaultOpeneds = ref([]);
 const defaultActive = ref('');
@@ -38,6 +43,13 @@ const navigators = [
         items: [
             { text: '旅館資訊', src: '/store/manage/setting/info' },
             { text: '帳號管理', src: '/store/manage/setting/account' },
+            {
+                text: '登出', click: e => {
+                    e.preventDefault();
+                    userStore.clearUserInfo();
+                    router.push('/');
+                }
+            },
         ]
     }
 ]
@@ -62,12 +74,24 @@ const navigators = [
                                     {{ navigator.title }}
                                 </div>
                             </template>
+
                             <template v-for="(item, index) in navigator.items" :key="index">
-                                <router-link :to="item.src" class="option-link">
-                                    <el-menu-item :index="String(navIndex) + '-' + String(index)">
-                                        {{ item.text }}
-                                    </el-menu-item>
-                                </router-link>
+                                <template v-if="(item.click)">
+                                    <div  class="option-link" @click="item.click">
+                                        <el-menu-item :index="String(navIndex) + '-' + String(index)">
+                                            {{ item.text }}
+                                        </el-menu-item>
+                                    </div>
+                                
+                                </template>
+                                <template v-else>
+                                    <router-link :to="item.src" class="option-link">
+                                        <el-menu-item :index="String(navIndex) + '-' + String(index)">
+                                            {{ item.text }}
+                                        </el-menu-item>
+                                    </router-link>
+                                </template>
+
                             </template>
                         </el-sub-menu>
                     </el-menu>

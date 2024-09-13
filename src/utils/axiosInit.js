@@ -5,11 +5,12 @@ import { useUserStore } from "@/stores/user";
 // import 'element-plus/theme-chalk/el-message.css';
 import router from '@/router';
 
+// 請求基礎路徑配置 (後端佈署後要更改)
+const baseURL = 'http://localhost:8080/api';
 
 const httpInstance = axios.create(
     {
-        // 請求基礎路徑配置 (後端佈署後要更改)
-        baseURL: 'http://localhost:8080',
+        baseURL: baseURL,
         timeout: 5000,
     }
 )
@@ -18,8 +19,8 @@ const httpInstance = axios.create(
 httpInstance.interceptors.request.use(
     config => {
         // 發送請求前 (攜帶Token)
-        const useStore = useUserStore();
-        const token = useStore.userInfo.token;
+        const userStore = useUserStore();
+        const token = userStore.userInfo.token;
         if (token) {
             // 當有token的時候 請求攜帶token
             config.headers.Authorization = `Bearer ${token}`;
@@ -38,22 +39,44 @@ httpInstance.interceptors.response.use(
         // 響應數據時
         return response.data;
     },
-    error => {
+    async error => {
         // 響應錯誤時
-        console.log(error);
+        // console.log(error);
 
         if (error.response.status === 401) {
+            const originalRequest = error.config;
+            const userStore = useUserStore();
+
+            if (!originalRequest._retry) {
+                originalRequest._retry = true;
+
+                // 攜帶reflash token 重新刷新
+                const refreshToken = userStore.userInfo.refreshToken;
+                if (refreshToken) {
+                    const tokenResponse = await axios.get(baseURL + '/fresh-token', {
+                        headers: {
+                            'Authorization': `Bearer ${refreshToken}`
+                        }
+                    });
+
+                    userStore.updateInfo(tokenResponse.data);
+
+                    // 使用新取得的token重新發送一次原本的請求
+                    originalRequest.headers['Authorization'] = `Bearer ${userStore.userInfo.token}`;
+                    return await httpInstance(originalRequest);
+                }
+            }
+
             ElMessage({
                 type: 'warning',
                 message: '使用者未登入'
             })
-            const userStore = useUserStore();
             userStore.clearUserInfo();
             router.push('/login');
         } else {
             ElMessage.error(error.response.data.message);
+            return Promise.reject(error);
         }
-        return Promise.reject(error);
     }
 );
 
