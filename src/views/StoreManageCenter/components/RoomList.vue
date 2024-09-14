@@ -1,42 +1,47 @@
 <template>
   <div>
     <header class="header">
-      <h2>Existing Rooms</h2>
-      <button @click="showModal = true" class="add-room-btn">Add New Room</button>
+      <h2>Existing Products</h2>
+      <button @click="showModal = true" class="add-room-btn">Add New Product</button>
     </header>
+
     <div class="filter-section">
-      <label for="filterType">Filter rooms by type</label>
+      <label for="filterType">Filter products by name</label>
       <select v-model="filterType" id="filterType">
-        <option value="">Select a room type to filter...</option>
-        <option v-for="type in roomTypes" :key="type" :value="type">{{ type }}</option>
+        <option value="">Select a product to filter...</option>
+        <option v-for="type in productTypes" :key="type" :value="type">{{ type }}</option>
       </select>
       <button @click="clearFilter" class="filter-btn">Clear Filter</button>
     </div>
+
     <table>
       <thead>
         <tr>
           <th>ID</th>
           <th>Company ID</th>
-          <th>Room Type</th>
-          <th>Room Price</th>
+          <th>Product Name</th>
+          <th>Max Occupancy</th>
+          <th>Price</th>
+          <th>Stock</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="room in paginatedRooms" :key="room.id">
-          <td>{{ room.id }}</td>
-          <td>{{ room.companyId }}</td>
-          <td>{{ room.type }}</td>
-          <td>{{ room.price }}</td>
+        <tr v-for="product in paginatedProducts" :key="product.productId">
+          <td>{{ product.productId }}</td>
+          <td>{{ product.companyId }}</td>
+          <td>{{ product.productName }}</td>
+          <td>{{ product.maxOccupancy }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.stock }}</td>
           <td>
-            <button @click="editRoom(room)" class="edit-btn">View/Edit</button>
-            <button @click="deleteRoom(room.id)" class="delete-btn">Delete</button>
+            <button @click="editProduct(product)" class="edit-btn">View/Edit</button>
+            <button @click="deleteProduct(product.productId)" class="delete-btn">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- 分页标签 -->
     <div class="pagination">
       <button 
         v-for="page in totalPages" 
@@ -48,36 +53,33 @@
       </button>
     </div>
 
-    <!-- Add New Room Modal -->
+    <!-- Modal for Add/Edit Product -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
-        <span class="close" @click="showModal = false">&times;</span>
-        <h2>Add a New Room</h2>
-        <form @submit.prevent="addRoom">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
+        <form @submit.prevent="isEditing ? updateProduct() : addProduct()">
           <div class="form-group">
             <label for="companyId">Company ID</label>
-            <input type="number" v-model="newRoom.companyId" id="companyId" required />
+            <input type="number" v-model="currentProduct.companyId" id="companyId" required />
           </div>
           <div class="form-group">
-            <label for="changeId">Change ID</label>
-            <input type="number" v-model="newRoom.changeId" id="changeId" required />
+            <label for="productName">Product Name</label>
+            <input type="text" v-model="currentProduct.productName" id="productName" required />
           </div>
           <div class="form-group">
-            <label for="roomType">Room Type</label>
-            <select v-model="newRoom.type" id="roomType" required>
-              <option disabled value="">Select a room type</option>
-              <option v-for="type in roomTypes" :key="type" :value="type">{{ type }}</option>
-            </select>
+            <label for="maxOccupancy">Max Occupancy</label>
+            <input type="number" v-model="currentProduct.maxOccupancy" id="maxOccupancy" required />
           </div>
           <div class="form-group">
-            <label for="roomPrice">Room Price</label>
-            <input type="number" v-model="newRoom.price" id="roomPrice" required />
+            <label for="price">Price</label>
+            <input type="number" v-model="currentProduct.price" id="price" required />
           </div>
           <div class="form-group">
-            <label for="roomPhoto">Room Photo</label>
-            <input type="file" @change="onFileChange" id="roomPhoto" required />
+            <label for="stock">Stock</label>
+            <input type="number" v-model="currentProduct.stock" id="stock" required />
           </div>
-          <button type="submit" class="save-btn">Save Room</button>
+          <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
         </form>
       </div>
     </div>
@@ -85,105 +87,210 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 
+// Modal state and new product form data
 const showModal = ref(false);
-
-const newRoom = reactive({
+const isEditing = ref(false); // 是否處於編輯模式
+const currentProduct = reactive({
   companyId: '',
-  changeId: '',
-  type: '',
+  productName: '',
+  maxOccupancy: '',
   price: '',
-  photo: null,
+  stock: '',
+  productId: null, // 用來存儲正在編輯的產品的ID
 });
 
-const rooms = ref([
-  { id: 1, companyId: 101, type: 'Single bed room', price: 200 },
-  { id: 2, companyId: 102, type: 'Double bed room', price: 500 },
-  { id: 3, companyId: 103, type: 'Triple Suite', price: 1000 },
-  { id: 4, companyId: 101, type: 'Single bed room', price: 150 },
-  { id: 5, companyId: 102, type: 'Family Suite', price: 700 },
-  { id: 6, companyId: 103, type: 'Triple Suite 2', price: 300 },
-]);
+const products = ref([]);  // 用來存放從後端獲取的產品數據
 
-const roomTypes = ref(['Single bed room', 'Double bed room', 'Triple Suite', 'Family Suite']);
+// 在組件加載時，從後端撈取所有產品
+onMounted(async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const response = await fetch('http://localhost:8080/product/all', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer admin`  // 添加token到請求頭部
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      products.value = data;  // 將數據存入 products 中
+    } else {
+      console.error('產品選取失敗');
+    }
+  } catch (error) {
+    console.error('選取產品的時候發生錯誤:', error);
+  }
+});
+
+// Product filtering
+const productTypes = ref(['Default Product Name', 'Sample Product']);
 const filterType = ref('');
 
+// Pagination logic
 const currentPage = ref(1);
-const roomsPerPage = 6;
+const productsPerPage = 6;
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredRooms.value.length / roomsPerPage);
+  return Math.ceil(filteredProducts.value.length / productsPerPage);
 });
 
-const filteredRooms = computed(() => {
+const filteredProducts = computed(() => {
   if (filterType.value) {
-    return rooms.value.filter(room => room.type === filterType.value);
+    return products.value.filter(product => product.productName === filterType.value);
   }
-  return rooms.value;
+  return products.value;
 });
 
-const paginatedRooms = computed(() => {
-  const start = (currentPage.value - 1) * roomsPerPage;
-  const end = start + roomsPerPage;
-  return filteredRooms.value.slice(start, end);
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  return filteredProducts.value.slice(start, end);
 });
 
-const addRoom = async () => {
-  const formData = new FormData();
-  formData.append('companyId', newRoom.companyId);
-  formData.append('changeId', newRoom.changeId);
-  formData.append('roomType', newRoom.type);
-  formData.append('roomPrice', newRoom.price);
-  formData.append('photo', newRoom.photo);
+// Add Product
+const addProduct = async () => {
+  const formData = {
+    companyId: currentProduct.companyId,  
+    productName: currentProduct.productName,
+    maxOccupancy: currentProduct.maxOccupancy,
+    price: currentProduct.price,
+    stock: currentProduct.stock,
+  };
+
+  const token = localStorage.getItem('authToken');
 
   try {
-    const response = await fetch('http://localhost:8080/rooms/add/new-room', {
+    const response = await fetch('http://localhost:8080/product/add', {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer admin`
+      },
+      body: JSON.stringify(formData),
     });
     const data = await response.json();
     if (response.ok) {
-      rooms.value.push({
-        id: data.id,
+      products.value.push({
+        productId: data.productId,
         companyId: data.companyId,
-        type: data.roomType,
-        price: data.roomPrice,
+        productName: data.productName,
+        maxOccupancy: data.maxOccupancy,
+        price: data.price,
+        stock: data.stock,
       });
-      newRoom.companyId = '';
-      newRoom.changeId = '';
-      newRoom.type = '';
-      newRoom.price = '';
-      newRoom.photo = null;
+      resetForm();
       showModal.value = false;
     } else {
-      console.error('Error adding room:', data);
+      console.error('Error adding product:', data);
     }
   } catch (error) {
-    console.error('Error adding room:', error);
+    console.error('Error adding product:', error);
   }
 };
 
-const onFileChange = (event) => {
-  const file = event.target.files[0];
-  newRoom.photo = file;
+// Update Product
+const updateProduct = async () => {
+  const formData = new FormData();
+  formData.append('productName', currentProduct.productName);
+  formData.append('roomPrice', currentProduct.price);
+  formData.append('maxOccupancy', currentProduct.maxOccupancy || 0);
+  formData.append('stock',currentProduct.stock);  
+  if (currentProduct.photo) {
+    formData.append('photo', currentProduct.photo);
+  }
+
+  const token = localStorage.getItem('authToken');
+
+  try {
+    const response = await fetch(`http://localhost:8080/product/update/${currentProduct.productId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer admin`,
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      // 更新成功的處理
+      const updatedProduct = await response.json();
+      console.log('產品已更新:', updatedProduct);
+    } else {
+      console.error('更新產品失敗');
+    }
+  } catch (error) {
+    console.error('更新產品時發生錯誤:', error);
+  }
 };
 
+
+// Edit Product: 打開燈箱，並載入選中的產品數據
+const editProduct = (product) => {
+  isEditing.value = true;
+  currentProduct.companyId = product.companyId;  
+  currentProduct.productName = product.productName;
+  currentProduct.maxOccupancy = product.maxOccupancy;
+  currentProduct.price = product.price;
+  currentProduct.stock = product.stock;
+  currentProduct.productId = product.productId; 
+  showModal.value = true;
+};
+
+// Reset form after product is added
+const resetForm = () => {
+  currentProduct.companyId = '';
+  currentProduct.productName = '';
+  currentProduct.maxOccupancy = '';
+  currentProduct.price = '';
+  currentProduct.stock = '';
+  currentProduct.productId = null;
+  isEditing.value = false;
+};
+
+// Close modal
+const closeModal = () => {
+  resetForm();
+  showModal.value = false;
+};
+
+// Clear filter
 const clearFilter = () => {
   filterType.value = '';
 };
 
-const editRoom = (room) => {
-  console.log(`Editing room: ${room.type}`);
-};
+// Delete product
+const deleteProduct = async (productId) => {
+  const confirmed = confirm("確定要刪除這個產品嗎？");
 
-const deleteRoom = (roomId) => {
-  rooms.value = rooms.value.filter(room => room.id !== roomId);
+  if (!confirmed) return;
+
+  const token = localStorage.getItem('authToken');
+
+  try {
+    const response = await fetch(`http://localhost:8080/product/delete/room/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer admin`,
+      }
+    });
+
+    if (response.ok) {
+      products.value = products.value.filter(product => product.productId !== productId);
+      console.log(`產品ID ${productId} 已成功刪除`);
+    } else {
+      console.error('刪除產品失敗');
+    }
+  } catch (error) {
+    console.error('刪除產品時發生錯誤:', error);
+  }
 };
 </script>
 
+
+
+
 <style scoped>
-/* Header 样式 */
 .header {
   display: flex;
   justify-content: space-between;
@@ -193,19 +300,20 @@ const deleteRoom = (roomId) => {
 
 .add-room-btn {
   padding: 10px 20px;
-  background-color: lightcoral;
+  background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .add-room-btn:hover {
-  background-color: lightcoral
+  background-color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
-
 
 .filter-section {
   margin-bottom: 20px;
@@ -216,21 +324,22 @@ const deleteRoom = (roomId) => {
 .filter-btn {
   margin-left: 10px;
   padding: 10px 15px;
-  background-color: lightcoral;
+  background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .filter-btn:hover {
-  background-color: lightcoral;
+  background-color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* 表格样式 */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -242,7 +351,7 @@ table {
 }
 
 table thead {
-  background-color: #343a40;
+  background-color: #007bff;
   color: #fff;
   text-align: left;
 }
@@ -259,7 +368,7 @@ table th {
 }
 
 table tr:hover {
-  background-color: #f8f9fa;
+  background-color: #f0f4ff;
 }
 
 table td {
@@ -275,7 +384,7 @@ table td button {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 table td button:hover {
@@ -284,14 +393,13 @@ table td button:hover {
 
 table td button:last-child {
   margin-right: 0;
-  background-color: #dc3545;
+  background-color: mediumblue
 }
 
 table td button:last-child:hover {
-  background-color: lightcoral;
+  background-color: mediumblue;
 }
 
-/* 分页样式 */
 .pagination {
   display: flex;
   justify-content: center;
@@ -307,7 +415,7 @@ table td button:last-child:hover {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .pagination button.active {
@@ -316,9 +424,9 @@ table td button:last-child:hover {
 
 .pagination button:hover {
   background-color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal 样式 */
 .modal {
   display: flex;
   align-items: center;
@@ -348,6 +456,7 @@ table td button:last-child:hover {
   right: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #333;
 }
 
 .modal h2 {
@@ -369,20 +478,12 @@ table td button:last-child:hover {
 }
 
 .modal .form-group input[type="text"],
-.modal .form-group input[type="number"],
-.modal .form-group select {
+.modal .form-group input[type="number"] {
   width: 100%;
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ced4da;
   font-size: 16px;
-  color: #495057;
-}
-
-.modal .form-group input[type="file"] {
-  width: 100%;
-  padding: 6px;
-  font-size: 14px;
   color: #495057;
 }
 
@@ -395,10 +496,12 @@ table td button:last-child:hover {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .modal .save-btn:hover {
   background-color: #0056b3;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 </style>
+
