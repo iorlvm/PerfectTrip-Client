@@ -4,7 +4,7 @@ import httpInstance from "@/utils/axiosInit";
 
 export const createOrderAPI = ({couponId, beginDate, endDate, companyId, productList}) => {
     return httpInstance({
-        url:'api/orders',
+        url:'orders',
         method: 'POST',
         data: {
             couponId,
@@ -19,7 +19,7 @@ export const createOrderAPI = ({couponId, beginDate, endDate, companyId, product
 //訂單管理-取得訂單   GetOrder
 export const getOrderAPI = () => {
     return httpInstance({
-        url:`api/orders`,
+        url:`orders`,
         method: 'GET',
        
     })
@@ -28,10 +28,8 @@ export const getOrderAPI = () => {
 //訂單管理-取得一筆訂單   GetOrder
 export const getOrderByIdAPI = (orderId) => {
     return httpInstance({
-        url:`api/orders/${orderId}`,
+        url:`orders/${orderId}`,
         method: 'GET',
-        
-       
     })
 }
 
@@ -40,7 +38,7 @@ export const getOrderByIdAPI = (orderId) => {
 
 export const updateOrderAPI = ({couponId, beginDate, endDate, companyId, productList}) => {
     return httpInstance({
-        url:'api/orders',
+        url:'orders',
         method: 'POST',
         data: {
             couponId,
