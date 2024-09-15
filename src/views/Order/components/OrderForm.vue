@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from "vue-router";
-
+import { getOrderByIdAPI } from '@/apis/order';
 const props = defineProps([
     'active'
 ])
@@ -102,9 +102,12 @@ const submitForm = () => {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
     const orderId = route.params.id;
     //TODO 利用這個值去撈資料
+    const res = await getOrderByIdAPI(orderId);
+    console.log(res.data);
+
 });
 
 </script>
