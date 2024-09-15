@@ -14,10 +14,6 @@ const roomData = ref({
     guestCount: 4,
     facilities: [
         {
-            icon: '<i class="bi bi-house"></i>',
-            text: '客房面積：99,999 平方公尺'
-        },
-        {
             icon: '<i class="bi bi-check-lg"></i>',
             text: '兩張大床'
         },
@@ -41,12 +37,6 @@ const roomData = ref({
             price: "19,654",
             notice: "預定須知",
             stockOptions: 3,
-            selectedRoomCount: 0
-        },
-        {
-            price: "25,000",
-            notice: "預定須知",
-            stockOptions: 2,
             selectedRoomCount: 0
         }
     ]

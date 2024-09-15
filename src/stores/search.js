@@ -56,20 +56,48 @@ export const useSearchStore = defineStore('Search', () => {
     const changeOrderBy = async (newOrderBy) => {
         orderBy.value = newOrderBy;
         page.value = 0;
+        isProcessing = true;
         await getProductList();
     }
 
     let hasMore = true;
+    let isProcessing = true;
     const loadMoreResult = async () => {
-        if (!hasMore) return;
+        if (isProcessing || !hasMore) return;
+        isProcessing = true;
         page.value = page.value + 1;
-        await getProductList(true);
+
+        const destination = searchQuery.value.destination;
+        const adultCount = searchQuery.value.adultCount
+        const childCount = searchQuery.value.childCount
+        const roomCount = searchQuery.value.roomCount
+        const startDate = searchQuery.value.dateRange[0].split('T')[0];
+        const endDate = searchQuery.value.dateRange[1].split('T')[0];
+
+        const res = await searchAPI({
+            destination,
+            adultCount,
+            childCount,
+            roomCount,
+            startDate,
+            endDate,
+            page: page.value,
+            size: pageSize,
+            orderBy: orderBy.value
+        })
+
+        resultList.value.push(res.data);
+
+        total.value = res.total;
+        hasMore = resultList.value.length < total.value;
+        isProcessing = false;
     }
 
     const pageSize = 20;
-    const getProductList = async (load = false) => {
+    const getProductList = async () => {
         const route = useRoute();
         const query = route.query;
+        page.value = 0;
 
         searchQuery.value.destination = query.destination || '';
         searchQuery.value.dateRange = [query.startDate, query.endDate] || [];
@@ -87,19 +115,16 @@ export const useSearchStore = defineStore('Search', () => {
             roomCount: query.roomCount,
             startDate,
             endDate,
-            page: page.value,
+            page: 0,
             size: pageSize,
             orderBy: orderBy.value
         })
 
-        if (load) {
-            resultList.value.append(res.data);
-        } else {
-            resultList.value = res.data;
-        }
+        resultList.value = res.data;
 
         total.value = res.total;
         hasMore = resultList.value.length < total.value;
+        isProcessing = false;
     }
 
     return {
