@@ -42,8 +42,7 @@ const clearDestination = () => {
 };
 
 const search = () => {
-  searchStore.getProductList(searchQuery.value);
-  router.push("/search");
+  searchStore.handleSearch(searchQuery.value);
 };
 
 const locations = ref([]);
