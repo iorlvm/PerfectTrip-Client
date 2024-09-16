@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import router from "@/router";
 import { useSearchStore } from "@/stores/search";
 
 const searchStore = useSearchStore();

@@ -2,6 +2,7 @@
 import Tag from "@/components/Tag.vue";
 import { ref, computed, onMounted } from "vue";
 import router from "@/router";
+import { useRoute } from 'vue-router';
 
 const rateValue = ref(7.0);
 const convertedScore = computed(() => {
@@ -15,11 +16,24 @@ const props = defineProps([
   'adultCount'
 ])
 
+const route = useRoute();
 
 const routeToProduct = (id) => {
-  router.push(
-    `/company/${id}`
-  )
+  const query = route.query;
+
+  const startDate = query.startDate ? query.startDate.split('T')[0] : '';
+  const endDate = query.endDate ? query.endDate.split('T')[0] : '';
+
+  router.push({
+    path: `/company/${id}`,
+    query: {
+      startDate,  // 日期範圍的開始日期
+      endDate,    // 日期範圍的結束日期
+      adultCount: query.adultCount,
+      childCount: query.childCount,
+      roomCount: query.roomCount
+    }
+  })
 }
 
 const getRatingMessage = (score) => {
