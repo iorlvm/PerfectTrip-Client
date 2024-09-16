@@ -36,7 +36,15 @@ httpInstance.interceptors.request.use(
 // 響應攔截器
 httpInstance.interceptors.response.use(
     response => {
-        // 響應數據時
+        // 響應數據時 同一處理錯誤訊息
+        const res = response.data;
+        if (res && !res.success) {
+            ElMessage({
+                type: 'warning',
+                message: res.errorMsg
+            })
+        }
+
         return response.data;
     },
     async error => {
