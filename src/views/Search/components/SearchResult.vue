@@ -1,32 +1,45 @@
 <script setup>
 import { ref } from "vue";
+import { useSearchStore } from "@/stores/search";
 
-const orederBy = ref("Option1");
+const searchStore = useSearchStore();
+
+const orederBy = ref("default");
 const isOptionOpen = ref(false);
 const isOnSelect = ref(false);
 
 const orderOptions = [
   {
-    value: "Option1",
+    value: "default",
     label: "為你推薦",
   },
   {
-    value: "Option2",
+    value: "price",
     label: "價格優先",
   },
   {
-    value: "Option3",
+    value: "score",
     label: "住宿評價",
   },
 ];
+
+const changeOrder = () => {
+  isOnSelect.value = false;
+  if (orederBy.value == 'default') {
+    searchStore.changeOrderBy('price');
+  } else {
+    searchStore.changeOrderBy(orederBy.value);
+  }
+}
+
 </script>
 
 <template>
   <div class="search-result">
-    <h3>不知道是哪個地方：找到 <strong>9,999</strong> 間住宿</h3>
+    <h3>{{ searchStore.searchQuery.destination }}：找到 <strong>{{ searchStore.total }}</strong> 間住宿</h3>
     <div class="select" :class="isOnSelect || isOptionOpen ? 'on-select' : ''">
       <el-select v-model="orederBy" placeholder="Select" size="large" style="width: 240px"
-        @visible-change="isOptionOpen = !isOptionOpen" @change="isOnSelect = true" @blur="isOnSelect = false">
+        @visible-change="isOptionOpen = !isOptionOpen" @change="isOnSelect = true" @blur="changeOrder">
         <template #prefix>
           <span class="arrow">⮃</span>
         </template>

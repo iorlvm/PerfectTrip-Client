@@ -1,77 +1,145 @@
 <script setup>
 import Tag from "@/components/Tag.vue";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import router from "@/router";
+import { useRoute } from 'vue-router';
 
-const rateValue = ref(9.2);
+const rateValue = ref(7.0);
 const convertedScore = computed(() => {
   const score = rateValue.value / 2;
   return score;
 });
 
+const props = defineProps([
+  'product',
+  'days',
+  'adultCount'
+])
+
+const route = useRoute();
+
 const routeToProduct = (id) => {
-  router.push(
-    `/company/${id}`
-  )
+  const query = route.query;
+
+  const startDate = query.startDate ? query.startDate.split('T')[0] : '';
+  const endDate = query.endDate ? query.endDate.split('T')[0] : '';
+
+  router.push({
+    path: `/company/${id}`,
+    query: {
+      startDate,  // 日期範圍的開始日期
+      endDate,    // 日期範圍的結束日期
+      adultCount: query.adultCount,
+      childCount: query.childCount,
+      roomCount: query.roomCount
+    }
+  })
 }
 
+const getRatingMessage = (score) => {
+  if (score > 9) {
+    return "超棒";
+  } else if (score > 8) {
+    return "推薦";
+  } else if (score > 7) {
+    return "不錯";
+  } else if (score > 6) {
+    return "一般";
+  } else if (score > 5) {
+    return "可接受";
+  } else if (score > 4) {
+    return "不推薦";
+  } else {
+    return "差勁";
+  }
+};
+
+const getLongRatingMessage = (score) => {
+  if (score > 9) {
+    return "非常值得推薦！";
+  } else if (score > 8) {
+    return "非常值得一試！";
+  } else if (score > 7) {
+    return "值得考慮一下。";
+  } else if (score > 6) {
+    return "還算不錯啦。";
+  } else if (score > 5) {
+    return "勉強可以接受。";
+  } else if (score > 4) {
+    return "不太建議嘗試。";
+  } else {
+    return "強烈不推薦！";
+  }
+};
+
+
+const formatScore = (score) => {
+  const limitedScore = Math.max(0, Math.min(10, score));
+
+  return limitedScore.toFixed(1);
+};
+
+onMounted(() => {
+  rateValue.value = formatScore(props.product.score);
+})
 
 </script>
 
 <template>
   <div class="hotel-card">
-    <div class="image"><img src="" alt="" /></div>
+    <div class="image"><img :src="product.photo" alt="" /></div>
     <div class="info">
       <div class="row">
         <div class="col title">
-          <h3>這家旅館名字超級長居然有一共二十六個中文字的旅館名稱</h3>
+          <h3>{{ product.companyName }}</h3>
           <p><el-rate v-model="convertedScore" disabled></el-rate></p>
           <p>
-            <span>國家, 地點</span>
-            <span>顯示在地圖上</span>
+            <span>{{ product.country }}, {{ product.city }}</span>
           </p>
         </div>
         <div class="col rate">
           <div class="score">
             <div class="comment">
               <h3>
-                很讚讚喔
+                {{ getRatingMessage(rateValue) }}
               </h3>
               <p class="small">
-                9,999則評語
+                {{ product.commentCount }}則評語
               </p>
             </div>
             <div class="number">{{ rateValue }}</div>
           </div>
-          <div class="feature">WOC! 這間 9.2 分</div>
+          <div class="feature">{{ getLongRatingMessage(rateValue) }}</div>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <tag>年終回饋</tag>
+          <tag v-if="product.isPromotion">促銷中</tag>
         </div>
       </div>
       <div class="row">
         <div class="col">
           <div class="details-info">
             <div class="narration">
-              <h5>標準百人房</h5>
-              <p>1 張國軍大通鋪</p>
+              <h5>
+                <span v-for="(name, index) in product.products" :key="index">
+                  {{ (index > 0 ? '、' : '') + name }}
+                </span>
+              </h5>
             </div>
             <div class="remark">
-              <p>包含三餐</p>
-              <p><i class="bi bi-check-lg"></i> 可免費取消</p>
+              <p v-if="product.includesBreakfast">包含早餐</p>
+              <p v-if="product.allowFreeCancellation"><i class="bi bi-check-lg"></i> 可免費取消</p>
               <p><i class="bi bi-check-lg"></i> 無須訂金</p>
             </div>
-            <div class="stock">此價格的客房在本站僅剩1間</div>
           </div>
         </div>
         <div class="col price">
           <div class="price-info">
-            <p>365 晚、 9,999 位成人</p>
-            <p class="large">TWD 9,999,999</p>
+            <p>{{ days }} 晚、 {{ adultCount }} 位成人</p>
+            <p class="large">TWD {{ product.price }}</p>
             <p class="small">不含稅費與其他費用</p>
-            <el-button type="primary" @click="routeToProduct(1)"> <!-- 靜態暫時寫死 記得要換 -->
+            <el-button type="primary" @click="routeToProduct(product.companyId)"> <!-- 靜態暫時寫死 記得要換 -->
               &nbsp;查看客房供應情況&nbsp;<el-icon>
                 <ArrowRightBold />
               </el-icon></el-button>

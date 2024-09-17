@@ -1,87 +1,182 @@
 <script setup>
-import ManageToolbar from './ManageToolbar.vue';
+import { ref } from 'vue';
+import axios from 'axios';
+import { onMounted } from 'vue';
 
-function editDiscount(id) {
-    // 編輯折扣
+// 表單欄位
+const discountTitle = ref('');
+const discountRate = ref(0);
+const startDate = ref('');
+const endDate = ref('');
+
+// 控制編輯模式的狀態
+const isEditing = ref(false);
+const editingDiscountId = ref(null);
+
+// 折扣列表
+const discounts = ref([]);
+
+// 取得已有的折扣
+function fetchDiscounts() {
+  axios.get('http://localhost:8080/discount/company/3') // 假設公司ID為1
+    .then(response => {
+      discounts.value = response.data;
+    })
+    .catch(error => {
+      console.error("Error fetching discounts:", error);
+    });
 }
 
+// 打開編輯視窗
+function editDiscount(discount) {
+    isEditing.value = true;
+    editingDiscountId.value = discount.productDiscountId;
+    // 填充表單資料
+    discountTitle.value = discount.discountTitle;
+    discountRate.value = discount.discountRate;
+    startDate.value = new Date(discount.startDateTime).toISOString().substring(0, 10);
+    endDate.value = new Date(discount.endDateTime).toISOString().substring(0, 10);
+}
+
+// 保存編輯後的折扣
+function saveEditedDiscount() {
+    const updatedDiscount = {
+        discountTitle: discountTitle.value,
+        discountRate: discountRate.value,
+        startDateTime: new Date(startDate.value).toISOString(),
+        endDateTime: new Date(endDate.value).toISOString(),
+    };
+
+    axios.put(`http://localhost:8080/discount/update/${editingDiscountId.value}`, updatedDiscount)
+      .then(() => {
+        // 成功後重新取得折扣列表並關閉編輯模式
+        fetchDiscounts();
+        isEditing.value = false;
+        // 清空表單
+        clearForm();
+      })
+      .catch(error => {
+        console.error("Error updating discount:", error);
+      });
+}
+
+// 清空表單
+function clearForm() {
+    discountTitle.value = '';
+    discountRate.value = 0;
+    startDate.value = '';
+    endDate.value = '';
+}
+
+// 刪除折扣
 function deleteDiscount(id) {
-    // 刪除折扣
+    axios.delete(`http://localhost:8080/discount/delete/${id}`)
+      .then(() => {
+        // 更新折扣列表
+        fetchDiscounts();
+      })
+      .catch(error => {
+        console.error("Error deleting discount:", error);
+      });
 }
+
+// 新增折扣
+function addDiscount() {
+    const newDiscount = {
+        discountTitle: discountTitle.value,
+        discountRate: discountRate.value,
+        startDate: new Date(startDate.value).toISOString(),  // 確保 startDate 被正確轉換
+        endDate: new Date(endDate.value).toISOString(),
+    };
+
+    // 發送 POST 請求，並包含 Authorization 標頭
+    axios.post('http://localhost:8080/discount/add', newDiscount, {
+        headers: {
+            'Authorization': `Bearer company`  
+        }
+    })
+    .then(() => {
+        // 清空表單
+        clearForm();
+
+        // 更新折扣列表
+        fetchDiscounts();
+    })
+    .catch(error => {
+        console.error("Error adding discount:", error);
+    });
+}
+
+// 初始化時取得已有的折扣
+onMounted(() => {
+    fetchDiscounts();  // 組件載入後自動調用此函數來取得資料
+});
+fetchDiscounts();
 </script>
 
 <template>
-    <ManageToolbar>
-        <li>左選項1</li>
-        <li>左選項2</li>
-    </ManageToolbar>
-    <el-scrollbar>
-        <div class="body">
-            <div class="discount-management">
-                <div class="title">
-                    <h1>房型折扣管理</h1>
-                </div>
-
-                <section class="discount-list">
-                    <h2>現有折扣</h2>
-                    <ul>
-                        <li>
-                            <h3>標準房 - 夏季折扣</h3>
-                            <p>折扣 ：20%</p>
-                            <p>有效期：2024-06-01 至 2024-12-31</p>
-                            <div class="actions">
-                                <button @click="editDiscount()">編輯</button>
-                                <button @click="deleteDiscount()">刪除</button>
-                            </div>
-                        </li>
-                        <!-- 添加更多折扣 -->
-                    </ul>
-                </section>
-
-                <section class="add-discount">
-                    <h2>添加新折扣</h2>
-                    <form>
-                        <label for="title">標題</label>
-                        <input type="input" id="title" name="title" required>
-
-                        <label for="roomType">房型</label>
-                        <select name="roomType" id="roomType">
-                            <option value="standard">標準房</option>
-                            <option value="deluxe">豪華房</option>
-                        </select>
-
-                        <label for="discount">折扣 （％）</label>
-                        <input type="number" id="discount" name="discount" min="0" max="100" required>
-
-                        <label for="startDate">開始日期</label>
-                        <input type="date" id="startDate" name="startDate" required>
-
-                        <label for="endDate">結束日期</label>
-                        <input type="date" id="endDate" name="endDate" required>
-                        <button>新增</button>
-                    </form>
-                </section>
-
-                <footer>
-                    <p>&copy; 2024 飯店管理平台</p>
-                </footer>
-            </div>
+    <div class="discount-management">
+        <div class="title">
+            <h1>房型折扣管理</h1>
         </div>
-    </el-scrollbar>
+
+        <!-- 現有折扣列表 -->
+        <section class="discount-list">
+            <h2>現有折扣</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>優惠標題</th>
+                        <th>折扣 (%)</th>
+                        <th>有效期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="discount in discounts" :key="discount.productDiscountId">
+                        <td>{{ discount.discountTitle }}</td>
+                        <td>{{ discount.discountRate }}</td>
+                        <td>
+                            {{ new Date(discount.startDateTime).toLocaleDateString('en-CA') }} - 
+                            {{ new Date(discount.endDateTime).toLocaleDateString('en-CA') }}
+                        </td>
+                        <td>
+                            <button class="edit" @click="editDiscount(discount)">編輯</button>
+                            <button class="delete" @click="deleteDiscount(discount.productDiscountId)">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 添加新折扣或編輯折扣 -->
+        <section class="add-discount">
+            <h2 v-if="isEditing">編輯折扣</h2>
+            <h2 v-else>添加新折扣</h2>
+            <form @submit.prevent="isEditing ? saveEditedDiscount() : addDiscount()">
+                <label for="title">標題</label>
+                <input v-model="discountTitle" type="text" id="title" name="title" required>
+
+                <label for="discount">折扣 （％）</label>
+                <input v-model="discountRate" type="number" id="discount" name="discount" min="0" max="100" required>
+
+                <label for="startDate">開始日期</label>
+                <input v-model="startDate" type="date" id="startDate" name="startDate" required>
+
+                <label for="endDate">結束日期</label>
+                <input v-model="endDate" type="date" id="endDate" name="endDate" required>
+                <button type="submit">{{ isEditing ? '保存編輯' : '新增' }}</button>
+            </form>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 飯店管理平台</p>
+        </footer>
+    </div>
 </template>
 
-<style lang="scss" scoped>
-$primary-color: #007bff;
-$danger-color: #dc3545;
-$confirm-color: #28a745;
 
-.body {
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
+<style scoped>
 .discount-management {
     min-width: 800px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -103,61 +198,52 @@ $confirm-color: #28a745;
         }
     }
 
-    .discount-list,
-    .add-discount {
+    table {
+        width: 100%;
+        border-collapse: collapse;
         margin-bottom: 20px;
 
-        h2 {
-            font-size: 20px;
-            color: #333;
-            border-bottom: 2px solid $primary-color;
-            padding-bottom: 5px;
+        th, td {
+            padding: 10px;
+            border: 1px solid #e7e7e7;
+            text-align: left;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
+        th {
+            background-color: #007bff;
+            color: white;
+        }
 
-            li {
-                background-color: #f1f1f1;
-                border: 1px solid #e7e7e7;
-                padding: 15px;
-                margin-bottom: 10px;
+        td {
+            background-color: #f1f1f1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+
+            button {
+                padding: 5px 10px;
+                color: white;
+                border: none;
                 border-radius: 4px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                cursor: pointer;
+                transition: background-color 0.3s;
 
-                h3,
-                p {
-                    margin: 5px 0;
+                &.edit {
+                    background-color: #28a745; /* confirm color */
                 }
 
-                .actions {
-                    display: flex;
-                    gap: 10px;
+                &.edit:hover {
+                    background-color: #218838;
+                }
 
-                    button {
-                        padding: 5px 10px;
-                        background-color: $confirm-color;
-                        color: #fff;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        transition: background-color 0.3s;
+                &.delete {
+                    background-color: #dc3545; /* danger color */
+                }
 
-                        &:hover {
-                            background-color: darken($confirm-color, 10%);
-                        }
-
-                        &:nth-child(2) {
-                            background-color: $danger-color;
-
-                            &:hover {
-                                background-color: darken($danger-color, 10%);
-                            }
-                        }
-                    }
+                &.delete:hover {
+                    background-color: #c82333;
                 }
             }
         }
@@ -173,8 +259,7 @@ $confirm-color: #28a745;
             color: #333;
         }
 
-        input,
-        select {
+        input {
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
@@ -184,8 +269,8 @@ $confirm-color: #28a745;
         button {
             margin-top: 5px;
             padding: 12px;
-            background-color: $primary-color;
-            color: #fff;
+            background-color: #007bff; /* primary color */
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -193,7 +278,7 @@ $confirm-color: #28a745;
             margin-bottom: 10px;
 
             &:hover {
-                background-color: darken($primary-color, 10%);
+                background-color: #0056b3; /* darker primary color */
             }
         }
     }

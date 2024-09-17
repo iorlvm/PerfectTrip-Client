@@ -7,46 +7,26 @@ const openDialog = () => {
     dialogVisible.value = true;
 }
 
+const props = defineProps({
+    roomInfo: Object
+})
+
 
 
 const roomData = ref({
-    title: "標準雙人房",
-    guestCount: 4,
-    facilities: [
-        {
-            icon: '<i class="bi bi-house"></i>',
-            text: '客房面積：99,999 平方公尺'
-        },
-        {
-            icon: '<i class="bi bi-check-lg"></i>',
-            text: '兩張大床'
-        },
-        {
-            icon: '<i class="bi bi-check-lg"></i>',
-            text: '禁菸房'
-        },
-        {
-            icon: '<i class="bi bi-check-lg"></i>',
-            text: '淋浴間&浴缸'
-        }
-    ],
-    days: 99,
-    photos: [
-        '/1.jpg',
-        '/2.jpg',
-        '/3.jpg',
-    ],
+    title: props.roomInfo.productName,
+    guestCount: props.roomInfo.maxOccupancy,
+    facilities: props.roomInfo.facilities.slice(0, 3),
+    days: props.roomInfo.days,
+    photos: props.roomInfo.photos.slice(0, 3),
     options: [
         {
-            price: "19,654",
-            notice: "預定須知",
-            stockOptions: 3,
-            selectedRoomCount: 0
-        },
-        {
-            price: "25,000",
-            notice: "預定須知",
-            stockOptions: 2,
+            price: props.roomInfo.price,
+            includesBreakfast: props.roomInfo.includesBreakfast,
+            allowDateChanges: props.roomInfo.allowDateChanges,
+            isRefundable: props.roomInfo.isRefundable,
+            allowFreeCancellation: props.roomInfo.allowFreeCancellation,
+            stockOptions: props.roomInfo.remainingRooms,
             selectedRoomCount: 0
         }
     ]
@@ -68,13 +48,13 @@ const roomData = ref({
             <el-col class="right-line" :span="8">
                 <div class="photos">
                     <div class="photo" v-for="photo in roomData.photos" :key="photo">
-                        <img :src="photo" alt="">
+                        <img :src="photo.photoUrl" :alt="photo.description">
                     </div>
                 </div>
                 <div class="detail">
                     <p v-for="(facility, index) in roomData.facilities" :key="index">
-                        <span v-html="facility.icon" style="margin-right: 8px;"></span>
-                        <span>{{ facility.text }}</span>
+                        <span v-html="facility.facilityIcon" style="margin-right: 8px;"></span>
+                        <span>{{ facility.facilityName }}</span>
                     </p>
                 </div>
                 <el-link class="show-more" type="primary" @click="openDialog">查看所有的設施與服務</el-link>
@@ -85,7 +65,12 @@ const roomData = ref({
                         <i class="bi bi-person-fill" v-for="item in roomData.guestCount" :key="item"></i>
                     </el-col>
                     <el-col class="right-line price" :span="5">TWD <span>{{ room.price }}</span></el-col>
-                    <el-col class="right-line" :span="12">{{ room.notice }}</el-col>
+                    <el-col class="right-line notice" :span="12">
+                        <li>{{ room.includesBreakfast ? '' : '不' }}包含早餐</li>
+                        <li v-if="room.allowDateChanges">可更改日期</li>
+                        <li v-if="room.allowFreeCancellation">可免費取消</li>
+                        <li v-if="room.isRefundable">可退款</li>
+                    </el-col>
                     <el-col class="rightmost" :span="3">
                         <div class="room-count">
                             <el-select v-model="room.selectedRoomCount" placeholder="Select">
@@ -231,6 +216,15 @@ const roomData = ref({
         .room-count {
             width: 95%;
             margin: 0 auto;
+        }
+
+        .notice {
+            padding: 5px 20px;
+
+            li {
+                font-size: 1.1em;
+                margin: 5px 0px;
+            }
         }
 
         &:first-child {

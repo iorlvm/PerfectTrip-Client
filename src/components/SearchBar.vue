@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import router from "@/router";
 import { useSearchStore } from "@/stores/search";
 
 const searchStore = useSearchStore();
@@ -42,8 +41,7 @@ const clearDestination = () => {
 };
 
 const search = () => {
-  searchStore.getProductList(searchQuery.value);
-  router.push("/search");
+  searchStore.handleSearch(searchQuery.value);
 };
 
 const locations = ref([]);

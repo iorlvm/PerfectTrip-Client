@@ -10,9 +10,9 @@ import { useSearchStore } from "@/stores/search";
 const searchStore = useSearchStore();
 
 
-onMounted(() => {
-  console.log(searchStore.searchQuery);
 
+onMounted(() => {
+  searchStore.getProductList();
 })
 
 </script>
@@ -24,7 +24,7 @@ onMounted(() => {
     <div class="breadcrumb-container">
       <el-breadcrumb separator=">">
         <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-        <el-breadcrumb-item>麵包屑路徑</el-breadcrumb-item>
+        <el-breadcrumb-item>搜尋結果</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
 
