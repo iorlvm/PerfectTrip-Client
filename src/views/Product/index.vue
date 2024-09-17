@@ -5,20 +5,49 @@ import ProductRoomList from './components/ProductRoomList.vue';
 import HotelFacility from '@/views/Product/components/HotelFacility.vue'
 import HotelRule from './components/HotelRule.vue';
 import { onMounted, ref } from 'vue';
+import router from '@/router';
 import { useRoute } from 'vue-router';
+import { searchProductAPI } from '@/apis/search';
+import { ElMessage } from 'element-plus';
 
 const rateDrawer = ref(false);
 
-const router = useRoute();
+const route = useRoute();
 
 const openRate = () => {
   rateDrawer.value = true;
 }
 
-onMounted(() => {
-  const id = router.params.id;
-  // 使用這個ID去查旅館詳情
-  console.log("商品id : " + id);
+const roomList = ref([]);
+
+onMounted(async () => {
+  const id = route.params.id;
+  const query = route.query;
+
+  // 檢查是否缺少必要的 query 參數
+  const requiredParams = ['adultCount', 'childCount', 'roomCount', 'startDate', 'endDate'];
+  const isMissingParams = requiredParams.some(param => !query[param]);
+
+  if (isMissingParams) {
+    // 缺少參數，導回首頁
+    ElMessage.warning('缺少查詢資訊, 請重新搜尋');
+    router.push('/');
+  } else {
+    const startDate = query.startDate.split('T')[0];
+    const endDate = query.endDate.split('T')[0];
+
+    const res = await searchProductAPI({
+      companyId: id,
+      adultCount: query.adultCount,
+      childCount: query.childCount,
+      roomCount: query.roomCount,
+      startDate,
+      endDate
+    });
+
+    roomList.value = res.data;
+    console.log(res);
+  }
 });
 </script>
 
@@ -46,7 +75,7 @@ onMounted(() => {
       </el-anchor>
       <ProductOverview id="overview" @openRate="openRate" />
       <el-divider class="divider" />
-      <ProductRoomList id="price-info" />
+      <ProductRoomList id="price-info" :roomList="roomList" />
       <el-divider class="divider" />
       <HotelFacility id="facility" />
       <el-divider class="divider" />

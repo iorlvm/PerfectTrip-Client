@@ -29,3 +29,24 @@ export const searchAPI = ({
         }
     });
 }
+
+export const searchProductAPI = ({
+    companyId,
+    adultCount,
+    childCount,
+    roomCount,
+    startDate,
+    endDate
+}) => {
+    return httpInstance({
+        url: `search/${companyId}`,
+        method: 'GET',
+        params: {
+            adultCount,
+            childCount,
+            roomCount,
+            startDate,
+            endDate
+        }
+    });
+}

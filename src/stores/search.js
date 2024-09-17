@@ -33,8 +33,8 @@ export const useSearchStore = defineStore('Search', () => {
         searchQuery.value.childCount = query.childCount;
         searchQuery.value.roomCount = query.roomCount;
 
-        const startDate = query.dateRange && query.dateRange[0] ? new Date(query.dateRange[0]).toISOString() : '';
-        const endDate = query.dateRange && query.dateRange[1] ? new Date(query.dateRange[1]).toISOString() : '';
+        const startDate = query.dateRange && query.dateRange[0] ? new Date(query.dateRange[0]).toLocaleDateString('en-CA') : '';
+        const endDate = query.dateRange && query.dateRange[1] ? new Date(query.dateRange[1]).toLocaleDateString('en-CA') : '';
 
 
         router.push({

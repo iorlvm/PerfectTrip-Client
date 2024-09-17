@@ -1,4 +1,5 @@
 <script setup>
+import RoomList from '@/views/StoreManageCenter/components/RoomList.vue';
 import RoomCard from './RoomCard.vue';
 import router from "@/router";
 
@@ -14,6 +15,10 @@ const createOrder = () => {
     )
 }
 
+defineProps({
+    roomList: Array
+})
+
 </script>
 
 
@@ -25,8 +30,7 @@ const createOrder = () => {
         <p class="desc">價格已轉換至TWD 圖標</p>
         <el-row>
             <el-col :xs="24" :sm="24" :md="20" class="roomCard-list">
-                <RoomCard />
-                <RoomCard />
+                <RoomCard v-for="(room, index) in roomList" :key="index" :roomInfo="room" />
             </el-col>
             <el-col :xs="24" :sm="24" :md="4">
                 <div class="order-title"></div>
