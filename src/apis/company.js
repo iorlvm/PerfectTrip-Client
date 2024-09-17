@@ -29,3 +29,22 @@ export const companyLoginAPI = ({ username, password }) => {
         }
     });
 }
+
+//商家管理頁面修改
+export const updatecompanyAPI = ({companyId,  changeId, username, password, companyName, vatNumber, address, telephone,manager}) => {
+    return httpInstance({
+        url:`/store/{companyId}`,
+        method: 'PUT',
+        data: {
+            changeId,
+            companyId, 
+            username, 
+            password, 
+            companyName, 
+            vatNumber,
+            address,
+            telephone,
+            manager
+        }
+    });
+}
