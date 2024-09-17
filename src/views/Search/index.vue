@@ -29,9 +29,9 @@ onMounted(() => {
     </div>
 
     <div class="layout">
-      <aside>
+      <!-- <aside>
         <AdvancedSearch />
-      </aside>
+      </aside> -->
       <main>
         <SearchResult />
         <ResultList />

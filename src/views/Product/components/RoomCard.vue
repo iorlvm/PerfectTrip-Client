@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const dialogVisible = ref(false)
 
@@ -11,6 +11,12 @@ const props = defineProps({
     roomInfo: Object
 })
 
+const mainIndex = ref(0);
+const mainPhoto = computed(() => roomData.value.photos[mainIndex.value] || {});
+
+const changMainPhoto = (index) => {
+    mainIndex.value = index;
+}
 
 
 const roomData = ref({
@@ -83,8 +89,45 @@ const roomData = ref({
             </el-col>
         </el-row>
     </div>
-    <el-dialog v-model="dialogVisible" :title="roomData.title" width="65%">
-        <div>詳細資訊放這裡</div>
+    <el-dialog v-model="dialogVisible" :title="roomData.title" width="70%">
+        <div class="product-detail">
+            <div class="left-section">
+                <div class="main-photo">
+                    <img :src="mainPhoto.photoUrl" :alt="mainPhoto.description">
+                </div>
+                <div class="photo-list">
+                    <div class="detail-photo" v-for="(photo, index) in roomData.photos" :key="photo.photoUrl"
+                        @click="changMainPhoto(index)">
+                        <img :src="photo.photoUrl" :alt="photo.description">
+                    </div>
+                </div>
+            </div>
+            <div class="right-section">
+                <div class="intro">
+                    <h2>{{ roomData.title }}</h2>
+                    <p>可容納人數: {{ roomData.guestCount }}</p>
+                    <p>入住天數: {{ roomData.days }}</p>
+                </div>
+                <div class="facilities">
+                    <h3>設施</h3>
+                    <div class="facility-list">
+                        <div v-for="(facility, index) in roomData.facilities" :key="index" class="facility-item">
+                            <span v-html="facility.facilityIcon" class="facility-icon"></span>
+                            <span>{{ facility.facilityName }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="options">
+                    <h3>房間選項</h3>
+                    <p>價格: {{ roomData.options[0].price }} 元</p>
+                    <p>包含早餐: {{ roomData.options[0].includesBreakfast ? '是' : '否' }}</p>
+                    <p>允許更改日期: {{ roomData.options[0].allowDateChanges ? '是' : '否' }}</p>
+                    <p>可退款: {{ roomData.options[0].isRefundable ? '是' : '否' }}</p>
+                    <p>免費取消: {{ roomData.options[0].allowFreeCancellation ? '是' : '否' }}</p>
+                    <p>剩餘房間數: {{ roomData.options[0].stockOptions }}</p>
+                </div>
+            </div>
+        </div>
     </el-dialog>
 </template>
 
@@ -234,6 +277,99 @@ const roomData = ref({
 
     .right-line {
         border-right: 1px solid #b2b9c1;
+    }
+}
+
+.product-detail {
+    display: flex;
+    gap: 20px;
+
+    .left-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .main-photo {
+            margin-bottom: 20px;
+            height: 40vh;
+
+            img {
+                border-radius: 8px;
+            }
+        }
+
+        .photo-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+
+            .detail-photo {
+                flex: 1 1 calc(33% - 10px);
+                box-sizing: border-box;
+                cursor: pointer;
+
+                img {
+                    border-radius: 4px;
+                }
+            }
+        }
+    }
+
+    .right-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .intro {
+            margin-bottom: 20px;
+
+            h2 {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            p {
+                margin: 5px 0;
+            }
+        }
+
+        .facilities {
+            margin-bottom: 20px;
+
+            h3 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            .facility-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+
+                .facility-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex: 1 1 calc(33% - 15px);
+
+                    .facility-icon {
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            }
+        }
+
+        .options {
+            h3 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+
+            p {
+                margin: 5px 0;
+            }
+        }
     }
 }
 </style>
