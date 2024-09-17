@@ -44,15 +44,16 @@ export const getUserAPI =(userId) =>{
     });
 }
 
+//會員管理頁面更新//密碼要放??
 export const updateUserAPI =({changeId,userId,firstName, lastName, nickname,username,password, address, phoneNumber, taxId, birthday }) =>{
     return httpInstance({
         url: `/users/${userId}`,
         method: 'PUT',
         data: {
+            changeId,
             firstName, 
             lastName, 
             nickname, 
-            changeId,
             address, 
             username,
             password,

@@ -17,11 +17,11 @@ const userInfo = ref({
     address: userStore.userInfo.address,
    
 });
-
+//TODO 前後端性別轉換
 const save  = async (e) => {
     e.preventDefault();
-    let  userId = userStore.userInfo.userId;
-    let  changeId = userStore.userInfo.changeId;
+   let  userId = userStore.userInfo.userId;
+   let  changeId = userStore.userInfo.userId;
    let firstName = userStore.userInfo.firstName;
    let lastName =userStore.userInfo.lastName;
    let nickname = userStore.userInfo.nickname;
@@ -88,7 +88,7 @@ const addressClick = (e) => {
 }
 
 </script>
-
+//TODO新增大頭貼
 <template>
     <div>
         <div class="title">
@@ -267,7 +267,7 @@ const addressClick = (e) => {
             </template> -->
         </div>
 
-        <div class="row border-bottom"> <!--還沒做資料連動 -->
+        <div class="row border-bottom"> 
             <template v-if="!address">
                 <div class="column">地址</div>
                 <div class="info">{{ userInfo.address }}</div>
