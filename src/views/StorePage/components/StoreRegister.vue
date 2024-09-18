@@ -11,11 +11,14 @@ const form = ref({
     username: '',
     password: '',
     password_check: '',
+    country: '台灣',
+    city: '',
     address: '',
     manager: '',
     regionNumber: '',
     telephone: '',
     vatNumber: '',
+
 });
 
 
@@ -43,6 +46,12 @@ const rules = {
         { required: true, message: '再次輸入密碼', trigger: 'blur' },
         { validator: validatePasswordCheck, trigger: ['blur', 'change'] }
     ],
+    country: [
+        { required: true, message: '請輸入國家', trigger: 'blur' }
+    ],
+    city: [
+        { required: true, message: '請輸入縣/市', trigger: 'blur' }
+    ],
     address: [
         { required: true, message: '請輸入地址', trigger: 'blur' }
     ],
@@ -56,7 +65,6 @@ const rules = {
     ],
     regionNumber: [
         { required: true, message: '請輸入區碼', trigger: 'blur' },
-        { pattern: /^\d{2}$/, message: '請輸入區碼', trigger: ['blur', 'change'] }
     ],
     vatNumber: [
         { required: true, message: '請輸入統一編號', trigger: 'blur' },
@@ -78,12 +86,14 @@ const register = async (e) => {
     let companyName = form.value.companyName;
     let username = form.value.username;
     let password = form.value.password;
+    let country = form.value.country;
+    let city = form.value.city;
     let address = form.value.address;
     let manager = form.value.manager;
     let telephone = form.value.regionNumber + form.value.telephone;
     let vatNumber = form.value.vatNumber
     // console.log({username, password, companyName, vatNumber, address, telephone})
-    await companyRegisterAPI({ username, password, companyName, vatNumber, address, manager, telephone });
+    await companyRegisterAPI({ username, password, companyName, vatNumber, country, city, address, manager, telephone });
     // console.log({username, password, companyName, vatNumber, address, telephone})
 
     router.push('/store/manage');//討論導主頁?
@@ -121,12 +131,24 @@ const register = async (e) => {
                             <el-input type="text" placeholder="請輸入密碼" v-model="form.password_check" required></el-input>
                         </div>
                     </el-form-item>
-                    <el-form-item label="營業地址" prop="address">
-                        <div>
+
+                    <div class="site" style="display: flex; align-items: center; justify-content: space-between;">
+                        <el-form-item label="營業地址" prop="country" style="flex: 1; margin-right: 10px;">
+                            <el-input type="text" class="country" placeholder="台灣" v-model="form.country"
+                                disabled></el-input>
+                        </el-form-item>
+
+                        <el-form-item  prop="city" style="flex: 2; margin-right: 10px;">
+                            <el-input type="text" class="city" placeholder="縣/市 ex:台北市" v-model="form.city"
+                                required></el-input>
+                        </el-form-item>
+
+                        <el-form-item  prop="address" style="flex: 7;">
                             <el-input type="text" class="address" placeholder="請輸入營業地址" v-model="form.address"
                                 required></el-input>
-                        </div>
-                    </el-form-item>
+                        </el-form-item>
+                    </div>
+
                     <el-form-item label="負責人姓名" prop="manager">
                         <div>
                             <el-input type="text" placeholder="請輸入負責人名稱" v-model="form.manager" required></el-input>
@@ -136,13 +158,10 @@ const register = async (e) => {
                     <div class="phone" style="display: flex; align-items: center;">
 
                         <el-form-item label="連絡電話" prop="regionNumber">
-
                             <div class="country_code" style="display: flex; align-items: center;">
-                                <div> </div>
                                 <el-input type="text" placeholder="ex:03" v-model="form.regionNumber"
                                     required></el-input>
                             </div>
-
                         </el-form-item>
 
                         <el-form-item label="" prop="telephone">
@@ -202,12 +221,21 @@ const register = async (e) => {
         width: 80px;
     }
 
+
+    .country {
+        width: 100px;
+    }
+
+    .city {
+        width: 100px;
+    }
+
     .address {
-        width: 500px;
+        width: 380px;
     }
 
     .username {
-        width: 500px;
+        width: 460px;
     }
 
     .free-parking-check-box {

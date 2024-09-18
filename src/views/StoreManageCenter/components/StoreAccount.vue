@@ -1,35 +1,52 @@
 <script setup>
 import { ref } from 'vue';
 import ManageToolbar from './ManageToolbar.vue';
-import{useUserStore} from '@/stores/user'
-import{updatecompanyAPI} from '@/apis/company'
+import { useUserStore } from '@/stores/user'
+import { updatecompanyAPI } from '@/apis/company'
 
 const userStore = useUserStore();
 // userStore.userInfo
 const userInfo = ref({
-    
+    companyId:userStore.userInfo.companyId,
     companyName: userStore.userInfo.companyName,
     username: userStore.userInfo.username,
-    password: userStore.userInfo.password,
     vatNumber: userStore.userInfo.vatNumber,
     telephone: userStore.userInfo.telephone,
     address: userStore.userInfo.address,
-    manager: userStore.userInfo.manager
-   
+    manager: userStore.userInfo.manager,
+    country: userStore.userInfo.country,
+    city: userStore.userInfo.city
+
 });
+
 const save = async (e) => {
     e.preventDefault();
-    let changeId =  userStore.userInfo.changeId;
-    let  companyId = userStore.userInfo.companyId;
-    let username = userStore.userInfo.username;
-    let companyName = userStore.userInfo.companyName;
-    let vatNumber = userStore.userInfo.vatNumber;
-    let address = userStore.userInfo.address;
-    let telephone = userStore.userInfo.telephone;
-    let manager = userStore.userInfo.manager;
+   
+    let companyId = userInfo.value.companyId;
+    let username = userInfo.value.username;
+    let companyName =userInfo.value.companyName;
+    let vatNumber = userInfo.value.vatNumber;
+    let address = userInfo.value.address;
+    let telephone = userInfo.value.telephone;
+    let manager = userInfo.value.manager;
+    let country = userInfo.value.country;
+    let city = userInfo.value.city;
+
+   
     // console.log({ companyId, changeId, username, companyName, vatNumber, address, telephone, manager });
-    await updatecompanyAPI({companyId,  changeId, username, companyName, vatNumber, address,telephone,manager})
-    console.log({ companyId, changeId, username, companyName, vatNumber, address, telephone, manager });
+    try {
+       const res = await updatecompanyAPI({ companyId, username, companyName, vatNumber, address, telephone, manager, country, city })
+        // console.log({ companyId, username, companyName, vatNumber, address, telephone, manager, country, city });
+       console.log(res);
+       userStore.updateInfo(res);
+        // 成功處理
+    } catch (error) {
+        console.error("Error updating company:", error.response.data);
+        // 顯示錯誤信息
+    }
+    console.log('companyId:', companyId);
+    console.log('API request companyId:', companyId);
+
 
 }
 
@@ -83,14 +100,11 @@ const vatNumberClick = (e) => {
             </div>
 
         </div>
-      
-       
-
 
         <div class="row border-bottom">
             <template v-if="!companyNameEdit">
                 <div class="column">刊登名稱</div>
-                <div class="info">{{userInfo.companyName}}</div>
+                <div class="info">{{ userInfo.companyName }}</div>
                 <div class="edit">
                     <a href="" @click="companyNameEditClick">編輯</a>
                 </div>
@@ -111,7 +125,7 @@ const vatNumberClick = (e) => {
             <template v-if="!mail">
                 <div class="column">電子信箱</div>
                 <div class="info">
-                    <div> {{userInfo.username}}</div>
+                    <div> {{ userInfo.username }}</div>
                     <div class="remind">這是您用來登入的電子信箱，我們也會發送預訂確認函至此信箱。</div>
                 </div>
                 <div class="edit">
@@ -130,20 +144,25 @@ const vatNumberClick = (e) => {
                 </div>
             </template>
         </div>
-        <div class="row border-bottom"> 
+        <div class="row border-bottom">
             <template v-if="!address">
                 <div class="column">營業地址</div>
                 <div class="info">
-                    <div> {{ userInfo.address }}</div>
-                <div class="remind">此地址為營業地址</div>
+                    <div class="site"  style="display: flex;">
+                        <div>{{ userInfo.country }}</div>
+                        <div>{{ userInfo.city }}</div>
+                        <div> {{ userInfo.address }}</div>
+                    </div>
+                    <div class="remind">此地址為營業地址</div>
                 </div>
+
                 <div class="edit"><a href="" @click="addressClick">編輯</a></div>
             </template>
             <template v-else>
                 <div class="afterclick">
                     <div class="column">營業地址</div>
                     <div class="input">
-                        <input class="text1" type="text" placeholder="請輸入您的地址"  v-model="userInfo.address" required>
+                        <input class="text1" type="text" placeholder="請輸入您的地址" v-model="userInfo.address" required>
                     </div>
                     <div class="edit">
                         <a href="" @click="addressClick">完成</a>
@@ -177,7 +196,7 @@ const vatNumberClick = (e) => {
                 <div class="column">聯絡電話</div>
                 <div class="info">
                     <div>{{ userInfo.telephone }}</div>
-                <div class="remind">此電話將使用於官方聯絡資訊</div>
+                    <div class="remind">此電話將使用於官方聯絡資訊</div>
                 </div>
                 <div class="edit">
                     <a href="" @click="telClick">編輯</a>
@@ -201,7 +220,7 @@ const vatNumberClick = (e) => {
         <div class="row border-bottom">
             <template v-if="!vatNumber">
                 <div class="column">統一編號</div>
-                <div class="info">{{ userInfo.vatNumber }}</div>
+                <div class="info"> {{ userInfo.vatNumber }} </div>
                 <div class="edit">
                     <a href="" @click="vatNumberClick">編輯</a>
                 </div>
@@ -219,11 +238,11 @@ const vatNumberClick = (e) => {
             </template>
         </div>
         <div class="save">
-            <el-button type="primary" @click="save" >儲存</el-button>
+            <el-button type="primary" @click="save">儲存</el-button>
         </div>
 
-    
-    </div> 
+
+    </div>
 
 </template>
 
@@ -279,75 +298,75 @@ const vatNumberClick = (e) => {
             }
         }
 
-        
+
 
     }
+
     .afterclick {
-    // border: 1px solid blue;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18 12;
-    margin: 0;
-    width: 100%;
+        // border: 1px solid blue;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18 12;
+        margin: 0;
+        width: 100%;
 
-    .column {
-        width: 150px;
-        // border: 1px solid black;
-    }
+        .column {
+            width: 150px;
+            // border: 1px solid black;
+        }
 
-    .input {
+        .input {
 
-        flex-grow: 1;
-        // border: 1px solid black;
+            flex-grow: 1;
+            // border: 1px solid black;
 
-        .text {
-            border-radius: 3px;
+            .text {
+                border-radius: 3px;
 
-            &:focus {
-                outline: 1px solid #ffb700;
+                &:focus {
+                    outline: 1px solid #ffb700;
 
+                }
+
+                padding: 10px 10px;
+                border: 1px solid #ffb700;
+                width: 200px;
             }
 
-            padding: 10px 10px;
-            border: 1px solid #ffb700;
-            width: 200px;
-        }
+            .text1 {
+                border-radius: 3px;
 
-        .text1 {
-            border-radius: 3px;
+                &:focus {
+                    outline: 1px solid #ffb700;
 
-            &:focus {
-                outline: 1px solid #ffb700;
+                }
 
+                padding: 10px 10px;
+                border: 1px solid #ffb700;
+                width: 400px;
             }
-
-            padding: 10px 10px;
-            border: 1px solid #ffb700;
-            width: 400px;
         }
-    }
 
 
 
-    .edit {
-        // display: flex;
-        width: 80px;
-        justify-content: flex-end;
-        // border: 1px solid black;
+        .edit {
+            // display: flex;
+            width: 80px;
+            justify-content: flex-end;
+            // border: 1px solid black;
 
-        a {
-            color: #0b94cf;
+            a {
+                color: #0b94cf;
+            }
         }
-    }
 
+    }
 }
-}
+
 .save {
     display: flex;
     justify-content: flex-end;
     padding: 10px;
 }
-
 </style>
-
