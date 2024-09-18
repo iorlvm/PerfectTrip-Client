@@ -46,7 +46,7 @@ onMounted(async () => {
     });
 
     roomList.value = res.data;
-    console.log(res);
+    // console.log(res);
   }
 });
 </script>

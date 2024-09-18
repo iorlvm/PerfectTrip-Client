@@ -1,7 +1,7 @@
 <script setup>
-import RoomList from '@/views/StoreManageCenter/components/RoomList.vue';
 import RoomCard from './RoomCard.vue';
 import router from "@/router";
+import { ref } from 'vue';
 
 const createOrder = () => {
     // TODO:
@@ -19,6 +19,17 @@ defineProps({
     roomList: Array
 })
 
+const roomSelections = ref({});
+
+const handleUpdateRoomCount = ({ productId, selectedCount }) => {
+    if (selectedCount <= 0) {
+        delete roomSelections.value[productId];
+    } else {
+        roomSelections.value[productId] = selectedCount;
+    }
+    console.log('房間選擇狀態:', roomSelections.value);
+};
+
 </script>
 
 
@@ -30,7 +41,8 @@ defineProps({
         <p class="desc">價格已轉換至TWD 圖標</p>
         <el-row>
             <el-col :xs="24" :sm="24" :md="20" class="roomCard-list">
-                <RoomCard v-for="(room, index) in roomList" :key="index" :roomInfo="room" />
+                <RoomCard v-for="(room, index) in roomList" :key="index" :roomInfo="room"
+                    @select-product="handleUpdateRoomCount" />
             </el-col>
             <el-col :xs="24" :sm="24" :md="4">
                 <div class="order-title"></div>

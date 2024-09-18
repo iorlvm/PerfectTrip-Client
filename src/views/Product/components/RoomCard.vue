@@ -18,6 +18,13 @@ const changMainPhoto = (index) => {
     mainIndex.value = index;
 }
 
+const emit = defineEmits([
+    'select-product'
+]);
+const emitSelectedCount = (productId, selectedCount) => {
+    emit('select-product', { productId, selectedCount });
+};
+
 
 const roomData = ref({
     title: props.roomInfo.productName,
@@ -27,6 +34,7 @@ const roomData = ref({
     photos: props.roomInfo.photos.slice(0, 3),
     options: [
         {
+            productId: props.roomInfo.productId,
             price: props.roomInfo.price,
             includesBreakfast: props.roomInfo.includesBreakfast,
             allowDateChanges: props.roomInfo.allowDateChanges,
@@ -79,7 +87,8 @@ const roomData = ref({
                     </el-col>
                     <el-col class="rightmost" :span="3">
                         <div class="room-count">
-                            <el-select v-model="room.selectedRoomCount" placeholder="Select">
+                            <el-select v-model="room.selectedRoomCount" placeholder="Select"
+                                @change="emitSelectedCount(room.productId, room.selectedRoomCount)">
                                 <el-option label="0" value="0" />
                                 <el-option :label="i" :value="i" v-for="i in room.stockOptions" :key="i" />
                             </el-select>
