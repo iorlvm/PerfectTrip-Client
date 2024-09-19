@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { searchAPI } from '@/apis/search';
+import { searchAPI, deleteSearchCacheAPI } from '@/apis/search';
 import router from "@/router";
 import { useRoute } from 'vue-router';
 
@@ -122,9 +122,32 @@ export const useSearchStore = defineStore('Search', () => {
 
         resultList.value = res.data;
 
+        lastQurey.destination = query.destination;
+        lastQurey.adultCount = query.adultCount;
+        lastQurey.childCount = query.childCount;
+        lastQurey.roomCount = query.roomCount;
+        lastQurey.startDate = query.startDate;
+        lastQurey.endDate = query.endDate;
+
+
         total.value = res.total;
         hasMore = resultList.value.length < total.value;
         isProcessing = false;
+    }
+
+    const lastQurey = {
+        destination: null,
+        adultCount: null,
+        childCount: null,
+        roomCount: null,
+        startDate: null,
+        endDate: null
+    }
+
+    const deleteCache = () => {
+        if (lastQurey.destination && lastQurey.adultCount && lastQurey.childCount && lastQurey.roomCount && lastQurey.startDate && lastQurey.endDate) {
+            deleteSearchCacheAPI(lastQurey)
+        }
     }
 
     return {
@@ -133,6 +156,7 @@ export const useSearchStore = defineStore('Search', () => {
         total,
         page,
         handleSearch,
+        deleteCache,
         getProductList,
         changeOrderBy,
         loadMoreResult

@@ -50,3 +50,25 @@ export const searchProductAPI = ({
         }
     });
 }
+
+export const deleteSearchCacheAPI = ({
+    destination,
+    adultCount,
+    childCount,
+    roomCount,
+    startDate,
+    endDate
+}) => {
+    return httpInstance({
+        url: `search/delete-cache`,
+        method: 'DELETE',
+        data: {
+            destination,
+            adultCount,
+            childCount,
+            roomCount,
+            startDate,
+            endDate
+        }
+    });
+}

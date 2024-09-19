@@ -41,6 +41,7 @@ const clearDestination = () => {
 };
 
 const search = () => {
+  searchStore.deleteCache();
   searchStore.handleSearch(searchQuery.value);
 };
 
