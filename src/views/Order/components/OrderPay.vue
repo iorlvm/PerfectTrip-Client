@@ -60,12 +60,14 @@ const sendPayment = async (prime) => {
         cardholder.value.email
     );
 
+    console.log(res);
+
     if (res.success && res.data.status === 0) {
         // 跳轉到訂單完成畫面
         router.push(`/order/created/${orderId.value}`);
     } else {
         // 跳出錯誤訊息
-        ElMessage.error(res.errorMsg);
+        // ElMessage.error(res.errorMsg);
         isProcessing.value = false;
     }
 }

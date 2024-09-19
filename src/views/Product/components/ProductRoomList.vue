@@ -1,18 +1,45 @@
 <script setup>
 import RoomCard from './RoomCard.vue';
 import router from "@/router";
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue';
+import { useRoute } from 'vue-router';
+import { createOrderAPI } from '@/apis/order';
 
-const createOrder = () => {
-    // TODO:
+const route = useRoute();
+
+const createOrder = async () => {
+    const query = route.query;
+
     // 先傳給伺服器訂單內容  由伺服器創造一個臨時的訂單編號
-    // 臨時訂單與編號使用redis完成 不進SQL
-    // 接收回傳的訂單編號
-    const orderId = 1; // 假資料  還沒做功能沒法寫真的
-    // 導去對應編號的頁面
+    const companyId = route.params.id;
+    const couponId = null;
+    const beginDate = query.startDate.split('T')[0];
+    const endDate = query.endDate.split('T')[0];
+
+    const productList = [];
+    Object.keys(roomSelections.value).forEach(key => {
+        productList.push({
+            productId: key,
+            count: roomSelections.value[key]
+        });
+    });
+
+    const res = await createOrderAPI({
+        companyId,
+        couponId,
+        beginDate,
+        endDate,
+        productList
+    })
+
+    // // 接收回傳的訂單編號
+    const orderId = res.data.orderId;
+    // // 導去對應編號的頁面
     router.push(
         `/order/form/${orderId}`
-    )
+    ).then(() => {
+        window.location.reload();
+    });
 }
 
 defineProps({

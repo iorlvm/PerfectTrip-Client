@@ -1,6 +1,6 @@
 import httpInstance from "@/utils/axiosInit";
 
-export const paymentAPI = (orderId, prime, details, name, phoneNumber, email) => {
+export const paymentAPI = (orderId, prime, details, name, phone_number, email) => {
     return httpInstance({
         url: `pay/${orderId}`,
         method: 'POST',
@@ -9,7 +9,7 @@ export const paymentAPI = (orderId, prime, details, name, phoneNumber, email) =>
             details,
             cardholder: {
                 name,
-                phoneNumber,
+                phone_number,
                 email
             }
         }
