@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from "vue-router";
-import { getOrderByIdAPI } from '@/apis/order';
+import { getOrderByIdAPI, updateOrderAPI } from '@/apis/order';
 const props = defineProps([
     'active'
 ])
@@ -92,22 +92,41 @@ const isVisible = () => {
 
 const route = useRoute();
 const router = useRouter();
-const submitForm = () => {
+const submitForm = async () => {
     const orderId = route.params.id;
     // 把資料送給後端伺服器
+    await updateOrderAPI({
+        orderId,
+        firstName: formData.value.firstName,
+        lastName: formData.value.lastName,
+        email: formData.value.email,
+        country: formData.value.country,
+        phone: formData.value.phone,
+        remark: formData.value.remarks,
+        wishedTime: formData.value.arrivalTime,
+
+    })
+
     nextStep();
     console.log('前往付款啦!');
     // 轉往付款頁面
     router.push(`/order/pay/${orderId}`);
 }
 
+const formatPrice = (price) => {
+    let format = price;
+
+    return format;
+}
+
+const orderData = ref({});
 
 onMounted(async () => {
     const orderId = route.params.id;
     //TODO 利用這個值去撈資料
     const res = await getOrderByIdAPI(orderId);
     console.log(res.data);
-
+    orderData.value = res.data;
 });
 
 </script>
@@ -116,11 +135,11 @@ onMounted(async () => {
     <div class="order-view">
         <div class="order-info">
             <div class="info-card hotel-name">
-                <h4>民宿</h4>
-                <h2>旅館名稱</h2>
-                <p>旅館地址 旅館地址XXX路 XXX 號 XX樓</p>
+                <h4>旅館</h4>
+                <h2>{{ orderData.hotelName }}</h2>
+                <p>{{ orderData.hotelAddress }}</p>
                 <div class="flex">
-                    <div class="number">9.2</div>
+                    <div class="number">{{ orderData.hotelScore }}</div>
                     <div class="desc">很讚 - 9,999則評語</div>
                 </div>
                 <div class="flex">
@@ -139,12 +158,12 @@ onMounted(async () => {
                 <div class="flex">
                     <div class="date">
                         <p>入住時間</p>
-                        <p class="big">2024 年 7 月 8 日 ( 一 )</p>
+                        <p class="big">{{ orderData.startDate }}</p>
                         <p class="small">15:00 - 22:00</p>
                     </div>
                     <div class="date">
                         <p>退房時間</p>
-                        <p class="big check-out">2024 年 7 月 9 日 ( 二 )</p>
+                        <p class="big check-out">{{ orderData.endDate }}</p>
                         <p class="small">12:00 前</p>
                     </div>
                 </div>
@@ -174,28 +193,28 @@ onMounted(async () => {
                 <div class="row">
                     <div class="flex">
                         <h4>原價</h4>
-                        <p>TWD 2,104</p>
+                        <p>TWD {{ orderData.fullPrice }}</p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="flex">
                         <h4>折扣</h4>
-                        <p>- TWD 492</p>
+                        <p>- TWD {{ orderData.discount }}</p>
                     </div>
                     <p class="small">該住宿正在打折，因此您可享折扣價。</p>
                 </div>
-                <div class="row">
+                <!-- <div class="row">
                     <div class="flex">
                         <h4>優惠券</h4>
                         <p>- TWD 210</p>
                     </div>
                     <p class="small">您使用了優惠券，因此享有額外折扣。</p>
-                </div>
+                </div> -->
                 <div class="highlight">
-                    <p class="right through">TWD 2,104</p>
+                    <p class="right through"> {{ orderData.fullPrice }}</p>
                     <div class="flex">
                         <h2>總金額</h2>
-                        <h2 class="right">TWD 1,401</h2>
+                        <h2 class="right">{{ orderData.actualPrice }}</h2>
                     </div>
                     <p class="right">含稅費與其他費用</p>
                 </div>
@@ -212,11 +231,11 @@ onMounted(async () => {
                         </div>
                         <div class="flex">
                             <p>5% 加值稅</p>
-                            <p>TWD 61</p>
+                            <p>{{ orderData.tax }}</p>
                         </div>
                         <div class="flex">
                             <p>10% 住宿方服務費</p>
-                            <p>TWD 127</p>
+                            <p>{{ formatPrice(orderData.serviceFee) }}</p>
                         </div>
                     </div>
                 </div>
