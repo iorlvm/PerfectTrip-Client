@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { WeienChat, actionHandlers } from './chat/weien-chat';
-import { getChatRoomsAPI, getUidAPI, getMessagesAPI, updateChatRoomNotifyAPI, updateChatRoomPinnedAPI } from '@/apis/chat';
+import { getChatRoomsAPI, getUidAPI, getMessagesAPI, updateChatRoomNotifyAPI, updateChatRoomPinnedAPI, getChatRoomsByChatIdAPI } from '@/apis/chat';
 import { useUserStore } from '@/stores/user';
 import { ref, defineEmits, watch } from 'vue';
 import { ElMessage } from 'element-plus';
@@ -48,6 +48,8 @@ actionHandlers.getChatRoomsData = async () => {
 
 actionHandlers.getChatRoomDataByChatId = async (chatId) => {
     // TODO: 取得單間聊天室的API
+    const res = await getChatRoomsByChatIdAPI(chatId);
+    return res.data;
 }
 
 actionHandlers.getChatMessagesData = async (chatId) => {
@@ -203,6 +205,30 @@ const onChatRoomClosed = e => {
 const onChatRoomError = e => {
 
 }
+
+const activeChat = async (chatId) => {
+    // 先斷開當前的 WebSocket 連接
+    if (webSocket) {
+        webSocket.close();
+    }
+
+    // 添加新的聊天室
+    await chat.activeChat(chatId);
+
+    let token = userStore.userInfo.token;
+
+    // 重連 WebSocket
+    webSocket = new WebSocket('ws://localhost:8080/chat?' + token);
+
+    webSocket.addEventListener('open', onChatRoomConnected);
+    webSocket.addEventListener('message', onMessageReceived);
+    webSocket.addEventListener('close', onChatRoomClosed);
+    webSocket.addEventListener('error', onChatRoomError);
+}
+defineExpose({
+    activeChat,
+});
+
 
 const chat = new WeienChat();
 onMounted(async () => {

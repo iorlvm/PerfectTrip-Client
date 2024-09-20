@@ -1,8 +1,11 @@
 <script setup>
 import ChatRoom from '@/components/ChatRoom.vue'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useAuthStore } from '@/stores/auth';
+import { useRoute } from 'vue-router';
+import { initChatRoomAPI } from '@/apis/chat';
+
 const newMessage = ref(0);
 const isOpen = ref(false);
 const userStore = useUserStore();
@@ -28,11 +31,51 @@ const closeChatRoom = () => {
         isOpen.value = false;
     }, 180);
 }
+
+const openContact = async () => {
+    const res = await initChatRoomAPI([
+        {
+            id: routePath.value.companyId,
+            type: 'company'
+        }
+    ])
+
+    await chatRef.value.activeChat(res.data);
+
+    openChatRoom();
+};
+
+const routePath = ref({
+    isCompany: false,
+    companyId: null,
+})
+const route = useRoute();
+
+watch(
+    () => route.path,  // 監聽 route.path 的變化
+    (newPath) => {
+        const isCompanyPath = /^\/company\/\d+$/.test(newPath);
+        if (isCompanyPath) {
+            routePath.value.isCompany = true;
+            routePath.value.companyId = route.params.id;
+        } else {
+            routePath.value.isCompany = false;
+            routePath.value.companyId = null;
+        }
+    },
+    { immediate: true }  // 在組件首次掛載時立即執行一次
+);
+
+const chatRef = ref(null);
 </script>
 
 <template>
     <div class="chat-layout" v-if="authStore.isAuth && userStore.userInfo.token">
-        <div :class="['chat-icon', { 'alert-new': newMessage > 0 }, { 'display-none': isOpen }]" @click="openChatRoom">
+        <div :class="['floating-button', { 'display-none': isOpen }]" @click="openContact" v-if="routePath.isCompany">
+            聯絡我們
+        </div>
+        <div :class="['chat-icon', { 'alert-new': newMessage > 0 }, { 'display-none': isOpen }]" @click="openChatRoom"
+            v-else>
             <el-icon class="icon">
                 <ChatLineSquare />
             </el-icon>
@@ -53,7 +96,7 @@ const closeChatRoom = () => {
                     </div>
                 </div>
                 <div class="room-height">
-                    <ChatRoom @updateUnreads="newMessage = $event" />
+                    <ChatRoom @updateUnreads="newMessage = $event" ref="chatRef" />
                 </div>
             </div>
         </div>
@@ -62,6 +105,30 @@ const closeChatRoom = () => {
 
 
 <style lang="scss" scoped>
+.floating-button {
+    position: fixed;
+    bottom: 40px;
+    right: 50px;
+    width: 60px;
+    height: 60px;
+    background-color: #ff6b6b;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    z-index: 99;
+
+    &:hover {
+        background-color: #ff4b4b;
+    }
+}
+
 .chat-layout {
     .display-none {
         display: none !important;
