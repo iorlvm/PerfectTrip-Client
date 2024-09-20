@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { updatecompanyAPI } from '@/apis/company'
 
 const userStore = useUserStore();
-// userStore.userInfo
+userStore.userInfo
 const userInfo = ref({
     companyId:userStore.userInfo.companyId,
     companyName: userStore.userInfo.companyName,

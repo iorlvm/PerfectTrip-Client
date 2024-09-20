@@ -6,7 +6,8 @@ import { updateUserAPI } from '@/apis/user';
 const userStore = useUserStore();
 userStore.userInfo
 const userInfo = ref({
-    
+    changeId: userStore.userInfo.changeId,
+    userId: userStore.userInfo.userId,
     firstName: userStore.userInfo.firstName,
     lastName: userStore.userInfo.lastName,
     nickname: userStore.userInfo.nickname,
@@ -20,17 +21,20 @@ const userInfo = ref({
 //TODO 前後端性別轉換
 const save  = async (e) => {
     e.preventDefault();
-   let  userId = userStore.userInfo.userId;
-   let  changeId = userStore.userInfo.userId;
-   let firstName = userStore.userInfo.firstName;
-   let lastName =userStore.userInfo.lastName;
-   let nickname = userStore.userInfo.nickname;
-//    let gender = userStore.userInfo.gender;
-   let username = userStore.userInfo.username;
-   let phoneNumber = userStore.userInfo.phoneNumber;
-   let birthday = userStore.userInfo.birthday;
-   let address =userStore.userInfo.address;
-   await updateUserAPI({changeId,userId, firstName, lastName, nickname, username, phoneNumber, birthday, address})
+   let changeId = userInfo.value.changeId
+   let  userId = userInfo.value.userId;
+   let firstName = userInfo.value.firstName;
+   let lastName =userInfo.value.lastName;
+   let nickname = userInfo.value.nickname;
+   let gender = userInfo.value.gender;
+   let username = userInfo.value.username;
+   let phoneNumber = userInfo.value.phoneNumber;
+   let birthday = userInfo.value.birthday;
+   let address =userInfo.value.address;
+   const res =await updateUserAPI({changeId,userId, firstName, gender,lastName, nickname, username, phoneNumber, birthday, address})
+   userStore.updateInfo(res)
+   console.log(res);
+   
 };
 
 

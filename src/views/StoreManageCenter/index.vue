@@ -41,7 +41,7 @@ const navigators = [
         icon: Setting,
         title: '設置',
         items: [
-            { text: '旅館資訊', src: '/store/manage/setting/info' },
+            { text: '旅館資訊', src: '/store/manage/setting/infoedit' },
             { text: '帳號管理', src: '/store/manage/setting/account' },
             {
                 text: '登出', click: e => {
