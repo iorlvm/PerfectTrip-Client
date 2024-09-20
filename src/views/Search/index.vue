@@ -3,7 +3,7 @@ import SearchBar from "@/components/SearchBar.vue";
 import AdvancedSearch from "./components/AdvancedSearch.vue";
 import ResultList from "./components/ResultList.vue";
 import SearchResult from "./components/SearchResult.vue";
-import { onMounted } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import { useSearchStore } from "@/stores/search";
 
 
@@ -13,6 +13,10 @@ const searchStore = useSearchStore();
 
 onMounted(() => {
   searchStore.getProductList();
+})
+
+onBeforeUnmount(() => {
+  searchStore.deleteCache();
 })
 
 </script>

@@ -18,6 +18,20 @@ export const getUidAPI = () => {
     })
 }
 
+export const initChatRoomAPI = (users) => {
+    return httpInstance({
+        url: `chat/rooms`,
+        method: 'POST',
+        data: users
+    })
+}
+
+export const getChatRoomsByChatIdAPI = (chatId) => {
+    return httpInstance({
+        url: `chat/rooms/${chatId}`,
+        method: 'GET'
+    })
+}
 
 export const getMessagesAPI = (chatId, messageId, size) => {
     return httpInstance({

@@ -497,6 +497,22 @@ export class WeienChat {
         return this._chatRoomsData.find(room => room.value.chatId === chatId);
     }
 
+    async activeChat(chatId) {
+        let flag = false;
+        this._chatRoomsData.forEach(chat => {
+            if (chat.value.chatId === chatId) {
+                flag = true;
+                this.state.value.activeChatId = chatId;
+                return;
+            }
+        });
+        if (flag) return;
+        // 代表這筆聊天室資料尚未被讀取到前端中
+        let chatRoom = await actionHandlers.getChatRoomDataByChatId(chatId);
+        this.prependChat(chatRoom);
+        this.state.value.activeChatId = chatId;
+    }
+
     /**
      * 將聊天室新增到聊天列表尾端
      * @param {object} chatRoom
@@ -829,6 +845,7 @@ export class WeienChat {
 
                     // 取得聊天訊息列表
                     this._chatMessagesData = await this._setChatMessages();
+
                     el.innerHTML = `
                         <div class="weien-chating-header">
                             <div class="weien-chating-name-block">

@@ -18,6 +18,7 @@ const openRate = () => {
   rateDrawer.value = true;
 }
 
+
 const roomList = ref([]);
 
 onMounted(async () => {
@@ -82,6 +83,7 @@ onMounted(async () => {
       <HotelRule id="rules" />
     </div>
   </div>
+
   <el-drawer v-model="rateDrawer" title="我是住客評價" size="40%" :lock-scroll="true">
     <div>我是評價列表</div>
   </el-drawer>
