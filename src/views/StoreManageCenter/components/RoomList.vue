@@ -1,17 +1,17 @@
 <template>
   <div>
     <header class="header">
-      <h2>Existing Products</h2>
-      <button @click="showModal = true" class="add-room-btn">Add New Product</button>
+      <h2>現存商品列表</h2>
+      <button @click="showModal = true" class="add-room-btn">新增一個商品</button>
     </header>
 
     <div class="filter-section">
-      <label for="filterType">Filter products by name</label>
+      <label for="filterType">商品名稱篩選器</label>
       <select v-model="filterType" id="filterType">
-        <option value="">Select a product to filter...</option>
+        <option value="">篩選中...</option>
         <option v-for="type in productTypes" :key="type" :value="type">{{ type }}</option>
       </select>
-      <button @click="clearFilter" class="filter-btn">Clear Filter</button>
+      <button @click="clearFilter" class="filter-btn">清除篩選</button>
     </div>
 
     <table>
@@ -23,7 +23,7 @@
           <th>Max Occupancy</th>
           <th>Price</th>
           <th>Stock</th>
-          <th>Actions</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -83,49 +83,39 @@
 </template>
 
 <script setup>
-import { addProductAPI } from '@/apis/product';
+import { addProductAPI, getAllProductsAPI, updateRoomAPI, deleteProductAPI } from '@/apis/product';
 import { ref, reactive, computed, onMounted } from 'vue';
 
 // Modal state and new product form data
 const showModal = ref(false);
-const isEditing = ref(false); // 是否處於編輯模式
+const isEditing = ref(false); 
 const currentProduct = reactive({
   companyId: '',
   productName: '',
   maxOccupancy: '',
   price: '',
   stock: '',
-  productId: null, // 用來存儲正在編輯的產品的ID
+  productId: null, 
 });
 
-const products = ref([]);  // 用來存放從後端獲取的產品數據
+const products = ref([]);
 
-// 在組件加載時，從後端撈取所有產品
 onMounted(async () => {
   try {
-    const token = localStorage.getItem('authToken');
-    const response = await fetch('http://localhost:8080/product/all', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer admin`  // 添加token到請求頭部
-      }
-    });
-    if (response.ok) {
-      const data = await response.json();
-      products.value = data;  // 將數據存入 products 中
+    const response = await getAllProductsAPI();  
+    if (response.success) {
+      products.value = response.data;  
     } else {
-      console.error('產品選取失敗');
+      console.error('產品獲取失敗');
     }
   } catch (error) {
-    console.error('選取產品的時候發生錯誤:', error);
+    console.error('產品獲取發生錯誤', error);
   }
 });
 
-// Product filtering
-const productTypes = ref(['Default Product Name', 'Sample Product']);
+const productTypes = ref(['單人房', '雙人房']);
 const filterType = ref('');
 
-// Pagination logic
 const currentPage = ref(1);
 const productsPerPage = 6;
 
@@ -154,7 +144,7 @@ const addProduct = async () => {
     maxOccupancy: currentProduct.maxOccupancy,
     price: currentProduct.price,
     stock: currentProduct.stock,
-  })
+  });
   const data = await response.data;
   if (response.success) {
     products.value.push({
@@ -168,73 +158,31 @@ const addProduct = async () => {
     resetForm();
     showModal.value = false;
     console.log(response);
-    //   const token = localStorage.getItem('authToken');
-
-    //   try {
-    //     const response = await fetch('http://localhost:8080/product/add', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer admin`
-    //       },
-    //       body: JSON.stringify(formData),
-    //     });
-    //     const data = await response.json();
-    //     if (response.ok) {
-    //       products.value.push({
-    //         productId: data.productId,
-    //         companyId: data.companyId,
-    //         productName: data.productName,
-    //         maxOccupancy: data.maxOccupancy,
-    //         price: data.price,
-    //         stock: data.stock,
-    //       });
-    //       resetForm();
-    //       showModal.value = false;
-    //     } else {
-    //       console.error('Error adding product:', data);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error adding product:', error);
   }
 };
 
 // Update Product
 const updateProduct = async () => {
-  const formData = new FormData();
-  formData.append('productName', currentProduct.productName);
-  formData.append('roomPrice', currentProduct.price);
-  formData.append('maxOccupancy', currentProduct.maxOccupancy || 0);
-  formData.append('stock', currentProduct.stock);
-  if (currentProduct.photo) {
-    formData.append('photo', currentProduct.photo);
-  }
-
-  const token = localStorage.getItem('authToken');
-
   try {
-    const response = await fetch(`http://localhost:8080/product/update/${currentProduct.productId}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer admin`,
-      },
-      body: formData,
+    const response = await updateRoomAPI({
+      roomId: currentProduct.productId,
+      productName: currentProduct.productName,
+      roomPrice: currentProduct.price,
+      stock: currentProduct.stock,
+      photo: currentProduct.photo,
     });
 
-    if (response.ok) {
-      // 更新成功的處理
-      const updatedProduct = await response.json();
-      console.log('產品已更新:', updatedProduct);
+    if (response.success) {
+      const updatedProduct = response.data;
+      console.log('產品已經更新', updatedProduct);
     } else {
       console.error('更新產品失敗');
     }
   } catch (error) {
-    console.error('更新產品時發生錯誤:', error);
+    console.error('更新產品時發生錯誤', error);
   }
 };
 
-
-// Edit Product: 打開燈箱，並載入選中的產品數據
 const editProduct = (product) => {
   isEditing.value = true;
   currentProduct.companyId = product.companyId;
@@ -246,7 +194,7 @@ const editProduct = (product) => {
   showModal.value = true;
 };
 
-// Reset form after product is added
+
 const resetForm = () => {
   currentProduct.companyId = '';
   currentProduct.productName = '';
@@ -270,34 +218,24 @@ const clearFilter = () => {
 
 // Delete product
 const deleteProduct = async (productId) => {
-  const confirmed = confirm("確定要刪除這個產品嗎？");
+  const confirmed = confirm("確定刪除嗎？");
 
   if (!confirmed) return;
 
-  const token = localStorage.getItem('authToken');
-
   try {
-    const response = await fetch(`http://localhost:8080/product/delete/room/${productId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer admin`,
-      }
-    });
+    const response = await deleteProductAPI(productId);  
 
-    if (response.ok) {
+    if (response.success) {
       products.value = products.value.filter(product => product.productId !== productId);
-      console.log(`產品ID ${productId} 已成功刪除`);
+      console.log(`產品ID ${productId} 已刪除成功`);
     } else {
-      console.error('刪除產品失敗');
+      console.error('產品刪除失敗');
     }
   } catch (error) {
-    console.error('刪除產品時發生錯誤:', error);
+    console.error('產品刪除時發生錯誤', error);
   }
 };
 </script>
-
-
-
 
 <style scoped>
 .header {

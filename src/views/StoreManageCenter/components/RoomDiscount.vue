@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+
 import { onMounted } from 'vue';
+import { addDiscountAPI,getDiscountsAPI, updateDiscountAPI, deleteDiscountAPI } from '@/apis/discount';
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
 
 // 表單欄位
 const discountTitle = ref('');
@@ -17,14 +20,11 @@ const editingDiscountId = ref(null);
 const discounts = ref([]);
 
 // 取得已有的折扣
-function fetchDiscounts() {
-  axios.get('http://localhost:8080/discount/company/3') // 假設公司ID為1
-    .then(response => {
-      discounts.value = response.data;
-    })
-    .catch(error => {
-      console.error("Error fetching discounts:", error);
-    });
+async function fetchDiscounts() {
+   const response = await getDiscountsAPI(userStore.userInfo.companyId);
+   // console.log(response);
+   discounts.value = response.data;
+  
 }
 
 // 打開編輯視窗
@@ -39,26 +39,23 @@ function editDiscount(discount) {
 }
 
 // 保存編輯後的折扣
-function saveEditedDiscount() {
-    const updatedDiscount = {
-        discountTitle: discountTitle.value,
-        discountRate: discountRate.value,
-        startDateTime: new Date(startDate.value).toISOString(),
-        endDateTime: new Date(endDate.value).toISOString(),
-    };
+const saveEditedDiscount = async () => {
+  const updatedDiscount = {
+    discountTitle: discountTitle.value,
+    discountRate: discountRate.value,
+    startDateTime: new Date(startDate.value).toISOString(),
+    endDateTime: new Date(endDate.value).toISOString(),
+  };
 
-    axios.put(`http://localhost:8080/discount/update/${editingDiscountId.value}`, updatedDiscount)
-      .then(() => {
-        // 成功後重新取得折扣列表並關閉編輯模式
-        fetchDiscounts();
-        isEditing.value = false;
-        // 清空表單
-        clearForm();
-      })
-      .catch(error => {
-        console.error("Error updating discount:", error);
-      });
-}
+  try {
+    await updateDiscountAPI(editingDiscountId.value, updatedDiscount);
+    fetchDiscounts();  
+    isEditing.value = false;
+    clearForm();  
+  } catch (error) {
+    console.error("Error updating discount:", error);
+  }
+};
 
 // 清空表單
 function clearForm() {
@@ -69,43 +66,29 @@ function clearForm() {
 }
 
 // 刪除折扣
-function deleteDiscount(id) {
-    axios.delete(`http://localhost:8080/discount/delete/${id}`)
-      .then(() => {
-        // 更新折扣列表
-        fetchDiscounts();
-      })
-      .catch(error => {
-        console.error("Error deleting discount:", error);
-      });
-}
+const deleteDiscount = async (id) => {
+  try {
+    await deleteDiscountAPI(id);
+    fetchDiscounts();  
+  } catch (error) {
+    console.error("Error deleting discount:", error);
+  }
+};
 
-// 新增折扣
-function addDiscount() {
-    const newDiscount = {
+// Add Product
+const addDiscount = async () => {
+  const response = await addDiscountAPI({
         discountTitle: discountTitle.value,
         discountRate: discountRate.value,
-        startDate: new Date(startDate.value).toISOString(),  // 確保 startDate 被正確轉換
-        endDate: new Date(endDate.value).toISOString(),
-    };
-
-    // 發送 POST 請求，並包含 Authorization 標頭
-    axios.post('http://localhost:8080/discount/add', newDiscount, {
-        headers: {
-            'Authorization': `Bearer company`  
-        }
-    })
-    .then(() => {
-        // 清空表單
-        clearForm();
-
-        // 更新折扣列表
-        fetchDiscounts();
-    })
-    .catch(error => {
-        console.error("Error adding discount:", error);
-    });
-}
+        startDate: new Date(startDate.value).toISOString(),
+        endDate: new Date(endDate.value).toISOString()
+  });
+  
+  if (response.success) {
+    fetchDiscounts();
+    
+  }
+};
 
 // 初始化時取得已有的折扣
 onMounted(() => {
