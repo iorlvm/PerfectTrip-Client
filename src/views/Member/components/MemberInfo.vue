@@ -18,6 +18,13 @@ const userInfo = ref({
     address: userStore.userInfo.address,
    
 });
+
+const genderMap = {
+  'FEMALE': '女性',
+  'MALE': '男性',
+  'LBGT': 'LBGT'
+};
+
 //TODO 前後端性別轉換
 const save  = async (e) => {
     e.preventDefault();
@@ -91,6 +98,8 @@ const addressClick = (e) => {
     address.value = !address.value
 }
 
+
+
 </script>
 //TODO新增大頭貼
 <template>
@@ -154,7 +163,7 @@ const addressClick = (e) => {
         <div class="row border-bottom">
             <template v-if="!gender">
                 <div class="column">姓別</div>
-                <div class="info">{{ userInfo.gender }}</div>
+                <div class="info">{{ genderMap[userInfo.gender]}}</div>
                 <div class="edit">
                     <a href="" @click="genderClick">編輯</a>
                 </div>
