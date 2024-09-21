@@ -36,16 +36,18 @@ export const getOrderByIdAPI = (orderId) => {
 
 //訂單管理-修改訂單   UpdateOrder
 
-export const updateOrderAPI = ({couponId, beginDate, endDate, companyId, productList}) => {
+export const updateOrderAPI = ({orderId,firstName,lastName,email,country,phone,remark, wishedTime}) => {
     return httpInstance({
-        url:'orders',
-        method: 'POST',
+        url:`orders/${orderId}`,
+        method: 'PUT',
         data: {
-            couponId,
-            beginDate,
-            endDate,
-            companyId,
-            productList,
+            firstName, 
+            lastName,
+            email,
+            country,
+            phone,
+            remark,
+            wishedTime,
         }
     })
 }

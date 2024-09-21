@@ -24,10 +24,7 @@ const getQAsAPI = async () => {
     })
 }
 
-onMounted(async () => {
-    qaList.value = await getQAsAPI();
 
-})
 
 </script>
 

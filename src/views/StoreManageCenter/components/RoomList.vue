@@ -43,12 +43,8 @@
     </table>
 
     <div class="pagination">
-      <button 
-        v-for="page in totalPages" 
-        :key="page" 
-        @click="currentPage = page" 
-        :class="{ active: currentPage === page }"
-      >
+      <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+        :class="{ active: currentPage === page }">
         {{ page }}
       </button>
     </div>
@@ -87,6 +83,7 @@
 </template>
 
 <script setup>
+import { addProductAPI } from '@/apis/product';
 import { ref, reactive, computed, onMounted } from 'vue';
 
 // Modal state and new product form data
@@ -151,42 +148,54 @@ const paginatedProducts = computed(() => {
 
 // Add Product
 const addProduct = async () => {
-  const formData = {
-    companyId: currentProduct.companyId,  
+  const response = await addProductAPI({
+    companyId: currentProduct.companyId,
     productName: currentProduct.productName,
     maxOccupancy: currentProduct.maxOccupancy,
     price: currentProduct.price,
     stock: currentProduct.stock,
-  };
-
-  const token = localStorage.getItem('authToken');
-
-  try {
-    const response = await fetch('http://localhost:8080/product/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer admin`
-      },
-      body: JSON.stringify(formData),
+  })
+  const data = await response.data;
+  if (response.success) {
+    products.value.push({
+      productId: data.productId,
+      companyId: data.companyId,
+      productName: data.productName,
+      maxOccupancy: data.maxOccupancy,
+      price: data.price,
+      stock: data.stock,
     });
-    const data = await response.json();
-    if (response.ok) {
-      products.value.push({
-        productId: data.productId,
-        companyId: data.companyId,
-        productName: data.productName,
-        maxOccupancy: data.maxOccupancy,
-        price: data.price,
-        stock: data.stock,
-      });
-      resetForm();
-      showModal.value = false;
-    } else {
-      console.error('Error adding product:', data);
-    }
-  } catch (error) {
-    console.error('Error adding product:', error);
+    resetForm();
+    showModal.value = false;
+    console.log(response);
+    //   const token = localStorage.getItem('authToken');
+
+    //   try {
+    //     const response = await fetch('http://localhost:8080/product/add', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer admin`
+    //       },
+    //       body: JSON.stringify(formData),
+    //     });
+    //     const data = await response.json();
+    //     if (response.ok) {
+    //       products.value.push({
+    //         productId: data.productId,
+    //         companyId: data.companyId,
+    //         productName: data.productName,
+    //         maxOccupancy: data.maxOccupancy,
+    //         price: data.price,
+    //         stock: data.stock,
+    //       });
+    //       resetForm();
+    //       showModal.value = false;
+    //     } else {
+    //       console.error('Error adding product:', data);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error adding product:', error);
   }
 };
 
@@ -196,7 +205,7 @@ const updateProduct = async () => {
   formData.append('productName', currentProduct.productName);
   formData.append('roomPrice', currentProduct.price);
   formData.append('maxOccupancy', currentProduct.maxOccupancy || 0);
-  formData.append('stock',currentProduct.stock);  
+  formData.append('stock', currentProduct.stock);
   if (currentProduct.photo) {
     formData.append('photo', currentProduct.photo);
   }
@@ -228,12 +237,12 @@ const updateProduct = async () => {
 // Edit Product: 打開燈箱，並載入選中的產品數據
 const editProduct = (product) => {
   isEditing.value = true;
-  currentProduct.companyId = product.companyId;  
+  currentProduct.companyId = product.companyId;
   currentProduct.productName = product.productName;
   currentProduct.maxOccupancy = product.maxOccupancy;
   currentProduct.price = product.price;
   currentProduct.stock = product.stock;
-  currentProduct.productId = product.productId; 
+  currentProduct.productId = product.productId;
   showModal.value = true;
 };
 
@@ -504,4 +513,3 @@ table td button:last-child:hover {
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 </style>
-

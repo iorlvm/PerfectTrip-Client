@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { imageUpdateAPI } from '@/apis/image';
 
 
 const maxPhotos = 12;  // 最多 8 張照片
@@ -45,9 +46,25 @@ const onSubmit = () => {
 const openUploadDialog = () => {
     showUploadDialog.value = true;
 };
+
 //燈箱大圖連結
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
+
+const customUpload = async ({ file }) => {
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('cacheEnabled', false);
+    formData.append('resizeEnabled', true);
+    formData.append('width', 1200);
+    formData.append('height', 900);
+
+    const res = await imageUpdateAPI(formData);
+
+    console.log(res);
+    // TODO: res.data是圖片網址 把這個網址存到商家相簿之中
+};
 
 //圖片
 const fileList = ref([
@@ -59,7 +76,7 @@ const fileList = ref([
         name: 'plant-1.png',
         url: '/images/plant-1.png',
     },
-    
+
 ])
 
 const handleRemove = (uploadFile, uploadFiles) => {
@@ -84,9 +101,8 @@ const handlePictureCardPreview = (uploadFile) => {
             <br />
             <div class="image">
                 <!-- 縮圖區域 -->
-                <el-upload v-model:file-list="fileList"
-                    action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" list-type="picture-card"
-                    :on-preview="handlePictureCardPreview" :on-remove="handleRemove" :multiple="true">
+                <el-upload v-model:file-list="fileList" :http-request="customUpload" list-type="picture-card"
+                    :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
                     <el-icon>
                         <Plus />
                     </el-icon>
