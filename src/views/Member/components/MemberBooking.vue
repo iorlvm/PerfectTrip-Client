@@ -4,6 +4,26 @@ import { onMounted, ref } from 'vue';
 
 const orders = ref([]);
 
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}年${month}月${day}日`;
+}
+
+const formatDate2 = (dateString) => {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}/${month}/${day}`;
+}
+
 onMounted(async () => {
   const res = await getOrderAPI();
   orders.value = res.data;
@@ -26,7 +46,7 @@ onMounted(async () => {
         <div class="row">
           <div>
             <p class="location">台北</p>
-            <p>{{ order.startDate }}-{{ order.endDate }}</p>
+            <p>{{ formatDate(order.startDate) }} - {{ formatDate(order.endDate) }}</p>
 
           </div>
           <el-icon class="option">
@@ -45,129 +65,14 @@ onMounted(async () => {
       </div>
       <template #footer>
         <div class="row">
-          <div class="ordertime">訂單日期 {{ order.createdDate }}</div>
+          <div class="ordertime">訂單日期 {{ formatDate2(order.createdDate) }}</div>
           <div class="status"> {{ order.payStatus }} </div>
-        </div>
-      </template>
-    </el-card>
-    <el-card>
-      <template #header>
-        <div class="row">
-          <div>
-            <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
-          </div>
-          <el-icon class="option">
-            <ArrowDownBold />
-          </el-icon>
-        </div>
-      </template>
-      <h1 class="hotel-name">國賓大飯店</h1>
-      <div class="row">
-        <div class="image"><img src="" alt="" /></div>
-        <div class="content">
-          <div>住宿人數:4人</div>
-          <div>豪華雙人房*2</div>
-        </div>
-        <div class="twd">TWD 5280</div>
-      </div>
-      <template #footer>
-        <div class="row">
-          <div class="ordertime">訂單日期2024/5/1 </div>
-          <div class="status">未完成</div>
         </div>
       </template>
     </el-card>
   </div>
   <div class="state">
     <h2 class="desc">歷史訂單</h2>
-    <el-card>
-      <template #header>
-        <div class="row">
-          <div>
-            <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
-          </div>
-          <el-icon class="option">
-            <ArrowDownBold />
-          </el-icon>
-        </div>
-      </template>
-      <div class="history">
-        <div class="row">
-          <h1 class="hotel-name">兄弟大飯店</h1>
-          <p class="twd">TWD 5280</p>
-        </div>
-        <div class="row">
-          <div class="content">
-            <p>住宿人數:4人</p>
-            <p>豪華雙人房*2</p>
-          </div>
-          <div class="end">
-            <p>已完成</p>
-            <p>訂單日期2024/5/1 </p>
-          </div>
-        </div>
-      </div>
-    </el-card>
-    <el-card>
-      <template #header>
-        <div class="row">
-          <div>
-            <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
-          </div>
-          <el-icon class="option">
-            <ArrowDownBold />
-          </el-icon>
-        </div>
-      </template>
-      <div class="history">
-        <div class="row">
-          <h1 class="hotel-name">兄弟大飯店</h1>
-          <p class="twd">TWD 5280</p>
-        </div>
-        <div class="row">
-          <div class="content">
-            <p>住宿人數:4人</p>
-            <p>豪華雙人房*2</p>
-          </div>
-          <div class="end">
-            <p>已完成</p>
-            <p>訂單日期2024/5/1 </p>
-          </div>
-        </div>
-      </div>
-    </el-card>
-    <el-card>
-      <template #header>
-        <div class="row">
-          <div>
-            <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
-          </div>
-          <el-icon class="option">
-            <ArrowDownBold />
-          </el-icon>
-        </div>
-      </template>
-      <div class="history">
-        <div class="row">
-          <h1 class="hotel-name">兄弟大飯店</h1>
-          <p class="twd">TWD 5280</p>
-        </div>
-        <div class="row">
-          <div class="content">
-            <p>住宿人數:4人</p>
-            <p>豪華雙人房*2</p>
-          </div>
-          <div class="end">
-            <p>已完成</p>
-            <p>訂單日期2024/5/1 </p>
-          </div>
-        </div>
-      </div>
-    </el-card>
     <el-card>
       <template #header>
         <div class="row">
