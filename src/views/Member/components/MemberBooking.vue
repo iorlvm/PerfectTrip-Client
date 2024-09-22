@@ -1,4 +1,15 @@
 <script setup>
+import { getOrderAPI } from '@/apis/order';
+import { onMounted, ref } from 'vue';
+
+const orders = ref([]);
+
+onMounted(async () => {
+  const res = await getOrderAPI();
+  orders.value = res.data;
+  console.log(orders.value);
+})
+
 </script>
 
 <template>
@@ -10,31 +21,32 @@
   </div>
   <div class="state">
     <h2 class="desc">即將啟程</h2>
-    <el-card>
+    <el-card v-for="(order, index) in orders" :key="index">
       <template #header>
         <div class="row">
           <div>
             <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
+            <p>{{ order.startDate }}-{{ order.endDate }}</p>
+
           </div>
           <el-icon class="option">
             <ArrowDownBold />
           </el-icon>
         </div>
       </template>
-      <h1 class="hotel-name">兄弟大飯店</h1>
+      <h1 class="hotel-name">{{ order.hotelName }}</h1>
       <div class="row">
-        <div class="image"><img src="" alt="" /></div>
+        <div class="image"><img :src="order.photo" alt="" /></div>
         <div class="content">
           <div>住宿人數:4人</div>
           <div>豪華雙人房*2</div>
         </div>
-        <div class="twd">TWD 5280</div>
+        <div class="twd">TWD {{ order.actualPrice }}</div>
       </div>
       <template #footer>
         <div class="row">
-          <div class="ordertime">訂單日期2024/5/1</div>
-          <div class="status">未完成</div>
+          <div class="ordertime">訂單日期 {{ order.createdDate }}</div>
+          <div class="status"> {{ order.payStatus }} </div>
         </div>
       </template>
     </el-card>
