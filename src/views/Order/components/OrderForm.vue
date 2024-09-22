@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from "vue-router";
-import { getOrderByIdAPI, updateOrderAPI } from '@/apis/order';
+import { deleteByOrderIdAPI, getOrderByIdAPI, updateOrderAPI } from '@/apis/order';
 const props = defineProps([
     'active'
 ])
@@ -113,6 +113,12 @@ const submitForm = async () => {
     router.push(`/order/pay/${orderId}`);
 }
 
+const changeSelected = async () => {
+    const orderId = route.params.id;
+    await deleteByOrderIdAPI(orderId);
+    router.go(-1);
+}
+
 const formatPrice = (price) => {
     let format = price;
 
@@ -123,7 +129,6 @@ const orderData = ref({});
 
 onMounted(async () => {
     const orderId = route.params.id;
-    //TODO 利用這個值去撈資料
     const res = await getOrderByIdAPI(orderId);
     console.log(res.data);
     orderData.value = res.data;
@@ -178,14 +183,15 @@ onMounted(async () => {
                     <el-collapse v-model="selectedActive">
                         <el-collapse-item :name="1" :disabled="active !== 0">
                             <template #title>
-                                <div class="title" style="color: black;">5 間客房 ( 10 位成人 )</div>
+                                <div class="title" style="color: black;">{{ orderData.products?.length }} 間客房 ( {{
+                                    orderData.guestCount }} 位成人 )
+                                </div>
                             </template>
-                            <p>1 x 標準雙人或雙床房</p>
-                            <p>3 x 高級雙人或雙床房</p>
-                            <p>1 x 豪華雙人或雙床房</p>
+                            <p v-for="(product, index) in orderData.products" :key="index">{{ product.quantity }} x {{
+                                product.productName }}</p>
                         </el-collapse-item>
                     </el-collapse>
-                    <el-link type="primary" @click="$router.go(-1)" v-if="active === 0"><span>更改選擇</span></el-link>
+                    <el-link type="primary" @click="changeSelected" v-if="active === 0"><span>更改選擇</span></el-link>
                 </div>
             </div>
             <div class="info-card total-price">

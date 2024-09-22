@@ -10,9 +10,10 @@ const route = useRoute();
 const createOrder = async () => {
     const query = route.query;
 
-    // 先傳給伺服器訂單內容  由伺服器創造一個臨時的訂單編號
+    // 先傳給伺服器訂單內容  由伺服器創造一個臨時的訂單編號 
     const companyId = route.params.id;
     const couponId = null;
+    const guestCount = query.adultCount;
     const beginDate = query.startDate.split('T')[0];
     const endDate = query.endDate.split('T')[0];
 
@@ -26,6 +27,7 @@ const createOrder = async () => {
 
     const res = await createOrderAPI({
         companyId,
+        guestCount,
         couponId,
         beginDate,
         endDate,
