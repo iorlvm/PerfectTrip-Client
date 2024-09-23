@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 
 import { onMounted } from 'vue';
-import { addDiscountAPI,getDiscountsAPI, updateDiscountAPI, deleteDiscountAPI } from '@/apis/discount';
+import { addDiscountAPI, getDiscountsAPI, updateDiscountAPI, deleteDiscountAPI } from '@/apis/discount';
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
@@ -21,10 +21,10 @@ const discounts = ref([]);
 
 // 取得已有的折扣
 async function fetchDiscounts() {
-   const response = await getDiscountsAPI(userStore.userInfo.companyId);
-   // console.log(response);
-   discounts.value = response.data;
-  
+    const response = await getDiscountsAPI(userStore.userInfo.companyId);
+    // console.log(response);
+    discounts.value = response.data;
+
 }
 
 // 打開編輯視窗
@@ -40,21 +40,21 @@ function editDiscount(discount) {
 
 // 保存編輯後的折扣
 const saveEditedDiscount = async () => {
-  const updatedDiscount = {
-    discountTitle: discountTitle.value,
-    discountRate: discountRate.value,
-    startDateTime: new Date(startDate.value).toISOString(),
-    endDateTime: new Date(endDate.value).toISOString(),
-  };
+    const updatedDiscount = {
+        discountTitle: discountTitle.value,
+        discountRate: discountRate.value,
+        startDateTime: new Date(startDate.value).toISOString(),
+        endDateTime: new Date(endDate.value).toISOString(),
+    };
 
-  try {
-    await updateDiscountAPI(editingDiscountId.value, updatedDiscount);
-    fetchDiscounts();  
-    isEditing.value = false;
-    clearForm();  
-  } catch (error) {
-    console.error("Error updating discount:", error);
-  }
+    try {
+        await updateDiscountAPI(editingDiscountId.value, updatedDiscount);
+        fetchDiscounts();
+        isEditing.value = false;
+        clearForm();
+    } catch (error) {
+        console.error("Error updating discount:", error);
+    }
 };
 
 // 清空表單
@@ -67,27 +67,27 @@ function clearForm() {
 
 // 刪除折扣
 const deleteDiscount = async (id) => {
-  try {
-    await deleteDiscountAPI(id);
-    fetchDiscounts();  
-  } catch (error) {
-    console.error("Error deleting discount:", error);
-  }
+    try {
+        await deleteDiscountAPI(id);
+        fetchDiscounts();
+    } catch (error) {
+        console.error("Error deleting discount:", error);
+    }
 };
 
 // Add Product
 const addDiscount = async () => {
-  const response = await addDiscountAPI({
+    const response = await addDiscountAPI({
         discountTitle: discountTitle.value,
         discountRate: discountRate.value,
         startDate: new Date(startDate.value).toISOString(),
         endDate: new Date(endDate.value).toISOString()
-  });
-  
-  if (response.success) {
-    fetchDiscounts();
-    
-  }
+    });
+
+    if (response.success) {
+        fetchDiscounts();
+
+    }
 };
 
 // 初始化時取得已有的折扣
@@ -118,9 +118,9 @@ fetchDiscounts();
                 <tbody>
                     <tr v-for="discount in discounts" :key="discount.productDiscountId">
                         <td>{{ discount.discountTitle }}</td>
-                        <td>{{ discount.discountRate }}</td>
+                        <td>{{ parseInt(discount.discountRate * 100) }}</td>
                         <td>
-                            {{ new Date(discount.startDateTime).toLocaleDateString('en-CA') }} - 
+                            {{ new Date(discount.startDateTime).toLocaleDateString('en-CA') }} -
                             {{ new Date(discount.endDateTime).toLocaleDateString('en-CA') }}
                         </td>
                         <td>
@@ -186,7 +186,8 @@ fetchDiscounts();
         border-collapse: collapse;
         margin-bottom: 20px;
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             border: 1px solid #e7e7e7;
             text-align: left;
@@ -214,7 +215,8 @@ fetchDiscounts();
                 transition: background-color 0.3s;
 
                 &.edit {
-                    background-color: #28a745; /* confirm color */
+                    background-color: #28a745;
+                    /* confirm color */
                 }
 
                 &.edit:hover {
@@ -222,7 +224,8 @@ fetchDiscounts();
                 }
 
                 &.delete {
-                    background-color: #dc3545; /* danger color */
+                    background-color: #dc3545;
+                    /* danger color */
                 }
 
                 &.delete:hover {
@@ -252,7 +255,8 @@ fetchDiscounts();
         button {
             margin-top: 5px;
             padding: 12px;
-            background-color: #007bff; /* primary color */
+            background-color: #007bff;
+            /* primary color */
             color: white;
             border: none;
             border-radius: 4px;
@@ -261,7 +265,8 @@ fetchDiscounts();
             margin-bottom: 10px;
 
             &:hover {
-                background-color: #0056b3; /* darker primary color */
+                background-color: #0056b3;
+                /* darker primary color */
             }
         }
     }

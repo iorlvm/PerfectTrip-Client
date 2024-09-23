@@ -31,16 +31,35 @@ export const deleteProductAPI = (roomId) => {
     });
 };
 
-export const updateRoomAPI = ({ roomId, productName, roomPrice, stock }) => {
+export const updateRoomAPI = ({
+    roomId,
+    price,
+    stock,
+    maxOccupancy,
+    productName,
+    productPhotos,
+    productFacilities,
+    productDetails
+}) => {
     return httpInstance({
         url: `product/update/${roomId}`,
         method: 'PUT',
         data: {
+            price,
+            stock,
+            maxOccupancy,
             productName,
-            roomPrice,
-            stock
+            productPhotos,
+            productFacilities,
+            productDetails
         }
+    });
+};
 
+export const getByProductIdAPI = (id) => {
+    return httpInstance({
+        url: `product/${id}`,
+        method: 'GET',
     });
 };
 

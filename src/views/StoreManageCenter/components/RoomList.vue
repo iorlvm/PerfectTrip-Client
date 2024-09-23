@@ -1,5 +1,5 @@
 <script setup>
-import { addProductAPI, getAllProductsAPI, updateRoomAPI, deleteProductAPI, getFacilitiesAPI } from '@/apis/product';
+import { addProductAPI, getAllProductsAPI, updateRoomAPI, deleteProductAPI, getFacilitiesAPI, getByProductIdAPI } from '@/apis/product';
 import { ref, reactive, computed, onMounted } from 'vue';
 import { imageUpdateAPI } from '@/apis/image';
 
@@ -131,9 +131,12 @@ const updateProduct = async () => {
     const response = await updateRoomAPI({
       roomId: currentProduct.productId,
       productName: currentProduct.productName,
-      roomPrice: currentProduct.price,
+      maxOccupancy: currentProduct.maxOccupancy,
+      price: currentProduct.price,
       stock: currentProduct.stock,
-      photo: currentProduct.photo,
+      productPhotos: currentProduct.productPhotos,
+      productFacilities: facilityCheckList.value.map(value => ({ facilityId: value })),
+      productDetails: currentProduct.productDetails
     });
 
     if (response.success) {
@@ -147,13 +150,25 @@ const updateProduct = async () => {
   }
 };
 
-const editProduct = (product) => {
+const editProduct = async (product) => {
   isEditing.value = true;
-  currentProduct.productName = product.productName;
-  currentProduct.maxOccupancy = product.maxOccupancy;
-  currentProduct.price = product.price;
-  currentProduct.stock = product.stock;
-  currentProduct.productId = product.productId;
+  const res = await getByProductIdAPI(product.productId);
+  console.log(res.data);
+
+  facilityCheckList.value = res.data.facilities.map(facility => facility.facilityId);
+
+  currentProduct.productDetails.includesBreakfast = res.data.includesBreakfast;
+  currentProduct.productDetails.allowDateChanges = res.data.allowDateChanges;
+  currentProduct.productDetails.isRefundable = res.data.isRefundable;
+  currentProduct.productDetails.allowFreeCancellation = res.data.allowFreeCancellation;
+
+  currentProduct.productPhotos = res.data.photos;
+
+  currentProduct.productName = res.data.product.productName;
+  currentProduct.maxOccupancy = res.data.product.maxOccupancy;
+  currentProduct.price = res.data.product.price;
+  currentProduct.stock = res.data.product.stock;
+  currentProduct.productId = res.data.product.productId;
   showModal.value = true;
 };
 
@@ -166,6 +181,7 @@ const resetForm = () => {
   currentProduct.productId = null;
   isEditing.value = false;
   facilityCheckList.value = [];
+  currentProduct.productPhotos = [];
   currentProduct.productDetails = {
     includesBreakfast: false,
     allowDateChanges: false,
@@ -475,9 +491,9 @@ table td button:last-child:hover {
   background-color: #fff;
   padding: 15px 20px;
   border-radius: 8px;
-  max-width: 550px;
+  max-width: 55vh;
   width: 100%;
-  height: 95vh;
+  max-height: 95vh;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
 }
