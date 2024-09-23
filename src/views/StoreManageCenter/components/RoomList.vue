@@ -1,116 +1,46 @@
-<template>
-  <div>
-    <header class="header">
-      <h2>現存商品列表</h2>
-      <button @click="showModal = true" class="add-room-btn">新增一個商品</button>
-    </header>
-
-    <div class="filter-section">
-      <label for="filterType">商品名稱篩選器</label>
-      <select v-model="filterType" id="filterType">
-        <option value="">篩選中...</option>
-        <option v-for="type in productTypes" :key="type" :value="type">{{ type }}</option>
-      </select>
-      <button @click="clearFilter" class="filter-btn">清除篩選</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Company ID</th>
-          <th>Product Name</th>
-          <th>Max Occupancy</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="product in paginatedProducts" :key="product.productId">
-          <td>{{ product.productId }}</td>
-          <td>{{ product.companyId }}</td>
-          <td>{{ product.productName }}</td>
-          <td>{{ product.maxOccupancy }}</td>
-          <td>{{ product.price }}</td>
-          <td>{{ product.stock }}</td>
-          <td>
-            <button @click="editProduct(product)" class="edit-btn">View/Edit</button>
-            <button @click="deleteProduct(product.productId)" class="delete-btn">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="pagination">
-      <button v-for="page in totalPages" :key="page" @click="currentPage = page"
-        :class="{ active: currentPage === page }">
-        {{ page }}
-      </button>
-    </div>
-
-    <!-- Modal for Add/Edit Product -->
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
-        <form @submit.prevent="isEditing ? updateProduct() : addProduct()">
-          <div class="form-group">
-            <label for="companyId">Company ID</label>
-            <input type="number" v-model="currentProduct.companyId" id="companyId" required />
-          </div>
-          <div class="form-group">
-            <label for="productName">Product Name</label>
-            <input type="text" v-model="currentProduct.productName" id="productName" required />
-          </div>
-          <div class="form-group">
-            <label for="maxOccupancy">Max Occupancy</label>
-            <input type="number" v-model="currentProduct.maxOccupancy" id="maxOccupancy" required />
-          </div>
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" v-model="currentProduct.price" id="price" required />
-          </div>
-          <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" v-model="currentProduct.stock" id="stock" required />
-          </div>
-          <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { addProductAPI, getAllProductsAPI, updateRoomAPI, deleteProductAPI } from '@/apis/product';
+import { addProductAPI, getAllProductsAPI, updateRoomAPI, deleteProductAPI, getFacilitiesAPI } from '@/apis/product';
 import { ref, reactive, computed, onMounted } from 'vue';
+import { imageUpdateAPI } from '@/apis/image';
 
 // Modal state and new product form data
 const showModal = ref(false);
-const isEditing = ref(false); 
+const isEditing = ref(false);
 const currentProduct = reactive({
-  companyId: '',
+  productId: null,
   productName: '',
   maxOccupancy: '',
   price: '',
   stock: '',
-  productId: null, 
+  productPhotos: [],
+  productDetails:
+  {
+    includesBreakfast: false,
+    allowDateChanges: false,
+    isRefundable: false,
+    allowFreeCancellation: false
+  }
 });
 
+const facilities = ref([]);
 const products = ref([]);
+const facilityCheckList = ref([]);
 
 onMounted(async () => {
   try {
-    const response = await getAllProductsAPI();  
+    const response = await getAllProductsAPI();
     if (response.success) {
-      products.value = response.data;  
+      products.value = response.data;
     } else {
       console.error('產品獲取失敗');
     }
   } catch (error) {
     console.error('產品獲取發生錯誤', error);
   }
+
+  const res = await getFacilitiesAPI();
+
+  facilities.value = res.data;
 });
 
 const productTypes = ref(['單人房', '雙人房']);
@@ -130,6 +60,39 @@ const filteredProducts = computed(() => {
   return products.value;
 });
 
+const baseURL = 'http://localhost:8080/';
+const photoList = computed(() => {
+  return currentProduct.productPhotos.map(photo => ({
+    name: photo.description,
+    url: baseURL + photo.photoUrl,
+  })) || [];
+})
+
+const customUpload = async ({ file }) => {
+  const formData = new FormData();
+
+  formData.append('file', file);
+  formData.append('cacheEnabled', false);
+  formData.append('resizeEnabled', true);
+  formData.append('width', 1200);
+  formData.append('height', 900);
+
+  const res = await imageUpdateAPI(formData);
+
+  console.log(res);
+  const count = currentProduct.productPhotos.length + 1;
+  currentProduct.productPhotos.push(
+    {
+      photoUrl: res.data,
+      description: '房間照片' + count
+    }
+  )
+};
+
+const handleRemove = (uploadFile, uploadFiles) => {
+  console.log(uploadFile, uploadFiles)
+}
+
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * productsPerPage;
   const end = start + productsPerPage;
@@ -139,17 +102,18 @@ const paginatedProducts = computed(() => {
 // Add Product
 const addProduct = async () => {
   const response = await addProductAPI({
-    companyId: currentProduct.companyId,
     productName: currentProduct.productName,
     maxOccupancy: currentProduct.maxOccupancy,
     price: currentProduct.price,
     stock: currentProduct.stock,
+    productPhotos: currentProduct.productPhotos,
+    productFacilities: facilityCheckList.value.map(value => ({ facilityId: value })),
+    productDetails: currentProduct.productDetails
   });
   const data = await response.data;
   if (response.success) {
     products.value.push({
       productId: data.productId,
-      companyId: data.companyId,
       productName: data.productName,
       maxOccupancy: data.maxOccupancy,
       price: data.price,
@@ -185,7 +149,6 @@ const updateProduct = async () => {
 
 const editProduct = (product) => {
   isEditing.value = true;
-  currentProduct.companyId = product.companyId;
   currentProduct.productName = product.productName;
   currentProduct.maxOccupancy = product.maxOccupancy;
   currentProduct.price = product.price;
@@ -196,13 +159,19 @@ const editProduct = (product) => {
 
 
 const resetForm = () => {
-  currentProduct.companyId = '';
   currentProduct.productName = '';
   currentProduct.maxOccupancy = '';
   currentProduct.price = '';
   currentProduct.stock = '';
   currentProduct.productId = null;
   isEditing.value = false;
+  facilityCheckList.value = [];
+  currentProduct.productDetails = {
+    includesBreakfast: false,
+    allowDateChanges: false,
+    isRefundable: false,
+    allowFreeCancellation: false
+  };
 };
 
 // Close modal
@@ -223,7 +192,7 @@ const deleteProduct = async (productId) => {
   if (!confirmed) return;
 
   try {
-    const response = await deleteProductAPI(productId);  
+    const response = await deleteProductAPI(productId);
 
     if (response.success) {
       products.value = products.value.filter(product => product.productId !== productId);
@@ -237,7 +206,122 @@ const deleteProduct = async (productId) => {
 };
 </script>
 
+<template>
+  <el-Scrollbar>
+    <header class="header">
+      <h2>現存商品列表</h2>
+      <button @click="showModal = true" class="add-room-btn">新增一個商品</button>
+    </header>
+
+    <div class="filter-section">
+      <label for="filterType">商品名稱篩選器</label>
+      <select v-model="filterType" id="filterType">
+        <option value="">篩選中...</option>
+        <option v-for="type in productTypes" :key="type" :value="type">{{ type }}</option>
+      </select>
+      <button @click="clearFilter" class="filter-btn">清除篩選</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product Name</th>
+          <th>Max Occupancy</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="product in paginatedProducts" :key="product.productId">
+          <td>{{ product.productId }}</td>
+          <td>{{ product.productName }}</td>
+          <td>{{ product.maxOccupancy }}</td>
+          <td>{{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td>
+            <button @click="editProduct(product)" class="edit-btn">View/Edit</button>
+            <button @click="deleteProduct(product.productId)" class="delete-btn">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+        :class="{ active: currentPage === page }">
+        {{ page }}
+      </button>
+    </div>
+
+    <!-- Modal for Add/Edit Product -->
+    <div v-if="showModal" class="modal">
+      <div class="modal-content">
+        <el-Scrollbar>
+          <span class="close" @click="closeModal">&times;</span>
+          <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
+          <form class="form" @submit.prevent="isEditing ? updateProduct() : addProduct()">
+            <div class="form-group full">
+              <label for="productName">商品照片</label>
+              <el-upload v-model:file-list="photoList" :http-request="customUpload" list-type="picture-card"
+                :on-remove="handleRemove">
+                <el-icon>
+                  <Plus />
+                </el-icon>
+              </el-upload>
+            </div>
+            <div class="form-group half">
+              <label for="productName">商品名稱</label>
+              <input type="text" v-model="currentProduct.productName" id="productName" required />
+            </div>
+            <div class="form-group half">
+              <label for="maxOccupancy">入住人數</label>
+              <input type="number" v-model="currentProduct.maxOccupancy" id="maxOccupancy" required />
+            </div>
+            <div class="form-group half">
+              <label for="price">價格</label>
+              <input type="number" v-model="currentProduct.price" id="price" required />
+            </div>
+            <div class="form-group half">
+              <label for="stock">庫存</label>
+              <input type="number" v-model="currentProduct.stock" id="stock" required />
+            </div>
+            <div class="form-group full">
+              <label>設施</label>
+              <el-checkbox-group v-model="facilityCheckList" class="flex">
+                <el-checkbox :label="facility.facilityName" :value="facility.facilityId" size="small"
+                  v-for="(facility, index) in facilities" :key="index" />
+              </el-checkbox-group>
+            </div>
+            <div class="form-group full">
+              <label>服務</label>
+              <div class="flex">
+                <el-checkbox label="包含早餐" v-model="currentProduct.productDetails.includesBreakfast" size="small" />
+                <el-checkbox label="允許更改日期" v-model="currentProduct.productDetails.allowDateChanges" size="small" />
+                <el-checkbox label="允許免費取消" v-model="currentProduct.productDetails.allowFreeCancellation"
+                  size="small" />
+                <el-checkbox label="可退款" v-model="currentProduct.productDetails.isRefundable" size="small" />
+              </div>
+            </div>
+            <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
+          </form>
+        </el-Scrollbar>
+      </div>
+    </div>
+  </el-Scrollbar>
+</template>
+
 <style scoped>
+.el-scrollbar {
+  padding: 10px;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -350,7 +434,7 @@ table td button:last-child:hover {
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin: 20px;
 }
 
 .pagination button {
@@ -389,10 +473,11 @@ table td button:last-child:hover {
 
 .modal-content {
   background-color: #fff;
-  padding: 20px;
+  padding: 15px 20px;
   border-radius: 8px;
-  max-width: 500px;
+  max-width: 550px;
   width: 100%;
+  height: 95vh;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
 }
@@ -407,14 +492,29 @@ table td button:last-child:hover {
 }
 
 .modal h2 {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   color: #495057;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
 }
 
+.form {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.full {
+  width: 100%;
+}
+
+.half {
+  width: 48%;
+}
+
 .modal .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .modal .form-group label {

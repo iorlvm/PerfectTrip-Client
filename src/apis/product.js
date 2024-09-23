@@ -1,6 +1,14 @@
 import httpInstance from "@/utils/axiosInit";
 
-export const addProductAPI = ({ price, stock, maxOccupancy, productName }) => {
+export const addProductAPI = ({
+    price,
+    stock,
+    maxOccupancy,
+    productName,
+    productPhotos,
+    productFacilities,
+    productDetails
+}) => {
     return httpInstance({
         url: 'product/add',
         method: 'POST',
@@ -8,7 +16,10 @@ export const addProductAPI = ({ price, stock, maxOccupancy, productName }) => {
             price,
             stock,
             maxOccupancy,
-            productName
+            productName,
+            productPhotos,
+            productFacilities,
+            productDetails
         }
     });
 };
@@ -36,7 +47,13 @@ export const updateRoomAPI = ({ roomId, productName, roomPrice, stock }) => {
 export const getAllProductsAPI = () => {
     return httpInstance({
         url: 'product/all',
-        method:'GET',
+        method: 'GET',
     });
 };
 
+export const getFacilitiesAPI = () => {
+    return httpInstance({
+        url: 'product/facility',
+        method: 'GET',
+    });
+};
