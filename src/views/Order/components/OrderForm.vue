@@ -130,7 +130,9 @@ const orderData = ref({});
 onMounted(async () => {
     const orderId = route.params.id;
     const res = await getOrderByIdAPI(orderId);
-    console.log(res.data);
+    if (!res.success) {
+        router.go(-1);
+    }
     orderData.value = res.data;
 });
 

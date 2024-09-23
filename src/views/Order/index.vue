@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+
 const active = ref(0)
 
 const nextStep = () => {
@@ -9,7 +10,6 @@ const nextStep = () => {
 const backStep = () => {
     active.value -= 1;
 }
-
 </script>
 
 <template>

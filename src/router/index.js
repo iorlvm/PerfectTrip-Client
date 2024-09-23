@@ -56,7 +56,7 @@ const router = createRouter({
         },
         {
           path: "company/:id",
-          component: Product,
+          component: Product
         },
         {
           path: "/register",

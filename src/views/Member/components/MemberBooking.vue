@@ -24,12 +24,20 @@ const formatDate2 = (dateString) => {
   return `${year}/${month}/${day}`;
 }
 
+const isCompleted = (dateString) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return date <= today;
+}
+
+
 onMounted(async () => {
   const res = await getOrderAPI();
   orders.value = res.data;
   console.log(orders.value);
 })
-
 </script>
 
 <template>
@@ -41,11 +49,11 @@ onMounted(async () => {
   </div>
   <div class="state">
     <h2 class="desc">即將啟程</h2>
-    <el-card v-for="(order, index) in orders" :key="index">
+    <el-card v-for="(order, index) in orders.filter(order => !isCompleted(order.startDate))" :key="index">
       <template #header>
         <div class="row">
           <div>
-            <p class="location">台北</p>
+            <p class="location">{{ order.city }}</p>
             <p>{{ formatDate(order.startDate) }} - {{ formatDate(order.endDate) }}</p>
 
           </div>
@@ -58,8 +66,10 @@ onMounted(async () => {
       <div class="row">
         <div class="image"><img :src="order.photo" alt="" /></div>
         <div class="content">
-          <div>住宿人數:4人</div>
-          <div>豪華雙人房*2</div>
+          <div>住宿人數：{{ order.guestCount }}人</div>
+          <div v-for="(product, index) in order.products" :key="index">{{ product.productName }} * {{ product.quantity
+            }}
+          </div>
         </div>
         <div class="twd">TWD {{ order.actualPrice }}</div>
       </div>
@@ -73,12 +83,12 @@ onMounted(async () => {
   </div>
   <div class="state">
     <h2 class="desc">歷史訂單</h2>
-    <el-card>
+    <el-card v-for="(order, index) in orders.filter(order => isCompleted(order.startDate))" :key="index">
       <template #header>
         <div class="row">
           <div>
-            <p class="location">台北</p>
-            <p>2024年8月8日-2024年8月11日</p>
+            <p class="location">{{ order.city }}</p>
+            <p>{{ formatDate(order.startDate) }} - {{ formatDate(order.endDate) }}</p>
           </div>
           <el-icon class="option">
             <ArrowDownBold />
@@ -87,17 +97,19 @@ onMounted(async () => {
       </template>
       <div class="history">
         <div class="row">
-          <h1 class="hotel-name">兄弟大飯店</h1>
-          <p class="twd">TWD 5280</p>
+          <h1 class="hotel-name">{{ order.hotelName }}</h1>
+          <p class="twd">TWD {{ order.actualPrice }}</p>
         </div>
         <div class="row">
           <div class="content">
-            <p>住宿人數:4人</p>
-            <p>豪華雙人房*2</p>
+            <p>住宿人數：{{ order.guestCount }}人</p>
+            <p v-for="(product, index) in order.products" :key="index">{{ product.productName }} * {{ product.quantity
+              }}
+            </p>
           </div>
           <div class="end">
-            <p>已完成</p>
-            <p>訂單日期2024/5/1 </p>
+            <p>{{ order.payStatus }}</p>
+            <p>訂單日期 {{ formatDate2(order.createdDate) }}</p>
           </div>
         </div>
       </div>
