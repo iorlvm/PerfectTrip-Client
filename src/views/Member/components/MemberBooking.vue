@@ -4,6 +4,12 @@ import { onMounted, ref } from 'vue';
 
 const orders = ref([]);
 
+const pagination = ref({
+  page: 1,
+  size: 5,
+  total: 0,
+});
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
 
@@ -32,11 +38,20 @@ const isCompleted = (dateString) => {
   return date <= today;
 }
 
-
-onMounted(async () => {
-  const res = await getOrderAPI();
+const loadOrders = async (page = 0, size = 5) => {
+  const res = await getOrderAPI({ page, size });
   orders.value = res.data;
-  console.log(orders.value);
+  pagination.value.total = res.total;
+
+}
+
+const handlePageChange = (page) => {
+  pagination.value.page = page;
+  loadOrders(page - 1);
+}
+
+onMounted(() => {
+  loadOrders();
 })
 </script>
 
@@ -115,9 +130,20 @@ onMounted(async () => {
       </div>
     </el-card>
   </div>
+  <div class="page">
+    <el-pagination background layout="prev, pager, next" :current-page="pagination.page" :page-size="pagination.size"
+      :total="pagination.total" @current-change="handlePageChange" />
+  </div>
+
+
 </template>
 
 <style lang="scss" scoped>
+.page {
+  display: flex;
+  justify-content: center;
+}
+
 .title {
   display: flex;
   justify-content: space-between;

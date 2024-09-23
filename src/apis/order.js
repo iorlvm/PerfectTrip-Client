@@ -18,11 +18,14 @@ export const createOrderAPI = ({ guestCount, couponId, beginDate, endDate, compa
 }
 
 //訂單管理-取得訂單   GetOrder
-export const getOrderAPI = () => {
+export const getOrderAPI = ({ page = 0, size = 10 }) => {
     return httpInstance({
         url: `orders`,
         method: 'GET',
-
+        params: {
+            page,
+            size
+        }
     })
 }
 
