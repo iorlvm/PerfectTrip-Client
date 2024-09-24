@@ -274,55 +274,52 @@ const deleteProduct = async (productId) => {
     <!-- Modal for Add/Edit Product -->
     <div v-if="showModal" class="modal">
       <div class="modal-content">
-        <el-Scrollbar>
-          <span class="close" @click="closeModal">&times;</span>
-          <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
-          <form class="form" @submit.prevent="isEditing ? updateProduct() : addProduct()">
-            <div class="form-group full">
-              <label for="productName">商品照片</label>
-              <el-upload v-model:file-list="photoList" :http-request="customUpload" list-type="picture-card"
-                :on-remove="handleRemove">
-                <el-icon>
-                  <Plus />
-                </el-icon>
-              </el-upload>
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
+        <form class="form" @submit.prevent="isEditing ? updateProduct() : addProduct()">
+          <div class="form-group full">
+            <label for="productName">商品照片</label>
+            <el-upload v-model:file-list="photoList" :http-request="customUpload" list-type="picture-card"
+              :on-remove="handleRemove">
+              <el-icon>
+                <Plus />
+              </el-icon>
+            </el-upload>
+          </div>
+          <div class="form-group half">
+            <label for="productName">商品名稱</label>
+            <input type="text" v-model="currentProduct.productName" id="productName" required />
+          </div>
+          <div class="form-group half">
+            <label for="maxOccupancy">入住人數</label>
+            <input type="number" v-model="currentProduct.maxOccupancy" id="maxOccupancy" required />
+          </div>
+          <div class="form-group half">
+            <label for="price">價格</label>
+            <input type="number" v-model="currentProduct.price" id="price" required />
+          </div>
+          <div class="form-group half">
+            <label for="stock">庫存</label>
+            <input type="number" v-model="currentProduct.stock" id="stock" required />
+          </div>
+          <div class="form-group full">
+            <label>設施</label>
+            <el-checkbox-group v-model="facilityCheckList" class="flex">
+              <el-checkbox :label="facility.facilityName" :value="facility.facilityId" size="small"
+                v-for="(facility, index) in facilities" :key="index" />
+            </el-checkbox-group>
+          </div>
+          <div class="form-group full">
+            <label>服務</label>
+            <div class="flex">
+              <el-checkbox label="包含早餐" v-model="currentProduct.productDetails.includesBreakfast" size="small" />
+              <el-checkbox label="允許更改日期" v-model="currentProduct.productDetails.allowDateChanges" size="small" />
+              <el-checkbox label="允許免費取消" v-model="currentProduct.productDetails.allowFreeCancellation" size="small" />
+              <el-checkbox label="可退款" v-model="currentProduct.productDetails.isRefundable" size="small" />
             </div>
-            <div class="form-group half">
-              <label for="productName">商品名稱</label>
-              <input type="text" v-model="currentProduct.productName" id="productName" required />
-            </div>
-            <div class="form-group half">
-              <label for="maxOccupancy">入住人數</label>
-              <input type="number" v-model="currentProduct.maxOccupancy" id="maxOccupancy" required />
-            </div>
-            <div class="form-group half">
-              <label for="price">價格</label>
-              <input type="number" v-model="currentProduct.price" id="price" required />
-            </div>
-            <div class="form-group half">
-              <label for="stock">庫存</label>
-              <input type="number" v-model="currentProduct.stock" id="stock" required />
-            </div>
-            <div class="form-group full">
-              <label>設施</label>
-              <el-checkbox-group v-model="facilityCheckList" class="flex">
-                <el-checkbox :label="facility.facilityName" :value="facility.facilityId" size="small"
-                  v-for="(facility, index) in facilities" :key="index" />
-              </el-checkbox-group>
-            </div>
-            <div class="form-group full">
-              <label>服務</label>
-              <div class="flex">
-                <el-checkbox label="包含早餐" v-model="currentProduct.productDetails.includesBreakfast" size="small" />
-                <el-checkbox label="允許更改日期" v-model="currentProduct.productDetails.allowDateChanges" size="small" />
-                <el-checkbox label="允許免費取消" v-model="currentProduct.productDetails.allowFreeCancellation"
-                  size="small" />
-                <el-checkbox label="可退款" v-model="currentProduct.productDetails.isRefundable" size="small" />
-              </div>
-            </div>
-            <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
-          </form>
-        </el-Scrollbar>
+          </div>
+          <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
+        </form>
       </div>
     </div>
   </el-Scrollbar>
@@ -491,11 +488,17 @@ table td button:last-child:hover {
   background-color: #fff;
   padding: 15px 20px;
   border-radius: 8px;
-  max-width: 55vh;
-  width: 100%;
+  min-width: 550px;
+  max-width: 900px;
+  width: 55vh;
   max-height: 95vh;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .close {
