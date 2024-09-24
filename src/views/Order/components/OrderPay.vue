@@ -6,6 +6,7 @@ import { ElMessage } from 'element-plus';
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from '@/stores/user';
 import { paymentAPI } from '@/apis/pay';
+import { getOrderByIdAPI } from '@/apis/order';
 
 const isVisible = ref(false);
 const isProcessing = ref(false);
@@ -138,8 +139,35 @@ const initTPDirect = () => {
     });
 }
 
-onMounted(() => {
+const roomCount = (products) => {
+    if (products) {
+        let res = 0;
+        for (let product of products) {
+            res += product.quantity;
+        }
+        return res;
+    }
+}
+
+const dateFormat = (dateStr) => {
+    const date = new Date(dateStr);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}/${month}/${day}`;
+}
+
+const orderInfo = ref({});
+
+onMounted(async () => {
     orderId.value = route.params.id;
+
+    const res = await getOrderByIdAPI(orderId.value);
+    // console.log(res.data);
+    orderInfo.value = res.data;
+
 
     // 不知道為什麼用while會失效  只好寫的這麼醜陋了
     if (props.active < 2) {
@@ -162,19 +190,20 @@ onMounted(() => {
                 <h2>訂單資訊</h2>
                 <div class="info-item">
                     <span class="info-label">旅館名稱：</span>
-                    <span class="info-value">豪華酒店</span>
+                    <span class="info-value">{{ orderInfo.hotelName }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">房間數量：</span>
-                    <span class="info-value">2</span>
+                    <span class="info-value">{{ roomCount(orderInfo.products) }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">住宿日期：</span>
-                    <span class="info-value">2024/09/01 - 2024/09/05</span>
+                    <span class="info-value">{{ dateFormat(orderInfo.startDate) }} - {{ dateFormat(orderInfo.endDate)
+                        }}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">總金額：</span>
-                    <span class="info-value">$5,000</span>
+                    <span class="info-value">${{ orderInfo.actualPrice }}</span>
                 </div>
             </div>
 
@@ -220,7 +249,7 @@ onMounted(() => {
             </el-icon>
         </div>
         <template v-else>
-            <OrderInfo />
+            <OrderInfo :order-info="orderInfo" />
         </template>
     </div>
 </template>

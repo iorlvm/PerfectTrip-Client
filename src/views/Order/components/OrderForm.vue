@@ -127,6 +127,16 @@ const formatPrice = (price) => {
 
 const orderData = ref({});
 
+const roomCount = (products) => {
+    if (products) {
+        let res = 0;
+        for (let product of products) {
+            res += product.quantity;
+        }
+        return res;
+    }
+}
+
 onMounted(async () => {
     const orderId = route.params.id;
     const res = await getOrderByIdAPI(orderId);
@@ -185,7 +195,7 @@ onMounted(async () => {
                     <el-collapse v-model="selectedActive">
                         <el-collapse-item :name="1" :disabled="active !== 0">
                             <template #title>
-                                <div class="title" style="color: black;">{{ orderData.products?.length }} 間客房 ( {{
+                                <div class="title" style="color: black;">{{ roomCount(orderData.products) }} 間客房 ( {{
                                     orderData.guestCount }} 位成人 )
                                 </div>
                             </template>

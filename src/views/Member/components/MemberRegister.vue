@@ -88,9 +88,9 @@ const register = async (e) => {
     let phoneNumber = form.value.phoneNumber;
     let taxId = form.value.taxId;
     let birthday = form.value.birthday
-    console.log({firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
+    console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
     await userRegisterAPI({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday })
-    console.log({firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
+    console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
     router.push('/');
 }
 
@@ -98,170 +98,127 @@ const register = async (e) => {
 
 
 </script>
-
-
 <template>
-    <div>
-        <div class="form_container">
-            <div class="storeregister">
-                <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"
-                    :status-icon="true" :scroll-to-error="true">
+    <div class="form_container">
+        <h2>註冊會員</h2>
+        <div class="storeregister">
+            <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"
+                :status-icon="true" :scroll-to-error="true">
 
-                    <div class="name" style="display: flex; align-items: center;">
-                        <el-form-item label="姓名" class="firstName" prop="firstName">
-                            <div>
-                                <el-input type="text" placeholder="姓氏" v-model="form.firstName" clearable
-                                    required></el-input>
-                            </div>
-                        </el-form-item>
-                        <el-form-item label="" prop="lastName">
-                            <div>
-                                <el-input type="text" placeholder="名子" v-model="form.lastName" required></el-input>
-                            </div>
-                        </el-form-item>
-
-                    </div>
-                    <el-form-item label="暱稱" prop="nickname">
-                        <div>
-                            <el-input type="text" placeholder="暱稱" v-model="form.nickname" required></el-input>
-                        </div>
+                <div class="name">
+                    <el-form-item label="姓名" prop="firstName" class="firstName">
+                        <el-input type="text" placeholder="姓氏" v-model="form.firstName" clearable required></el-input>
                     </el-form-item>
-                    <el-form-item label="生日" prop="birthday">
+                    <el-form-item label="" prop="lastName" class="lastName">
+                        <el-input type="text" placeholder="名字" v-model="form.lastName" required></el-input>
+                    </el-form-item>
+                </div>
+
+                <el-form-item label="暱稱" prop="nickname">
+                    <el-input type="text" placeholder="暱稱" v-model="form.nickname" required></el-input>
+                </el-form-item>
+
+                <div class="gender-birthday">
+                    <el-form-item label="生日" prop="birthday" class="birthday">
                         <el-date-picker v-model="form.birthday" type="date" placeholder="選擇日期" clearable required />
                     </el-form-item>
 
-                    <el-form-item class="gender" label="性別">
-                        <el-select v-model="form.gender" placeholder="選單" clearable>
+                    <el-form-item class="gender" label="性別" label-width="40px">
+                        <el-select v-model="form.gender" placeholder="選擇性別" clearable>
                             <el-option label="男姓" value="MALE" />
                             <el-option label="女性" value="FEMALE" />
                             <el-option label="LBGT" value="LBGT" />
                         </el-select>
                     </el-form-item>
-
-                    <el-form-item label="電子信箱(登入帳號)" prop="username">
-                        <div>
-                            <el-input class="username" type="text" placeholder="電子信箱即為登入帳號" v-model="form.username"
-                                required></el-input>
-                        </div>
-                    </el-form-item>
-
-                    <el-form-item label="登入密碼" prop="password">
-                        <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="form.password" required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="再次輸入密碼" prop="password_check">
-                        <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="form.password_check" required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="身分證號" prop="taxId">
-                        <div>
-                            <el-input type="text" placeholder="請輸入身分證字號" v-model="form.taxId" required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="手機" prop="phoneNumber">
-                        <div>
-                            <el-input type="text" placeholder="請輸入連絡電話" v-model="form.phoneNumber" required></el-input>
-                        </div>
-                    </el-form-item>
-
-                    <el-form-item label="聯絡地址" prop="address">
-                        <div>
-                            <el-input type="text" class="address" placeholder="請輸入地址" v-model="form.address"
-                                required></el-input>
-                        </div>
-                    </el-form-item>
-
-
-
-
-                </el-form>
-                <div class="button-block">
-                    <el-button type="danger" @click="resetForm()">清除</el-button>
-                    <el-button type="primary" @click="register">註冊</el-button>
                 </div>
 
+                <el-form-item label="身分證號" prop="taxId">
+                    <el-input type="text" placeholder="請輸入身分證字號" v-model="form.taxId" required></el-input>
+                </el-form-item>
+
+                <el-form-item label="電子信箱(登入帳號)" prop="username">
+                    <el-input class="username" type="text" placeholder="電子信箱即為登入帳號" v-model="form.username"
+                        required></el-input>
+                </el-form-item>
+
+                <el-form-item label="登入密碼" prop="password">
+                    <el-input type="password" placeholder="請輸入密碼" v-model="form.password" required></el-input>
+                </el-form-item>
+
+                <el-form-item label="再次輸入密碼" prop="password_check">
+                    <el-input type="password" placeholder="請再次輸入密碼" v-model="form.password_check" required></el-input>
+                </el-form-item>
+
+                <el-form-item label="手機" prop="phoneNumber">
+                    <el-input type="text" placeholder="請輸入連絡電話" v-model="form.phoneNumber" required></el-input>
+                </el-form-item>
+
+                <el-form-item class="address" label="聯絡地址" prop="address">
+                    <el-input type="text" placeholder="請輸入地址" v-model="form.address" required></el-input>
+                </el-form-item>
+            </el-form>
+
+            <div class="button-block">
+                <el-button type="danger" @click="resetForm()">清除</el-button>
+                <el-button type="primary" @click="register">註冊</el-button>
             </div>
         </div>
     </div>
-
-
-
 </template>
-
-
-
-
 
 <style lang="scss" scoped>
 .form_container {
-    // border: 1px solid #00000025;
-    // height: 100vh; // 讓容器充滿整個視窗高度
-    width: 70%;
+    width: 60%; // 調整為60%，適應更多螢幕
     text-align: center;
     margin: 50px auto;
 }
 
-
-
 .storeregister {
-    padding: 75px 150px;
-    border: 1px solid #00000025;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px -1px #00000020;
 
-    // .phone {
-    //     display: flex;
-    // }
+    .name {
+        display: flex;
+        gap: 15px;
 
-    .firstName {
-        width: 230px;
+        .firstName {
+            width: 50%;
+        }
+
+        .lastName {
+            width: 50%;
+        }
     }
 
-    .country_code {
-        width: 80px;
+    .gender-birthday {
+        display: flex;
+        gap: 15px;
+
+        .birthday {
+            width: 60%;
+        }
+
+        .gender {
+            width: 40%;
+        }
     }
 
-    .gender {
-        width: 300px;
+    .el-form-item {
+        margin-bottom: 20px;
     }
 
-    .address {
-        width: 500px;
-    }
-
-    .username {
-        width: 500px;
-    }
-
-    .free-parking-check-box {
-        --el-checkbox-checked-text-color: var(--el-color-success);
-        --el-checkbox-checked-bg-color: var(--el-color-success);
-    }
-
-
-    .el-form-item__label {
-        font-weight: bold;
+    .el-input,
+    .el-select {
+        width: 100%;
     }
 
     .button-block {
         display: flex;
         justify-content: center;
-        // background-color: #3f5976;
+        margin-top: 20px;
+        gap: 20px;
     }
 
-    .check-value {
-        color: #3f5976 !important;
-        font-size: 1.1em !important;
-        font-weight: bold;
-        padding: 5px 12px;
-        background-color: #f4f0f0;
-        border-radius: 10px;
+    .el-button {
+        width: 120px;
     }
-
-
-
-
 }
 </style>

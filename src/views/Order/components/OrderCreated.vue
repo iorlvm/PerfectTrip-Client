@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import OrderInfo from './OrderInfo.vue';
 import { useRoute } from "vue-router";
+import { getOrderByIdAPI } from '@/apis/order';
 
 
 const props = defineProps([
@@ -20,9 +21,14 @@ const nextStep = () => {
 
 const route = useRoute();
 
-onMounted(() => {
+
+const orderInfo = ref({});
+
+onMounted(async () => {
     orderId.value = route.params.id;
-    // TODO: 利用訂單id 取得訂單資料
+    const res = await getOrderByIdAPI(orderId.value);
+    // console.log(res.data);
+    orderInfo.value = res.data;
 
     // 不知道為什麼用while會失效  只好寫的這麼醜陋了
     if (props.active < 3) {
@@ -51,7 +57,7 @@ onMounted(() => {
             </el-result>
         </div>
 
-        <OrderInfo />
+        <OrderInfo :order-info="orderInfo" />
     </div>
 </template>
 

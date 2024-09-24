@@ -1,36 +1,44 @@
 <script setup>
 
+defineProps([
+    'orderInfo'
+])
 </script>
 
 <template>
     <el-divider>訂購資訊</el-divider>
-    <div class="order-info">
+    <div class="order-info" v-if="orderInfo.orderId">
         <div class="info-card">
             <h2>住客資料</h2>
             <div class="customer">
                 <div class="info">
                     <div class="label">姓名：</div>
-                    <div class="value">張三</div>
+                    <div class="value">{{ orderInfo.residents[0]?.firstName + orderInfo.residents[0]?.lastName }}</div>
                 </div>
                 <div class="info">
                     <div class="label">國家：</div>
-                    <div class="value">Taiwan</div>
+                    <div class="value">{{ orderInfo.residents[0]?.country }}</div>
                 </div>
                 <div class="info">
                     <div class="label">電話：</div>
-                    <div class="value">0900123456</div>
+                    <div class="value">{{ orderInfo.residents[0]?.tel }}</div>
                 </div>
                 <div class="info">
                     <div class="label">電子信箱：</div>
-                    <div class="value">test@test.com</div>
+                    <div class="value">{{ orderInfo.residents[0]?.email }}</div>
                 </div>
                 <div class="info">
                     <div class="label">抵達時間：</div>
-                    <div class="value">15:00</div>
+                    <div class="value">
+                        {{ orderInfo.wishedTime || '15:00' }}
+                    </div>
                 </div>
                 <div class="info">
                     <div class="label">特別需求：</div>
-                    <div class="value">無</div>
+                    <div class="value">
+                        {{ (!orderInfo.orderNotes || orderInfo.orderNotes === '') ? '無' :
+                            orderInfo.orderNotes }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,10 +47,10 @@
     <div class="order-info">
         <div class="info-card hotel-name">
             <h4>民宿</h4>
-            <h2>旅館名稱</h2>
-            <p>旅館地址 旅館地址XXX路 XXX 號 XX樓</p>
+            <h2>{{ orderInfo.hotelName }}</h2>
+            <p>{{ orderInfo.hotelAddress }}</p>
             <div class="flex">
-                <div class="number">9.2</div>
+                <div class="number">{{ orderInfo.hotelScore }}</div>
                 <div class="desc">很讚 - 9,999則評語</div>
             </div>
             <div class="flex">
@@ -78,9 +86,8 @@
             <el-divider class="divider" />
             <h3>訂購內容：</h3>
             <div class="selected">
-                <p>1 x 標準雙人或雙床房</p>
-                <p>3 x 高級雙人或雙床房</p>
-                <p>1 x 豪華雙人或雙床房</p>
+                <p v-for="(product, index) in orderInfo.products" :key="index">{{ product.quantity }} x
+                    {{ product.productName }}</p>
             </div>
         </div>
         <el-divider class="divider" />
@@ -89,28 +96,28 @@
             <div class="row">
                 <div class="flex">
                     <h4>原價</h4>
-                    <p>TWD 2,104</p>
+                    <p>TWD {{ orderInfo.fullPrice }}</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" v-if="orderInfo.discount > 0">
                 <div class="flex">
                     <h4>折扣</h4>
-                    <p>- TWD 492</p>
+                    <p>- TWD {{ orderInfo.discount }}</p>
                 </div>
                 <p class="small">該住宿正在打折，因此您可享折扣價。</p>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="flex">
                     <h4>優惠券</h4>
                     <p>- TWD 210</p>
                 </div>
                 <p class="small">您使用了優惠券，因此享有額外折扣。</p>
-            </div>
+            </div> -->
             <div class="highlight">
-                <p class="right through">TWD 2,104</p>
+                <p class="right through">TWD {{ orderInfo.fullPrice }}</p>
                 <div class="flex">
                     <h2>總金額</h2>
-                    <h2 class="right">TWD 1,401</h2>
+                    <h2 class="right">TWD {{ orderInfo.actualPrice }}</h2>
                 </div>
                 <p class="right">含稅費與其他費用</p>
             </div>
@@ -122,16 +129,16 @@
                             <PriceTag />
                         </el-icon>
                         <h4>
-                            包含 TWD 188 稅費與其他費用
+                            包含 TWD {{ orderInfo.tax + orderInfo.serviceFee }} 稅費與其他費用
                         </h4>
                     </div>
                     <div class="flex">
                         <p>5% 加值稅</p>
-                        <p>TWD 61</p>
+                        <p>TWD {{ orderInfo.tax }}</p>
                     </div>
                     <div class="flex">
                         <p>10% 住宿方服務費</p>
-                        <p>TWD 127</p>
+                        <p>TWD {{ orderInfo.serviceFee }}</p>
                     </div>
                 </div>
             </div>
