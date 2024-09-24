@@ -1,57 +1,29 @@
-<script lang="ts" setup>
+<script setup>
+import { getOrderAPI } from '@/apis/order';
 import { InfoFilled } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-interface User {
-    date: string
-    number: string
-    name: string
-    roomtype: string
-    status: string
-    isExpanded: boolean
-    price: number
+
+
+
+const tableData = ref([])
+
+onMounted(async () => {
+    const res = await getOrderAPI({ page: 0, size: 10 });
+    console.log(res);
+    tableData.value = res.data;
+
+})
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}/${month}/${day}`;
 }
-
-
-const tableData: User[] = [
-    {
-        date: '20240808',
-        number: '20160503001',
-        name: '萱萱美眉',
-        roomtype: '兄弟大飯店',
-        status: '完成',
-        isExpanded: false,
-        price: 11603,
-    },
-    {
-        date: '20240808',
-        number: '20160502002',
-        name: '維恩大大',
-        roomtype: '長榮桂冠酒店(台中)',
-        status: '完成',
-        isExpanded: false,
-        price: 10737,
-    },
-    {
-        date: '20240808',
-        number: '20160504003',
-        name: '陳小餅乾',
-        roomtype: '大倉久和大飯店',
-        status: '完成',
-        isExpanded: false,
-        price: 12776,
-    },
-    {
-        date: '20240808',
-        number: '20160501004',
-        name: '誌謙小哥',
-        roomtype: '亞都麗緻大飯店',
-        status: '完成',
-        isExpanded: false,
-        price: 19888,
-    },
-
-]
 // 控制版面折叠或收合
 // const toggleCollapse = (row: User) => {
 //     row.isExpanded = !row.isExpanded
@@ -63,15 +35,27 @@ const tableData: User[] = [
 <template>
     <el-table :data="tableData" style="width: 100%">
         <el-table-column type="selection" width="55" />
-        <el-table-column property="date" label="日期" width="120" />
-        <el-table-column property="number" label="訂單編號" width="180" />
-        <el-table-column property="name" label="訂購人" width="180" />
-        <el-table-column property="roomtype" label="訂購房型" width="280" show-overflow-tooltip />
-        <el-table-column property="status" label="訂單狀態">
-
+        <el-table-column property="createdDate" label="日期" width="120">
             <template #default="scope">
-                {{ scope.row.status }}
+                {{ formatDate(scope.row.createdDate) }}
 
+
+            </template>
+        </el-table-column>
+        <el-table-column property="orderId" label="訂單編號" width="180" />
+        <el-table-column property="subscriber" label="訂購人" width="180" />
+        <el-table-column property="products" label="訂購房型" width="280" show-overflow-tooltip>
+            <template #default="scope">
+                <div v-for="(item, index) in scope.row.products " :key="index">
+                    {{ item.productName }}
+                    x
+                    {{ item.quantity }}
+                </div>
+            </template>
+        </el-table-column>
+        <el-table-column property="payStatus" label="訂單狀態">
+            <template #default="scope">
+                {{ scope.row.payStatus }}
                 <div class="demo-collapse">
                     <el-collapse v-model="scope.row.isExpanded">
                         <el-collapse-item :name="scope.row.number">
@@ -88,7 +72,7 @@ const tableData: User[] = [
                             </div>
                             <div><el-icon>
                                     <PriceTag />
-                                </el-icon> 訂單金額 {{ scope.row.price.toLocaleString() }}</div>
+                                </el-icon> 訂單金額 {{ scope.row.actualPrice.toLocaleString() }}</div>
                         </el-collapse-item>
                     </el-collapse>
                 </div>
