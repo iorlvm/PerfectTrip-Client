@@ -9,9 +9,6 @@
                     <li class="logo">
                         <router-link to="/">PerfectTrip.com</router-link>
                     </li>
-                    <li>
-                        (支援中心實際上是管理中心連結 功能完成後替換)
-                    </li>
                     <li class="grow"></li>
                     <li>
                         已經是合作夥伴了嗎？
@@ -23,13 +20,13 @@
                             </span>
                         </router-link>
                     </li>
-                    <li>
+                    <!-- <li>
                         <router-link to="/store/manage">
                             <span class="help">
                                 支援中心
                             </span>
                         </router-link>
-                    </li>
+                    </li> -->
                 </ul>
             </nav>
         </header>

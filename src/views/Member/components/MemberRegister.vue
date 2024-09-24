@@ -93,13 +93,10 @@ const register = async (e) => {
     console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
     router.push('/');
 }
-
-
-
-
 </script>
+
 <template>
-    <div class="form_container">
+    <div class="form_container container">
         <h2>註冊會員</h2>
         <div class="storeregister">
             <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"

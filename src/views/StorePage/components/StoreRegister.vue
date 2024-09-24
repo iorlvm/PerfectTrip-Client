@@ -98,170 +98,136 @@ const register = async (e) => {
 
     router.push('/store/manage');//討論導主頁?
 }
-
-
-
 </script>
 
 <template>
-    <div>
-        <div class="form_container">
-            <div class="storeregister">
-                <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"
-                    :status-icon="true" :scroll-to-error="true">
+    <div class="form_container container">
+        <h2>註冊商家</h2>
+        <div class="storeregister">
+            <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto"
+                style="margin: 0 auto; max-width: 600px" :status-icon="true" :scroll-to-error="true">
 
-                    <el-form-item label="刊登名稱" prop="companyName">
-                        <div>
-                            <el-input type="text" placeholder="請輸入刊登名稱" v-model="form.companyName" required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="電子信箱" prop="username">
-                        <div>
-                            <el-input class="username" type="text" placeholder="電子信箱即為登入帳號" v-model="form.username"
-                                required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="登入密碼" prop="password">
-                        <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="form.password" required></el-input>
-                        </div>
-                    </el-form-item>
-                    <el-form-item label="再次輸入密碼" prop="password_check">
-                        <div>
-                            <el-input type="text" placeholder="請輸入密碼" v-model="form.password_check" required></el-input>
-                        </div>
-                    </el-form-item>
+                <el-form-item label="刊登名稱" prop="companyName">
+                    <el-input type="text" placeholder="請輸入刊登名稱" v-model="form.companyName" required></el-input>
+                </el-form-item>
 
-                    <div class="site" style="display: flex; align-items: center; justify-content: space-between;">
-                        <el-form-item label="營業地址" prop="country" style="flex: 1; margin-right: 10px;">
-                            <el-input type="text" class="country" placeholder="台灣" v-model="form.country"
-                                disabled></el-input>
-                        </el-form-item>
+                <el-form-item label="電子信箱" prop="username">
+                    <el-input type="text" placeholder="電子信箱即為登入帳號" v-model="form.username" required></el-input>
+                </el-form-item>
 
-                        <el-form-item  prop="city" style="flex: 2; margin-right: 10px;">
-                            <el-input type="text" class="city" placeholder="縣/市 ex:台北市" v-model="form.city"
-                                required></el-input>
-                        </el-form-item>
+                <el-form-item label="登入密碼" prop="password">
+                    <el-input type="password" placeholder="請輸入密碼" v-model="form.password" required></el-input>
+                </el-form-item>
 
-                        <el-form-item  prop="address" style="flex: 7;">
-                            <el-input type="text" class="address" placeholder="請輸入營業地址" v-model="form.address"
-                                required></el-input>
-                        </el-form-item>
-                    </div>
+                <el-form-item label="再次輸入密碼" prop="password_check">
+                    <el-input type="password" placeholder="請再次輸入密碼" v-model="form.password_check" required></el-input>
+                </el-form-item>
 
-                    <el-form-item label="負責人姓名" prop="manager">
-                        <div>
-                            <el-input type="text" placeholder="請輸入負責人名稱" v-model="form.manager" required></el-input>
-                        </div>
+                <div class="site">
+                    <el-form-item label="營業地址" prop="country" class="country">
+                        <el-input type="text" placeholder="台灣" v-model="form.country" disabled></el-input>
                     </el-form-item>
 
-                    <div class="phone" style="display: flex; align-items: center;">
-
-                        <el-form-item label="連絡電話" prop="regionNumber">
-                            <div class="country_code" style="display: flex; align-items: center;">
-                                <el-input type="text" placeholder="ex:03" v-model="form.regionNumber"
-                                    required></el-input>
-                            </div>
-                        </el-form-item>
-
-                        <el-form-item label="" prop="telephone">
-                            <div style="display: flex; align-items: center;">
-                                <el-input type="text" placeholder="請輸入電話" v-model="form.telephone" required></el-input>
-                            </div>
-                        </el-form-item>
-                    </div>
-
-                    <el-form-item label="統一編號" prop="vatNumber">
-                        <div>
-                            <el-input type="text" placeholder="請輸入統一編號" v-model="form.vatNumber" required></el-input>
-                        </div>
+                    <el-form-item prop="city" class="city">
+                        <el-input type="text" placeholder="縣/市 ex:台北市" v-model="form.city" required></el-input>
                     </el-form-item>
-
-
-                </el-form>
-                <div class="button">
-                    <el-button type="danger" @click="resetForm()">清除</el-button>
-                    <el-button type="primary" @click="register">註冊</el-button>
                 </div>
 
+                <el-form-item prop="address" label=" " class="address">
+                    <el-input type="text" placeholder="請輸入營業地址" v-model="form.address" required></el-input>
+                </el-form-item>
+
+                <el-form-item label="負責人姓名" prop="manager">
+                    <el-input type="text" placeholder="請輸入負責人名稱" v-model="form.manager" required></el-input>
+                </el-form-item>
+
+                <div class="phone">
+                    <el-form-item label="連絡電話" prop="regionNumber" class="regionNumber">
+                        <el-input type="text" placeholder="ex:03" v-model="form.regionNumber" required></el-input>
+                    </el-form-item>
+
+                    <el-form-item prop="telephone" class="telephone">
+                        <el-input type="text" placeholder="請輸入電話" v-model="form.telephone" required></el-input>
+                    </el-form-item>
+                </div>
+
+                <el-form-item label="統一編號" prop="vatNumber">
+                    <el-input type="text" placeholder="請輸入統一編號" v-model="form.vatNumber" required></el-input>
+                </el-form-item>
+
+            </el-form>
+
+            <div class="button-block">
+                <el-button type="danger" @click="resetForm()">清除</el-button>
+                <el-button type="primary" @click="register">註冊</el-button>
             </div>
+
         </div>
     </div>
-
-
-
 </template>
 
-
-
-
+<style lang="scss">
+.address {
+    .el-form-item__label-wrap {
+        label {
+            opacity: 0;
+        }
+    }
+}
+</style>
 
 <style lang="scss" scoped>
 .form_container {
-    // border: 1px solid #00000025;
-    // height: 100vh; // 讓容器充滿整個視窗高度
-    width: 70%;
+    width: 60%;
     text-align: center;
     margin: 50px auto;
 }
 
-
-
 .storeregister {
-    padding: 75px 150px;
-    border: 1px solid #00000025;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px -1px #00000020;
+
+    .site {
+        display: flex;
+        gap: 10px;
+
+        .country {
+            width: 27%;
+        }
+
+        .city {
+            width: 20%;
+        }
+    }
 
     .phone {
         display: flex;
+        gap: 10px;
+
+        .regionNumber {
+            width: 35%;
+        }
+
+        .telephone {
+            width: 65%;
+        }
     }
 
-    .country_code {
-        width: 80px;
+    .el-form-item {
+        margin-bottom: 20px;
     }
 
-
-    .country {
-        width: 100px;
+    .el-input {
+        width: 100%;
     }
 
-    .city {
-        width: 100px;
-    }
-
-    .address {
-        width: 380px;
-    }
-
-    .username {
-        width: 460px;
-    }
-
-    .free-parking-check-box {
-        --el-checkbox-checked-text-color: var(--el-color-success);
-        --el-checkbox-checked-bg-color: var(--el-color-success);
-    }
-
-
-    .el-form-item__label {
-        font-weight: bold;
-    }
-
-    .button {
+    .button-block {
         display: flex;
         justify-content: center;
+        margin-top: 20px;
+        gap: 20px;
     }
 
-    .check-value {
-        color: #3f5976 !important;
-        font-size: 1.1em !important;
-        font-weight: bold;
-        padding: 5px 12px;
-        background-color: #f4f0f0;
-        border-radius: 10px;
+    .el-button {
+        width: 120px;
     }
-
-
 }
 </style>
