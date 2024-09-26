@@ -34,9 +34,11 @@ actionHandlers.notifyToggle = async (binder) => {
     await updateChatRoomNotifyAPI(chatId, binder.value.notifySettings);
 }
 
+let uid;
 actionHandlers.getUID = async () => {
     const res = await getUidAPI();
     unreads.value = Number(res.data[1]);
+    uid = res.data[0];
     return res.data[0];
 }
 
@@ -172,6 +174,23 @@ const handleReadMessage = (payload) => {
 };
 
 const handleUpdateUserInfo = (payload) => {
+    let content = JSON.parse(payload.content);
+    const authorId = payload.authorId;
+    const chatList = chat.getChatList();
+    chatList.forEach(chat => {
+        chat.value.participants.forEach(participant => {
+            if (participant.userId === authorId) {
+                participant.name = content.name;
+                participant.avatar = content.avatar;
+                if (authorId !== uid && (chat.value.chatName == null || chat.value.chatName === '')) {
+                    chat.value.chatName = chat.value.chatName ? '' : null;
+                }
+                if (authorId !== uid && chat.value.participants.length === 2) {
+                    chat.value.photo = content.avatar;
+                }
+            }
+        })
+    })
 };
 
 const handleUpdateRoomInfo = (payload) => {

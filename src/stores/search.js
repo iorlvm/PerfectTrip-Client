@@ -57,7 +57,28 @@ export const useSearchStore = defineStore('Search', () => {
         orderBy.value = newOrderBy;
         page.value = 0;
         isProcessing = true;
-        await getProductList();
+        const destination = lastQurey.destination;
+        const adultCount = lastQurey.adultCount
+        const childCount = lastQurey.childCount
+        const roomCount = lastQurey.roomCount
+        const startDate = lastQurey.startDate.split('T')[0];
+        const endDate = lastQurey.endDate.split('T')[0];
+
+        const res = await searchAPI({
+            destination,
+            adultCount,
+            childCount,
+            roomCount,
+            startDate,
+            endDate,
+            orderBy: orderBy.value
+        })
+
+        resultList.value = res.data;
+
+        total.value = res.total;
+        hasMore = resultList.value.length < total.value;
+        isProcessing = false;
     }
 
     let hasMore = true;
@@ -67,12 +88,12 @@ export const useSearchStore = defineStore('Search', () => {
         isProcessing = true;
         page.value = page.value + 1;
 
-        const destination = searchQuery.value.destination;
-        const adultCount = searchQuery.value.adultCount
-        const childCount = searchQuery.value.childCount
-        const roomCount = searchQuery.value.roomCount
-        const startDate = searchQuery.value.dateRange[0].split('T')[0];
-        const endDate = searchQuery.value.dateRange[1].split('T')[0];
+        const destination = lastQurey.destination;
+        const adultCount = lastQurey.adultCount
+        const childCount = lastQurey.childCount
+        const roomCount = lastQurey.roomCount
+        const startDate = lastQurey.startDate.split('T')[0];
+        const endDate = lastQurey.endDate.split('T')[0];
 
         const res = await searchAPI({
             destination,
