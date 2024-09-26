@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { updateUserAPI } from '@/apis/user';
+import { imageUpdateAPI } from '@/apis/image';
+
+const baseURL = 'http://localhost:8080/';
 
 const userStore = useUserStore();
 userStore.userInfo
@@ -16,32 +19,44 @@ const userInfo = ref({
     phoneNumber: userStore.userInfo.phoneNumber,
     birthday: userStore.userInfo.birthday,
     address: userStore.userInfo.address,
-   
+    avatar: userStore.userInfo.avatar
 });
 
 const genderMap = {
-  'FEMALE': '女性',
-  'MALE': '男性',
-  'LBGT': 'LBGT'
+    'FEMALE': '女性',
+    'MALE': '男性',
+    'LBGT': 'LBGT'
 };
 
 //TODO 前後端性別轉換
-const save  = async (e) => {
+const save = async (e) => {
     e.preventDefault();
-   let changeId = userInfo.value.changeId
-   let  userId = userInfo.value.userId;
-   let firstName = userInfo.value.firstName;
-   let lastName =userInfo.value.lastName;
-   let nickname = userInfo.value.nickname;
-   let gender = userInfo.value.gender;
-   let username = userInfo.value.username;
-   let phoneNumber = userInfo.value.phoneNumber;
-   let birthday = userInfo.value.birthday;
-   let address =userInfo.value.address;
-   const res =await updateUserAPI({changeId,userId, firstName, gender,lastName, nickname, username, phoneNumber, birthday, address})
-   userStore.updateInfo(res)
-   console.log(res);
-   
+    let changeId = userInfo.value.changeId
+    let userId = userInfo.value.userId;
+    let firstName = userInfo.value.firstName;
+    let lastName = userInfo.value.lastName;
+    let nickname = userInfo.value.nickname;
+    let gender = userInfo.value.gender;
+    let username = userInfo.value.username;
+    let phoneNumber = userInfo.value.phoneNumber;
+    let birthday = userInfo.value.birthday;
+    let address = userInfo.value.address;
+    let avatar = userInfo.value.avatar;
+    const res = await updateUserAPI({
+        changeId,
+        userId,
+        firstName,
+        gender,
+        lastName,
+        nickname,
+        username,
+        phoneNumber,
+        birthday,
+        address,
+        avatar
+    })
+    userStore.updateInfo(res)
+    console.log(res);
 };
 
 
@@ -65,43 +80,89 @@ const tel = ref(false);
 // const country = ref(false);
 const address = ref(false);
 
-const nameEditClick = (e) => {
+const nameEditClick = async (e) => {
     e.preventDefault();
+    if (isNameEdit.value) {
+        await save(e);
+    }
     isNameEdit.value = !isNameEdit.value;
 }
-const isNickNameEditClick = (e) => {
+const isNickNameEditClick = async (e) => {
     e.preventDefault();
+    if (isNickNameEdit.value) {
+        await save(e);
+    }
     isNickNameEdit.value = !isNickNameEdit.value
 }
-const genderClick = (e) => {
+const genderClick = async (e) => {
     e.preventDefault();
+    if (gender.value) {
+        await save(e);
+    }
     gender.value = !gender.value
 }
-const birthdayClick = (e) => {
+const birthdayClick = async (e) => {
     e.preventDefault();
+    if (birthday.value) {
+        await save(e);
+    }
     birthday.value = !birthday.value
 }
-const mailClick = (e) => {
+const mailClick = async (e) => {
     e.preventDefault();
+    if (mail.value) {
+        await save(e);
+    }
     mail.value = !mail.value
 }
-const telClick = (e) => {
+const telClick = async (e) => {
     e.preventDefault();
+    if (tel.value) {
+        await save(e);
+    }
     tel.value = !tel.value
 }
 // const countryClick = (e) => {
 //     e.preventDefault();
 //     country.value = !country.value
 // }
-const addressClick = (e) => {
+const addressClick = async (e) => {
     e.preventDefault();
+    if (address.value) {
+        await save(e);
+    }
     address.value = !address.value
 }
 
+const fileInput = ref(null);
 
+const triggerFileInput = () => {
+    if (fileInput.value) {
+        fileInput.value.click();
+    }
+};
+
+
+
+const handleAvatarUpdate = async (event) => {
+    event.preventDefault();
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('cacheEnabled', false);
+        formData.append('resizeEnabled', true);
+        formData.append('width', 120);
+        formData.append('height', 120);
+
+        const res = await imageUpdateAPI(formData);
+        userInfo.value.avatar = res.data;
+        await save(event);
+    }
+};
 
 </script>
-//TODO新增大頭貼
+
 <template>
     <div>
         <div class="title">
@@ -109,14 +170,15 @@ const addressClick = (e) => {
                 <h1>個人資訊</h1>
                 <p class="sub-title">更新個人資訊並查看我們如何使用這些資訊。</p>
             </div>
-            <div class="avatar">
-                <img src="" alt="">
+            <div class="avatar" @click="triggerFileInput">
+                <img :src="baseURL + userInfo.avatar" alt="">
                 <div class="avatar-icon">
                     <el-icon size="23" color="#fff" class="camera">
                         <Camera />
                     </el-icon>
                 </div>
             </div>
+            <input type="file" ref="fileInput" @change="handleAvatarUpdate" accept="image/*" style="display: none" />
         </div>
         <div class="row border-bottom">
             <template v-if="!isNameEdit">
@@ -162,8 +224,8 @@ const addressClick = (e) => {
 
         <div class="row border-bottom">
             <template v-if="!gender">
-                <div class="column">姓別</div>
-                <div class="info">{{ genderMap[userInfo.gender]}}</div>
+                <div class="column">性別</div>
+                <div class="info">{{ genderMap[userInfo.gender] }}</div>
                 <div class="edit">
                     <a href="" @click="genderClick">編輯</a>
                 </div>
@@ -268,7 +330,7 @@ const addressClick = (e) => {
                 </div>
             </template> -->
             <!-- <template v-else> -->
-                <!-- <div class="afterclick">
+            <!-- <div class="afterclick">
                     <div class="column">國籍</div>
                     <div class="input">
                         <input class="text" type="text" placeholder="請輸入您的國籍" v-model="userInfo.country" required>
@@ -280,7 +342,7 @@ const addressClick = (e) => {
             </template> -->
         </div>
 
-        <div class="row border-bottom"> 
+        <div class="row border-bottom">
             <template v-if="!address">
                 <div class="column">地址</div>
                 <div class="info">{{ userInfo.address }}</div>
@@ -290,7 +352,7 @@ const addressClick = (e) => {
                 <div class="afterclick">
                     <div class="column">地址</div>
                     <div class="input">
-                        <input class="text1" type="text" placeholder="請輸入您的地址"  v-model="userInfo.address" required>
+                        <input class="text1" type="text" placeholder="請輸入您的地址" v-model="userInfo.address" required>
                     </div>
                     <div class="edit">
                         <a href="" @click="addressClick">完成</a>
@@ -299,11 +361,9 @@ const addressClick = (e) => {
             </template>
 
         </div>
-        <div class="save">
-            <el-button type="primary" @click="save" >儲存</el-button>
-        </div>
-
-
+        <!-- <div class="save">
+            <el-button type="primary" @click="save">儲存</el-button>
+        </div> -->
     </div>
 </template>
 
