@@ -1,20 +1,15 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-
 const emit = defineEmits([
     'openRate'
 ])
 
-const comments = ref([
-    {
-        id: 1, text: `只要不知道是誰說的\n通通可以當成是胡適講的。`, author: '胡適 (並沒有說過這句話)'
-    },
-    { id: 2, text: '服務非常好，會再來！', author: '用戶B' },
-    { id: 3, text: '食物很美味，推薦！', author: '用戶C' },
-    { id: 4, text: '環境非常舒適！', author: '用戶D' },
-    { id: 5, text: '價格合理，值得一試！', author: '用戶E' },
-    { id: 6, text: '非常滿意這次的住宿！', author: '用戶F' },
-]);
+defineProps([
+    'score',
+    'rateData',
+    'totalRate'
+])
+
 
 const commentWrapper = ref(null);
 const commentBlock = ref(null);
@@ -30,6 +25,24 @@ const handleScroll = () => {
     const wrapper = commentWrapper.value;
     showLeftButton.value = wrapper.scrollLeft > 0;
     showRightButton.value = wrapper.scrollLeft + wrapper.clientWidth < wrapper.scrollWidth;
+};
+
+const getRatingMessage = (score) => {
+    if (score > 9) {
+        return "超棒";
+    } else if (score > 8) {
+        return "推薦";
+    } else if (score > 7) {
+        return "不錯";
+    } else if (score > 6) {
+        return "一般";
+    } else if (score > 5) {
+        return "可接受";
+    } else if (score > 4) {
+        return "不推薦";
+    } else {
+        return "差勁";
+    }
 };
 
 const handleResize = () => {
@@ -60,7 +73,7 @@ const scrollRight = (e) => {
 };
 
 let resizeObserver
-onMounted(() => {
+onMounted(async () => {
     handleResize();
     resizeObserver = new ResizeObserver(handleResize);
 
@@ -79,10 +92,10 @@ onBeforeUnmount(() => {
     <div class="rate-container">
         <div class="title" @click="emit('openRate')">
             <div class="desc">
-                <p>好吉了</p>
-                <p>9,999則評語</p>
+                <p>{{ getRatingMessage(score) }}</p>
+                <p>{{ totalRate }}則評語</p>
             </div>
-            <div class="point">9.2</div>
+            <div class="point">{{ score }}</div>
         </div>
         <div class="contect" ref="commentBlock">
             <button v-if="showLeftButton" @click="scrollLeft" class="scroll-button left">
@@ -91,10 +104,10 @@ onBeforeUnmount(() => {
                 </el-icon>
             </button>
             <div class="comment-wrapper" ref="commentWrapper">
-                <div v-for="comment in comments" :key="comment.id" class="comment"
+                <div v-for="rate in rateData" :key="rate.companyReviewsId" class="comment"
                     :style="{ width: `${containerWidth - 20}px` }">
-                    <p>{{ comment.text }}</p>
-                    <p class="author">{{ comment.author }}</p>
+                    <p>{{ rate.comment }}</p>
+                    <p class="author">{{ rate.author }}</p>
                 </div>
             </div>
             <button v-if="showRightButton" @click="scrollRight" class="scroll-button right">

@@ -9,6 +9,8 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import { searchProductAPI } from '@/apis/search';
 import { ElMessage } from 'element-plus';
+import { getRateAPI } from '@/apis/rate';
+import { getCompanyDetailAPI } from '@/apis/company';
 
 const rateDrawer = ref(false);
 
@@ -18,8 +20,13 @@ const openRate = () => {
   rateDrawer.value = true;
 }
 
-
 const roomList = ref([]);
+
+const rate = ref({});
+
+const company = ref({});
+const facilities = ref([]);
+const photos = ref([]);
 
 onMounted(async () => {
   const id = route.params.id;
@@ -48,6 +55,16 @@ onMounted(async () => {
 
     roomList.value = res.data;
     // console.log(res);
+
+    rate.value = await getRateAPI({ companyId: id });
+
+
+    const detail = await getCompanyDetailAPI({ companyId: id });
+
+    company.value = detail.data.company;
+    facilities.value = detail.data.facilities;
+    photos.value = detail.data.photos;
+
   }
 });
 </script>
@@ -71,10 +88,11 @@ onMounted(async () => {
         </el-anchor-link>
         <el-anchor-link class="a-link" href="#facility"> 設施 </el-anchor-link>
         <el-anchor-link class="a-link" href="#rules"> 住宿規定 </el-anchor-link>
-        <el-anchor-link class="a-link" @click="openRate"> 住客評價(999) </el-anchor-link>
+        <el-anchor-link class="a-link" @click="openRate"> 住客評價({{ rate.total }}) </el-anchor-link>
         <div class="bottom-line"></div>
       </el-anchor>
-      <ProductOverview id="overview" @openRate="openRate" />
+      <ProductOverview :rateData="rate.data" :totalRate="rate.total" :company="company" :facilities="facilities"
+        :photos="photos" id="overview" @openRate="openRate" />
       <el-divider class="divider" />
       <ProductRoomList id="price-info" :roomList="roomList" />
       <el-divider class="divider" />

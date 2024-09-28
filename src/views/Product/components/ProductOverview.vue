@@ -4,9 +4,10 @@ import ProductAlbum from './ProductAlbum.vue';
 import CouponBlock from './CouponBlock.vue';
 import OverviewRate from './OverviewRate.vue';
 import OverviewMap from './OverviewMap.vue';
-import { ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { getCompanyDetailAPI } from '@/apis/company';
 
-const rateScore = ref(5);
 const isOpenFlod = ref(false);
 
 const openFlod = () => {
@@ -17,22 +18,17 @@ const emit = defineEmits([
   'openRate'
 ])
 
+const props = defineProps([
+  'rateData',
+  'totalRate',
+  'company',
+  'facilities',
+  'photos'
+])
 
-const text = ref(
-  `Aurora Star Hotel 地點絕佳，位於巴黎市中心，提供空調客房，擁有美麗的花園、免費WiFi和寬敞的露台。這間4星級飯店的每個房型都能欣賞到城市美景。住客可以享用館內餐廳和酒吧的美食。飯店還提供私人停車位。
-            
-  Aurora Star Hotel 的所有客房均配備舒適的座位區、平面電視和保險箱。每間客房都備有寢具和毛巾，確保住客享有舒適的住宿體驗。
 
-  飯店每天早上供應豐富的早餐，提供自助式、歐陸式和素食三種選擇，滿足不同住客的需求。
+const rateScore = computed(() => (props.company.score || 6) / 2);
 
-  櫃台服務人員會講法語、英語、西班牙語和中文，可以幫助住客規劃行程，解答各種問題。
-
-  Aurora Star Hotel 附近的人氣景點包括艾菲爾鐵塔、羅浮宮博物館和香榭麗舍大街。最近的機場是夏爾·戴高樂國際機場，距離
-  Aurora Star Hotel 25 公里。飯店提供付費機場接駁服務。
-
-  情侶特別喜歡這個位置，並給他們的雙人旅行住宿體驗評分9.8分。
-
-  這邊的文字由旅館方輸入提供`);
 </script>
 
 <template>
@@ -43,17 +39,18 @@ const text = ref(
         &nbsp;
         <el-rate v-model="rateScore" disabled></el-rate>
       </p>
-      <h2>旅館名稱旅館名稱旅館名稱</h2>
-      <p class="location">圖標 地點 位置 國家 -顯示地圖</p>
+      <h2>{{ company.companyName }}</h2>
+      <p class="location">{{ company.country }} - {{ company.city }}</p>
     </div>
     <el-row :gutter="20">
       <el-col :xs="24" :sm="24" :md="18">
-        <ProductAlbum />
+        <ProductAlbum :photos />
       </el-col>
       <el-col :xs="0" :sm="0" :md="6">
         <div class="rate-map">
           <div class="rate">
-            <OverviewRate @openRate="emit('openRate')" />
+            <OverviewRate :rateData="rateData" :score="company.score" :totalRate="totalRate"
+              @openRate="emit('openRate')" />
           </div>
           <div class="map">
             <OverviewMap />
@@ -68,51 +65,15 @@ const text = ref(
             <el-button type="info" @click="openFlod" plain>顯示更多</el-button>
           </div>
           <p class="pre-line-text">
-            {{ text }}
+            {{ company.introduce }}
           </p>
         </div>
         <div class="facility-wrap">
           <h3>熱門設施</h3>
           <div class="facility-tags">
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>禁菸客房</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>機場接駁車</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>免費wife</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>客房服務</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>私人停車場</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>餐廳</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>家庭房</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>24 小時接待櫃檯</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>酒吧</span>
-            </div>
-            <div class="tag">
-              <i class="bi bi-exclamation-circle"></i>
-              <span>早餐評價很好</span>
+            <div class="tag" v-for="(facility, index) in facilities" :key="index">
+              <i v-html="facility.facilityIcon"></i>
+              <span>{{ facility.facilityName }}</span>
             </div>
           </div>
         </div>

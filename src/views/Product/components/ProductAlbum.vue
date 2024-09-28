@@ -3,14 +3,12 @@ import { ref } from 'vue';
 const selectedPohto = ref(0);
 const hoverPohto = ref(null);
 
-const photos = ref([
-  { id: 1, src: '/1.jpg', alt: '' },
-  { id: 2, src: '/2.jpg', alt: '' },
-  { id: 3, src: '/3.jpg', alt: '' },
-  { id: 4, src: '/4.jpg', alt: '' },
-  { id: 5, src: '/5.jpg', alt: '' },
-  { id: 6, src: '/6.jpg', alt: '' },
-]);
+defineProps([
+  'photos'
+])
+
+const baseUrl = 'http://localhost:8080/'
+
 
 const isIndexMatch = (index) => {
   return index === selectedPohto.value;
@@ -62,7 +60,7 @@ const handleMouseLeave = () => {
         :class="{ 'active': isIndexMatch(index) }" :style="{ flexShrink: getFlexShrink(index) }"
         @click="selectPhoto(index)" @mouseover="handleMouseOver(index)" @mouseleave="handleMouseLeave">
         <div class="action" :style="{ opacity: getOpacity(index), filter: 'blur(' + getFilterBlur(index) + ')' }">
-          <img :src="photo.src" alt="photo.alt">
+          <img :src="baseUrl + photo.photoUrl" :alt="photo.description">
         </div>
       </div>
     </div>
@@ -70,12 +68,12 @@ const handleMouseLeave = () => {
       <div v-for="(photo, index) in photos.slice(0, 6)" :key="index" class="list-ele">
         <template v-if="index < 5">
           <div class="image brightness" @click="selectPhoto(index)">
-            <img :src="photo.src" alt="photo.alt">
+            <img :src="baseUrl + photo.photoUrl" :alt="photo.description">
           </div>
         </template>
         <template v-else>
-          <div class="image more" :style="{ backgroundImage: 'url(' + photo.src + ')' }">
-            <span>+99 張相片</span>
+          <div class="image more" :style="{ backgroundImage: `url(${baseUrl + photo.photoUrl})` }">
+            <span>+{{ photos.length - 5 }} 張相片</span>
           </div>
         </template>
       </div>
