@@ -32,7 +32,7 @@ export const companyLoginAPI = ({ username, password }) => {
     });
 }
 
-//商家管理頁面修改
+//商家資料管理頁面修改
 export const updatecompanyAPI = ({companyId, username, companyName, vatNumber, address, telephone,manager,country,city}) => {
     return httpInstance({
         url:`/store/${companyId}`,
@@ -51,4 +51,28 @@ export const updatecompanyAPI = ({companyId, username, companyName, vatNumber, a
             
         }
     });
+}
+
+//編輯商家資訊
+export const updateCompanyDetailAPI = ({companyId,photos,facilityIds,introduce}) => {
+    return httpInstance({
+    url:`/storeDetail/${companyId}`,
+    method:'PUT',
+    data:{
+        companyId,
+        photos,
+        facilityIds,
+        introduce
+    }
+    })
+}
+
+//取得商家資訊
+export const getCompanyDetailAPI = ({companyId}) => {
+    return httpInstance({
+        url:`/storeDetail/${companyId}`,
+        method:'GET',
+      
+
+    })
 }
