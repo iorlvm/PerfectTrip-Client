@@ -1,4 +1,5 @@
 <script setup>
+import { getFaqAPI } from '@/apis/faq';
 import { onMounted, ref } from 'vue'
 
 const activeName = ref('first')
@@ -24,7 +25,10 @@ const getQAsAPI = async () => {
     })
 }
 
-
+onMounted(async () => {
+    const res = await getFaqAPI();
+    qaList.value = res.data;
+})
 
 </script>
 
