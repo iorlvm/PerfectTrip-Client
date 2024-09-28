@@ -2,6 +2,14 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { imageUpdateAPI } from '@/apis/image';
+import { useUserStore } from '@/stores/user';
+// import {updateCompanyeDetailAPI} from '@/apis/company'
+
+const userStore = useUserStore();
+userStore.userInfo
+// const userInfo = ref({
+    
+// });
 
 
 const maxPhotos = 12;  // 最多 8 張照片
@@ -42,10 +50,10 @@ const onSubmit = () => {
     console.log('Uploaded Photos:', photoList.value);
 };
 
-// 打開編輯燈箱
-const openUploadDialog = () => {
-    showUploadDialog.value = true;
-};
+// // 打開編輯燈箱
+// const openUploadDialog = () => {
+//     showUploadDialog.value = true;
+// };
 
 //燈箱大圖連結
 const dialogImageUrl = ref('')
@@ -68,14 +76,14 @@ const customUpload = async ({ file }) => {
 
 //圖片
 const fileList = ref([
-    {
-        name: 'food.jpeg',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-    },
-    {
-        name: 'plant-1.png',
-        url: '/images/plant-1.png',
-    },
+    // {
+    //     name: 'food.jpeg',
+    //     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+    // },
+    // {
+    //     name: 'plant-1.png',
+    //     url: '/images/plant-1.png',
+    // },
 
 ])
 
@@ -117,9 +125,9 @@ const handlePictureCardPreview = (uploadFile) => {
 
                 <!-- 編輯按鈕 -->
                 <!-- <el-image style="width: 160px; height: 126px" :src="url" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" fit="cover" /> -->
-                <div style="margin-bottom: 20px" class="addtab">
+                <!-- <div style="margin-bottom: 20px" class="addtab">
                     <el-button size="small" @click="openUploadDialog" style="margin: 0 0 0 20px;">編輯</el-button>
-                </div>
+                </div> -->
             </div>
 
             <!-- 燈箱內容 -->
@@ -148,12 +156,15 @@ const handlePictureCardPreview = (uploadFile) => {
                     <el-form-item label="熱門設施">
                         <el-checkbox-group v-model="form.type">
                             <el-checkbox value="swim">室內游泳池</el-checkbox>
+                            <el-checkbox value="gym">健身房</el-checkbox>
+                            <el-checkbox value="SPA">SPA</el-checkbox>
+                            <el-checkbox value="meetingroom">會議室</el-checkbox>
+                            <el-checkbox value="restaurant">餐廳</el-checkbox>
                             <el-checkbox value="wifi">免費無線網路</el-checkbox>
                             <el-checkbox value="familysweet">家庭房</el-checkbox>
                             <el-checkbox value="nosmoke">禁菸客房</el-checkbox>
                             <el-checkbox value="freepark">免費停車</el-checkbox>
-                            <el-checkbox value="gym">健身中心</el-checkbox>
-                            <el-checkbox value="restaurant">餐廳</el-checkbox>
+                            <el-checkbox value="KTV">KTV</el-checkbox>
                             <el-checkbox value="24hr">24小時接待櫃檯</el-checkbox>
                             <el-checkbox value="liquor">酒吧</el-checkbox>
                             <el-checkbox value="breakfast">附早餐</el-checkbox>
