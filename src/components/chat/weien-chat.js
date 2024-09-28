@@ -1461,7 +1461,7 @@ export class WeienChat {
                 } else if (len > 2) {
                     text = '會話群組';
                 } else if (len === 2) {
-                    text = chatingWith.name;
+                    text = this._getChatingWith(chat).name;
                 } else {
                     text = 'ERROR - 這個聊天室只有一個參與者';
                 }

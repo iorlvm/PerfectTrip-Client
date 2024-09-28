@@ -42,7 +42,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ProductCard v-for="(res, index) in searchStore.resultList" :key="index" :product="res" :adultCount="adultCount"
+  <ProductCard v-for="(res) in searchStore.resultList" :key="res.companyId" :product="res" :adultCount="adultCount"
     :days="days" />
   <div ref="loadMoreTrigger" class="load-more-trigger"></div>
 </template>

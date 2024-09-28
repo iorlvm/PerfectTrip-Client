@@ -23,12 +23,12 @@ const orderOptions = [
   },
 ];
 
-const changeOrder = () => {
+const changeOrder = async () => {
   isOnSelect.value = false;
   if (orederBy.value == 'default') {
-    searchStore.changeOrderBy('price');
+    await searchStore.changeOrderBy('price');
   } else {
-    searchStore.changeOrderBy(orederBy.value);
+    await searchStore.changeOrderBy(orederBy.value);
   }
 }
 
