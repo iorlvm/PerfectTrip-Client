@@ -80,12 +80,12 @@ const handleUpdateRoomCount = ({ productId, selectedCount }) => {
                         <el-button class="order-button" type="primary" size="large"
                             @click="createOrder">現在就預定</el-button>
                     </el-col>
-                    <el-col :xs="0" :sm="0" :md="24">
+                    <!-- <el-col :xs="0" :sm="0" :md="24">
                         <p><i class="bi bi-dot"></i>資訊</p>
                     </el-col>
                     <el-col :xs="0" :sm="0" :md="24">
                         <p><i class="bi bi-dot"></i>資訊</p>
-                    </el-col>
+                    </el-col> -->
                 </el-row>
             </el-col>
         </el-row>

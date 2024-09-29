@@ -1,15 +1,20 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 const emit = defineEmits([
     'openRate'
 ])
 
-defineProps([
-    'score',
-    'rateData',
-    'totalRate'
-])
+const props = defineProps({
+    score: Number,
+    rateData: Array,
+    totalRate: Number
+})
 
+watch(() => props.rateData, () => {
+    nextTick(() => {
+        handleResize();
+    });
+});
 
 const commentWrapper = ref(null);
 const commentBlock = ref(null);
@@ -74,11 +79,11 @@ const scrollRight = (e) => {
 
 let resizeObserver
 onMounted(async () => {
-    handleResize();
     resizeObserver = new ResizeObserver(handleResize);
 
     resizeObserver.observe(commentBlock.value);
     commentWrapper.value.addEventListener('scroll', handleScroll);
+    handleResize();
 });
 
 onBeforeUnmount(() => {
