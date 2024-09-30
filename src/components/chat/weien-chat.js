@@ -1015,7 +1015,7 @@ export class WeienChat {
         if (message.value.img) {
             content = `<img src="${message.value.img.src}" alt="${message.value.img.alt}" style="margin-top: 3px"></img>`;
         }
-        content += `<p style="margin-top: 3px">${message.value.content}</p>`;
+        content += `<p style="margin-top: 3px">${message.value.content || ''}</p>`;
         messageCard.innerHTML = `
             <div class="chat-room-avatar">
                 <div class="weien-message-sender-name">${sender.name}</div>
