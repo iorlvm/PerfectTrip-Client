@@ -4,9 +4,7 @@ import ProductAlbum from './ProductAlbum.vue';
 import CouponBlock from './CouponBlock.vue';
 import OverviewRate from './OverviewRate.vue';
 import OverviewMap from './OverviewMap.vue';
-import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { getCompanyDetailAPI } from '@/apis/company';
+import { ref, computed } from 'vue';
 
 const isOpenFlod = ref(false);
 

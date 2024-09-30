@@ -12,21 +12,54 @@ import { ElMessage } from 'element-plus';
 import { getRateAPI } from '@/apis/rate';
 import { getCompanyDetailAPI } from '@/apis/company';
 
-const rateDrawer = ref(false);
 
 const route = useRoute();
 
-const openRate = () => {
-  rateDrawer.value = true;
-}
-
+const rateDrawer = ref(false);
 const roomList = ref([]);
 
-const rate = ref({});
+const rate = ref({ total: 0, data: [] });
+const page = ref(0);
+const loading = ref(false);
+const noMoreData = ref(false);
 
 const company = ref({});
 const facilities = ref([]);
 const photos = ref([]);
+
+
+const openRate = () => {
+  rateDrawer.value = true;
+  loadRates();
+}
+
+const loadRates = async () => {
+  if (loading.value || noMoreData.value) return; // 防止重複加載
+
+  loading.value = true; // 開始加載
+  try {
+    const res = await getRateAPI({ companyId: company.value.companyId, page: page.value });
+    if (res.data.length > 0) {
+      rate.value.total = res.total;
+      rate.value.data.push(...res.data); // 添加新加載的數據
+      page.value++;
+    } else {
+      noMoreData.value = true; // 沒有更多數據
+    }
+  } catch (error) {
+    ElMessage.error('加載評價失敗');
+  } finally {
+    loading.value = false; // 加載結束
+  }
+};
+
+// 添加 handleScroll 函數
+const handleScroll = (event) => {
+  const { scrollTop, clientHeight, scrollHeight } = event.target;
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    loadRates(); // 加載更多評價
+  }
+};
 
 onMounted(async () => {
   const id = route.params.id;
@@ -56,15 +89,14 @@ onMounted(async () => {
     roomList.value = res.data;
     // console.log(res);
 
-    rate.value = await getRateAPI({ companyId: id });
-
-
     const detail = await getCompanyDetailAPI({ companyId: id });
 
     company.value = detail.data.company;
     facilities.value = detail.data.facilities;
     photos.value = detail.data.photos;
 
+
+    await loadRates();
   }
 });
 </script>
@@ -102,8 +134,25 @@ onMounted(async () => {
     </div>
   </div>
 
-  <el-drawer v-model="rateDrawer" title="我是住客評價" size="40%" :lock-scroll="true">
-    <div>我是評價列表</div>
+  <el-drawer v-model="rateDrawer" :with-header="false" size="40%" :lock-scroll="true">
+    <div class="rate-header">
+      <h3 class="rate-title">{{ company.companyName }} 的評價列表</h3>
+      <div class="point">{{ company.score }}</div>
+    </div>
+    <div class="rate-list" ref="rateList" @scroll="handleScroll"> <!-- 添加 ref 和 @scroll -->
+      <div v-for="(item, index) in rate.data" :key="index" class="rate-item">
+        <div class="rate-comment-wrapper">
+          <p class="rate-comment">{{ item.comment }}</p>
+          <el-rate v-model="item.starRank" :disabled="true" class="rate-stars"></el-rate>
+        </div>
+        <div class="rate-meta">
+          <span class="rate-author">{{ item.author }}</span>
+        </div>
+      </div>
+      <!-- 加載更多提示 -->
+      <div v-if="loading" class="loading">加載中...</div>
+      <div v-if="noMoreData" class="no-more">沒有更多評價了</div>
+    </div>
   </el-drawer>
 </template>
 
@@ -127,6 +176,84 @@ onMounted(async () => {
 </style>
 
 <style lang="scss" scoped>
+.loading,
+.no-more {
+  text-align: center;
+  padding: 10px;
+  color: #999;
+}
+
+.rate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eaeaea;
+  /* 分隔線 */
+}
+
+.rate-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.point {
+  padding: 5px;
+  background-color: $headerFooter;
+  color: #fff;
+  border-radius: 5px;
+  margin-left: 8px;
+}
+
+.rate-list {
+  padding: 20px;
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
+}
+
+.rate-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.rate-comment-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rate-comment {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.rate-stars {
+  margin-left: 20px;
+}
+
+.rate-meta {
+  text-align: right;
+  font-size: 14px;
+  color: #666;
+}
+
+.rate-author {
+  font-weight: bold;
+}
+
 .product-container {
   width: 95%;
   margin: 0 auto;
