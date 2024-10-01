@@ -165,7 +165,7 @@ onMounted(async () => {
     orderId.value = route.params.id;
 
     const res = await getOrderByIdAPI(orderId.value);
-    // console.log(res.data);
+
     orderInfo.value = res.data;
 
 

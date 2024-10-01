@@ -7,6 +7,12 @@ defineProps([
     'item'
 ]);
 
+const formatScore = (score) => {
+    const limitedScore = Math.max(0, Math.min(10, score));
+
+    return limitedScore.toFixed(1);
+};
+
 const getRatingMessage = (score) => {
     if (score > 9) {
         return "超棒";
@@ -68,7 +74,7 @@ const routeToCompany = (id) => {
             <h3 class="accommodation-title">{{ item.companyName }}</h3>
             <p class="accommodation-desc">{{ item.country }}, {{ item.city }}</p>
             <div class="rate-block">
-                <span class="rate">{{ item.score }}</span>
+                <span class="rate">{{ formatScore(item.score) }}</span>
                 <span>{{ getRatingMessage(item.score) }}－{{ item.rateCount }} 則評語</span>
             </div>
         </div>

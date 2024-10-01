@@ -1,4 +1,21 @@
 <script setup>
+const formatScore = (score) => {
+    if (!score) return;
+    const limitedScore = Math.max(0, Math.min(10, score));
+
+    return limitedScore.toFixed(1);
+};
+
+const calculateDaysDifference = (startDate, endDate) => {
+    if (!startDate || !endDate) return;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const diffTime = end - start;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    return diffDays;
+};
 
 defineProps([
     'orderInfo'
@@ -50,17 +67,13 @@ defineProps([
             <h2>{{ orderInfo.hotelName }}</h2>
             <p>{{ orderInfo.hotelAddress }}</p>
             <div class="flex">
-                <div class="number">{{ orderInfo.hotelScore }}</div>
-                <div class="desc">很讚 - 9,999則評語</div>
+                <div class="number">{{ formatScore(orderInfo.hotelScore) }}</div>
+                <div class="desc">很讚 - {{ orderInfo.rateCount }}則評語</div>
             </div>
             <div class="flex">
-                <div class="tag">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <span>免費無線網路</span>
-                </div>
-                <div class="tag">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <span>停車場</span>
+                <div class="tag" v-for="(item, index) in orderInfo.hotelFacilities?.slice(0, 3)" :key="index">
+                    <i class="bi bi-check"></i>
+                    <span>{{ item }}</span>
                 </div>
             </div>
         </div>
@@ -70,18 +83,18 @@ defineProps([
             <div class="flex">
                 <div class="date">
                     <p>入住時間</p>
-                    <p class="big">2024 年 7 月 8 日 ( 一 )</p>
+                    <p class="big">{{ orderInfo.startDate }}</p>
                     <p class="small">15:00 - 22:00</p>
                 </div>
                 <div class="date">
                     <p>退房時間</p>
-                    <p class="big">2024 年 7 月 9 日 ( 二 )</p>
+                    <p class="big">{{ orderInfo.endDate }}</p>
                     <p class="small">12:00 前</p>
                 </div>
             </div>
             <div class="total-days">
                 <p>總共入住：</p>
-                <span>1 晚</span>
+                <span>{{ calculateDaysDifference(orderInfo.startDate, orderInfo.endDate) }} 晚</span>
             </div>
             <el-divider class="divider" />
             <h3>訂購內容：</h3>

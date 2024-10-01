@@ -50,6 +50,12 @@ const getRatingMessage = (score) => {
     }
 };
 
+const formatScore = (score) => {
+    const limitedScore = Math.max(0, Math.min(10, score));
+
+    return limitedScore.toFixed(1);
+};
+
 const handleResize = () => {
     containerWidth.value = commentBlock.value.clientWidth;
 
@@ -100,7 +106,7 @@ onBeforeUnmount(() => {
                 <p>{{ getRatingMessage(score) }}</p>
                 <p>{{ totalRate }}則評語</p>
             </div>
-            <div class="point">{{ score }}</div>
+            <div class="point">{{ formatScore(score) }}</div>
         </div>
         <div class="contect" ref="commentBlock">
             <button v-if="showLeftButton" @click="scrollLeft" class="scroll-button left">

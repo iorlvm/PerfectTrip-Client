@@ -38,7 +38,6 @@ const submitComment = async () => {
 
 onMounted(async () => {
     const res = await getUserRateAPI(props.companyId);
-    console.log(res);
 
     if (res.data) {
         rateId.value = res.data.companyReviewsId;
@@ -128,6 +127,13 @@ onMounted(async () => {
 
 .edit {
     margin-right: 10px;
-    font-weight: bold;
+    /* font-weight: bold; */
+    color: #409EFF;
+    cursor: pointer;
+}
+
+.edit:hover {
+    text-decoration: underline;
+    color: #66b1ff;
 }
 </style>
