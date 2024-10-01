@@ -1,17 +1,16 @@
 <script setup>
-// const coupons = [
-//     { title: '20% 折扣', description: '使用此優惠券獲得 20% 的折扣', code: 'DISCOUNT20' },
-//     { title: '免費早餐', description: '訂房即享免費早餐', code: 'FREEBREAKFAST' },
-//     { title: '延遲退房', description: '享受免費延遲退房服務', code: 'LATECHECKOUT' },
-//     // 可以添加更多優惠券
-// ]
+import router from '@/router';
+
+const routeToRegist = () => {
+    router.push('/register');
+}
 </script>
 
 <template>
     <div class="banner">
-        <h3>註冊會員，獲取專屬優惠券</h3>
-        <p>2025年02月31日前加入會員，立即獲得獨家優惠券！</p>
-        <el-button type="primary" size="large" class="more">立即行動</el-button>
+        <h3>註冊會員，獲取專屬優惠</h3>
+        <!-- <p>2025年02月31日前加入會員，立即獲得獨家優惠！</p> -->
+        <el-button type="primary" size="large" class="more" @click="routeToRegist">立即行動</el-button>
     </div>
 </template>
 

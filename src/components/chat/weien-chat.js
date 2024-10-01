@@ -251,10 +251,17 @@ const textareaSettings = () => {
                     if (e.target === fileInput) return; //避免click事件遞迴
 
                     fileInput.click();
-                    fileInput.addEventListener('change', event => {
+                    const handleFileChange = (event) => {
                         const selectedFile = event.target.files[0];
                         actionHandlers.updateFile(selectedFile);
-                    })
+
+                        // 移除事件監聽器，避免多次觸發
+                        fileInput.removeEventListener('change', handleFileChange);
+                        fileInput.value = '';
+                    };
+
+                    // 綁定事件監聽器
+                    fileInput.addEventListener('change', handleFileChange);
                 }
             },
         ]

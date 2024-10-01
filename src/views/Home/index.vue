@@ -7,6 +7,9 @@ import HotelCard from './components/HotelCard.vue';
 import TravelDest from './components/TravelDest.vue'
 import { onMounted, ref } from 'vue';
 import { getDiscountCompanyAPI, getHotCompanyAPI, getRandCompanyAPI } from '@/apis/recommend';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
 
 const dests = ref([
   {
@@ -26,7 +29,7 @@ const dests = ref([
     img: '/4.jpg'
   },
   {
-    place: '東京',
+    place: '屏東',
     img: '/5.jpg'
   },
 ])
@@ -68,9 +71,6 @@ onMounted(async () => {
   hotCompany.value = (await getHotCompanyAPI()).data;
   randCompany.value = (await getRandCompanyAPI()).data;
   discountCompany.value = (await getDiscountCompanyAPI(formateDate(date))).data;
-
-  console.log(hotCompany.value);
-
 })
 </script>
 
@@ -78,7 +78,7 @@ onMounted(async () => {
   <HomeCarousel />
   <SearchBar :half="false" />
   <div class="container">
-    <HomeTitle title="特別優惠" desc="為您提供的促銷、折扣與特別優惠">
+    <HomeTitle title="特別優惠" desc="為您提供的促銷、折扣與特別優惠" v-if="userStore.userInfo.role !== 'user'">
       <HomeCoupons />
     </HomeTitle>
     <HomeTitle title="推薦目的地" desc="發現我們精心挑選的推薦目的地，開啟您的夢幻假期">
