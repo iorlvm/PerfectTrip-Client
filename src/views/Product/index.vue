@@ -4,6 +4,7 @@ import ProductOverview from './components/ProductOverview.vue';
 import ProductRoomList from './components/ProductRoomList.vue';
 import HotelFacility from '@/views/Product/components/HotelFacility.vue'
 import HotelRule from './components/HotelRule.vue';
+import AddComment from './components/AddComment.vue';
 import { onMounted, ref } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
@@ -11,9 +12,10 @@ import { searchProductAPI } from '@/apis/search';
 import { ElMessage } from 'element-plus';
 import { getRateAPI } from '@/apis/rate';
 import { getCompanyDetailAPI } from '@/apis/company';
-
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
+const userStore = useUserStore();
 
 const rateDrawer = ref(false);
 const roomList = ref([]);
@@ -39,8 +41,8 @@ const loadRates = async () => {
   loading.value = true; // 開始加載
   try {
     const res = await getRateAPI({ companyId: company.value.companyId, page: page.value });
+    rate.value.total = res.total;
     if (res.data.length > 0) {
-      rate.value.total = res.total;
       rate.value.data.push(...res.data); // 添加新加載的數據
       page.value++;
     } else {
@@ -135,23 +137,26 @@ onMounted(async () => {
   </div>
 
   <el-drawer v-model="rateDrawer" :with-header="false" size="40%" :lock-scroll="true">
-    <div class="rate-header">
-      <h3 class="rate-title">{{ company.companyName }} 的評價列表</h3>
-      <div class="point">{{ company.score }}</div>
-    </div>
-    <div class="rate-list" ref="rateList" @scroll="handleScroll"> <!-- 添加 ref 和 @scroll -->
-      <div v-for="(item, index) in rate.data" :key="index" class="rate-item">
-        <div class="rate-comment-wrapper">
-          <p class="rate-comment">{{ item.comment }}</p>
-          <el-rate v-model="item.starRank" :disabled="true" class="rate-stars"></el-rate>
-        </div>
-        <div class="rate-meta">
-          <span class="rate-author">{{ item.author }}</span>
-        </div>
+    <div style="height: 93vh; display: flex; flex-direction: column;">
+      <div class="rate-header">
+        <h3 class="rate-title">{{ company.companyName }} 的評價列表</h3>
+        <div class="point">{{ company.score }}</div>
       </div>
-      <!-- 加載更多提示 -->
-      <div v-if="loading" class="loading">加載中...</div>
-      <div v-if="noMoreData" class="no-more">沒有更多評價了</div>
+      <AddComment :companyId="company.companyId" v-if="userStore.userInfo.role === 'user'" />
+      <div class="rate-list" ref="rateList" @scroll="handleScroll"> <!-- 添加 ref 和 @scroll -->
+        <div v-for="(item, index) in rate.data" :key="index" class="rate-item">
+          <div class="rate-meta">
+            <span class="rate-author">{{ item.author }}</span>
+          </div>
+          <div class="rate-comment-wrapper">
+            <p class="rate-comment">{{ item.comment }}</p>
+            <el-rate v-model="item.starRank" :disabled="true" class="rate-stars"></el-rate>
+          </div>
+        </div>
+        <!-- 加載更多提示 -->
+        <div v-if="loading" class="loading">加載中...</div>
+        <div v-if="noMoreData" class="no-more">沒有更多評價了</div>
+      </div>
     </div>
   </el-drawer>
 </template>
@@ -209,7 +214,7 @@ onMounted(async () => {
 
 .rate-list {
   padding: 20px;
-  max-height: 100%;
+  flex-grow: 1;
   overflow-y: auto;
   scrollbar-width: none;
   /* Firefox */
@@ -223,7 +228,7 @@ onMounted(async () => {
 }
 
 .rate-item {
-  padding: 15px 0;
+  padding: 15px 0 5px;
   border-bottom: 1px solid #eaeaea;
 }
 
@@ -245,9 +250,10 @@ onMounted(async () => {
 }
 
 .rate-meta {
-  text-align: right;
+  text-align: left;
   font-size: 14px;
   color: #666;
+  margin-bottom: 10px;
 }
 
 .rate-author {
