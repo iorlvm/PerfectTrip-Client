@@ -73,6 +73,14 @@ export const getCompanyDetailAPI = ({companyId}) => {
         url:`/storeDetail/${companyId}`,
         method:'GET',
       
+    })
+}
 
+
+//刪除商家單張照片
+export const deleteCompanyPhotoAPI = (photoId) => {
+    return httpInstance({
+        url:`/storeDetail/photo/${photoId}`,
+        method:'DELETE'
     })
 }
