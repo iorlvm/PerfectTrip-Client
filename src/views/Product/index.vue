@@ -55,6 +55,12 @@ const loadRates = async () => {
   }
 };
 
+const formatScore = (score) => {
+  const limitedScore = Math.max(0, Math.min(10, score));
+
+  return limitedScore.toFixed(1);
+};
+
 // 添加 handleScroll 函數
 const handleScroll = (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
@@ -140,7 +146,7 @@ onMounted(async () => {
     <div style="height: 93vh; display: flex; flex-direction: column;">
       <div class="rate-header">
         <h3 class="rate-title">{{ company.companyName }} 的評價列表</h3>
-        <div class="point">{{ company.score }}</div>
+        <div class="point">{{ formatScore(company.score) }}</div>
       </div>
       <AddComment :companyId="company.companyId" v-if="userStore.userInfo.role === 'user'" />
       <div class="rate-list" ref="rateList" @scroll="handleScroll"> <!-- 添加 ref 和 @scroll -->
