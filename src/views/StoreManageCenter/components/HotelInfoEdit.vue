@@ -1,100 +1,153 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref, computed ,reactive, toRaw} from 'vue';
 import { ElMessage } from 'element-plus';
 import { imageUpdateAPI } from '@/apis/image';
 import { useUserStore } from '@/stores/user';
-// import {updateCompanyeDetailAPI} from '@/apis/company'
+import {updateCompanyDetailAPI,getCompanyDetailAPI, deleteCompanyPhotoAPI} from '@/apis/company'
+import { getFacilitiesAPI } from '@/apis/product';
 
 const userStore = useUserStore();
 userStore.userInfo
-// const userInfo = ref({
-    
-// });
 
-
-const maxPhotos = 12;  // 最多 8 張照片
-
-const form = ref({
-    name: '',
-    region: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: '',
-    number: '',
-    date: []
+const currentPhoto = reactive({
+  companyPhotos: [],
 });
 
-// 管理上傳的圖片列表
-const photoList = ref([]);
-const showUploadDialog = ref(false);  // 控制燈箱顯示
+const form = reactive({
+    type: [],
+    desc: '',
+    companyPhotos: []
+});
 
-// 確認圖片數量限制
-const handlePhotoUpload = (event) => {
-    const files = Array.from(event.target.files);
-    if (photoList.value.length + files.length > maxPhotos) {
-        ElMessage.error(`最多只能上傳 ${maxPhotos} 張照片`);
-    } else {
-        photoList.value.push(...files.map(file => URL.createObjectURL(file)));  // 預覽圖片
-    }
-};
-
-// 刪除圖片
-const removePhoto = (index) => {
-    photoList.value.splice(index, 1);
-};
-
-// 提交表單
-const onSubmit = () => {
-    console.log('submit!', form.value);
-    console.log('Uploaded Photos:', photoList.value);
-};
-
-// // 打開編輯燈箱
-// const openUploadDialog = () => {
-//     showUploadDialog.value = true;
-// };
-
-//燈箱大圖連結
-const dialogImageUrl = ref('')
-const dialogVisible = ref(false)
-
-const customUpload = async ({ file }) => {
+const companyUpload = async ({ file }) => {
+  try {
     const formData = new FormData();
-
     formData.append('file', file);
     formData.append('cacheEnabled', false);
     formData.append('resizeEnabled', true);
     formData.append('width', 1200);
     formData.append('height', 900);
-
+   
+    const companyId = userStore.userInfo.companyId;
     const res = await imageUpdateAPI(formData);
+    
+   
+    if (res.success) {
+      const count = currentPhoto.companyPhotos.length + 1;
+      currentPhoto.companyPhotos.push({
+        photoUrl: res.data,
+        description: '商家照片' + count
+      });
+     await updateCompanyDetailAPI({
+       companyId, 
+       photos:[{
+        photoUrl: res.data,
+        description: '商家照片' + count
+      }]
+       })
+    } else {
+      console.error('照片上傳失敗', res.error);
+    }
+  } catch (error) {
+    console.error('照片上傳發生錯誤', error);
+  }
+};
+const baseURL = 'http://localhost:8080/';
+const fileList = computed(() => {
+  return currentPhoto.companyPhotos.map(photo => ({
+    name: photo.photoId,
+    url: baseURL + photo.photoUrl,
+  })) || [];
+});
 
-    console.log(res);
-    // TODO: res.data是圖片網址 把這個網址存到商家相簿之中
+
+// 管理上傳的圖片列表
+const photoList = ref([]);
+
+// 刪除圖片
+const removePhoto = (index) => {
+    photoList.value.splice(index, 1);
+
 };
 
-//圖片
-const fileList = ref([
-    // {
-    //     name: 'food.jpeg',
-    //     url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-    // },
-    // {
-    //     name: 'plant-1.png',
-    //     url: '/images/plant-1.png',
-    // },
 
-])
+//燈箱大圖連結
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
 
-const handleRemove = (uploadFile, uploadFiles) => {
-    console.log(uploadFile, uploadFiles)
+
+
+const facilities = ref([]);
+
+onMounted(async () => {
+  try {
+    // 獲取設施選項
+    const res = await getFacilitiesAPI();
+    facilities.value = res.data;
+ 
+    // 獲取商家詳細資訊
+    const companyId = userStore.userInfo.companyId;
+    const resCompany = await getCompanyDetailAPI({ companyId });
+
+    if (resCompany.success) {
+      // 初始化表單數據
+      form.type = resCompany.data.facilities.map(facilitiy => facilitiy.facilityId);
+      form.desc = resCompany.data.introduce;
+      currentPhoto.companyPhotos = resCompany.data.photos 
+    } else {
+      ElMessage.error('無法獲取商家資訊，請重試！');
+    }
+  } catch (error) {
+    console.error('初始化商家資訊失敗:', error);
+  }
+});
+
+const handleRemove = async(file) => {
+  try{
+    //使用file.name(photoId) 來刪除資料
+    await deleteCompanyPhotoAPI(file.name);
+    currentPhoto.companyPhotos = currentPhoto.companyPhotos.filter(photo =>photo.photoId != file.name);
+  }catch(error){
+    console.error('未能刪除照片',error)
+  }
 }
+
 
 const handlePictureCardPreview = (uploadFile) => {
     dialogImageUrl.value = uploadFile.url
     dialogVisible.value = true
 }
+// 提交表單
+
+const onSubmit = async () => {
+ 
+  try {
+ 
+    const companyId = userStore.userInfo.companyId;  // 假設 companyId 來自 userInfo
+    const facilityIds = form.type;// 設施選項
+    const introduce = form.desc;// 介紹文本
+
+    // 打印即將提交的資料
+    console.log('Submit Data:', { companyId, facilityIds, introduce },);
+    console.log('公司 ID:', companyId);
+    console.log('設施 ID:', facilityIds);
+    console.log('介紹:', introduce);
+
+    const res = await updateCompanyDetailAPI({ companyId, facilityIds, introduce });
+
+    if (res.success) {
+      ElMessage.success('商家資訊更新成功！');
+    } else {
+      ElMessage.error('商家資訊更新失敗，請重試！');
+    }
+  } catch (error) {
+    console.error('提交表單發生錯誤:', error);
+    ElMessage.error('商家資訊更新失敗，請稍後重試！');
+  }
+  console.log('submit!', form);
+  console.log('Uploaded Photos:', toRaw(currentPhoto.companyPhotos)); // toRaw() 顯示 reactive 代理內的實際數據。 
+  
+};
 </script>
 
 <template>
@@ -109,7 +162,7 @@ const handlePictureCardPreview = (uploadFile) => {
             <br />
             <div class="image">
                 <!-- 縮圖區域 -->
-                <el-upload v-model:file-list="fileList" :http-request="customUpload" list-type="picture-card"
+                <el-upload v-model:file-list="fileList" :http-request="companyUpload" list-type="picture-card"
                     :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
                     <el-icon>
                         <Plus />
@@ -123,76 +176,27 @@ const handlePictureCardPreview = (uploadFile) => {
                     </div>
                 </div>
 
-                <!-- 編輯按鈕 -->
-                <!-- <el-image style="width: 160px; height: 126px" :src="url" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" fit="cover" /> -->
-                <!-- <div style="margin-bottom: 20px" class="addtab">
-                    <el-button size="small" @click="openUploadDialog" style="margin: 0 0 0 20px;">編輯</el-button>
-                </div> -->
             </div>
-
-            <!-- 燈箱內容 -->
-            <el-dialog v-model="showUploadDialog" title="上傳圖片" width="50%">
-                <div>
-                    <input type="file" multiple accept="image/*" @change="handlePhotoUpload" />
-                </div>
-                <div v-if="photoList.length">
-                    <h3>預覽照片：</h3>
-                    <div class="photo-preview">
-                        <div v-for="(photo, index) in photoList" :key="index" class="photo-item">
-                            <el-image :src="photo" style="width: 100px; height: 100px" fit="cover" />
-                            <el-button @click="removePhoto(index)" type="danger" icon="el-icon-delete"
-                                circle></el-button>
-                        </div>
-                    </div>
-                </div>
-                <template #footer>
-                    <el-button @click="showUploadDialog = false">取消</el-button>
-                    <el-button type="primary" @click="showUploadDialog = false">確定</el-button>
-                </template>
-            </el-dialog>
-
-            <el-form :model="form" label-width="">
+            <el-form :model="form" label-width="" >
                 <div class="hot">
                     <el-form-item label="熱門設施">
-                        <el-checkbox-group v-model="form.type">
-                            <el-checkbox value="swim">室內游泳池</el-checkbox>
-                            <el-checkbox value="gym">健身房</el-checkbox>
-                            <el-checkbox value="SPA">SPA</el-checkbox>
-                            <el-checkbox value="meetingroom">會議室</el-checkbox>
-                            <el-checkbox value="restaurant">餐廳</el-checkbox>
-                            <el-checkbox value="wifi">免費無線網路</el-checkbox>
-                            <el-checkbox value="familysweet">家庭房</el-checkbox>
-                            <el-checkbox value="nosmoke">禁菸客房</el-checkbox>
-                            <el-checkbox value="freepark">免費停車</el-checkbox>
-                            <el-checkbox value="KTV">KTV</el-checkbox>
-                            <el-checkbox value="24hr">24小時接待櫃檯</el-checkbox>
-                            <el-checkbox value="liquor">酒吧</el-checkbox>
-                            <el-checkbox value="breakfast">附早餐</el-checkbox>
-                            <el-checkbox value="dinner">附晚餐</el-checkbox>
-                            <el-checkbox value="package">行李寄放</el-checkbox>
-                            <el-checkbox value="tv">電視</el-checkbox>
-                            <el-checkbox value="washlet ">免治馬桶</el-checkbox>
-                            <el-checkbox value="spring">溫泉</el-checkbox>
-                            <el-checkbox value="shuttle_service">機場接駁車</el-checkbox>
-                            <el-checkbox value="pet">寵物友善</el-checkbox>
-                            <el-checkbox value="breakfast">早餐</el-checkbox>
-                            <el-checkbox value="brunch">早午餐</el-checkbox>
-                            <el-checkbox value="lunch">午餐</el-checkbox>
-                            <el-checkbox value="dunch ">下午茶</el-checkbox>
-                            <el-checkbox value="dinner">晚餐 </el-checkbox>
-
+                        <el-checkbox-group v-model="form.type"> 
+                            <!-- 沒有冒號會視為字串，家冒號才會認變數 -->
+                            <el-checkbox :value="facility.facilityId" v-for="(facility) in facilities" :key="facility.facilityId" >
+                                {{facility.facilityName}}</el-checkbox>
+                        
                         </el-checkbox-group>
                     </el-form-item>
                 </div>
 
                 <el-form-item label="旅館介紹">
                     <el-input v-model="form.desc" type="textarea" rows="5" resize="none" class="textarea"
-                        style="width: 650px" />
+                        style="width: 650px" data-gramm="false" />
                 </el-form-item>
                 <br />
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">新增</el-button>
-                    <el-button>暫存</el-button>
+                    <el-button>刪除</el-button>
                 </el-form-item>
             </el-form>
         </div>
