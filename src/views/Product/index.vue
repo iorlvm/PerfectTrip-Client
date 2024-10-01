@@ -4,22 +4,64 @@ import ProductOverview from './components/ProductOverview.vue';
 import ProductRoomList from './components/ProductRoomList.vue';
 import HotelFacility from '@/views/Product/components/HotelFacility.vue'
 import HotelRule from './components/HotelRule.vue';
+import AddComment from './components/AddComment.vue';
 import { onMounted, ref } from 'vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { searchProductAPI } from '@/apis/search';
 import { ElMessage } from 'element-plus';
-
-const rateDrawer = ref(false);
+import { getRateAPI } from '@/apis/rate';
+import { getCompanyDetailAPI } from '@/apis/company';
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
+const userStore = useUserStore();
+
+const rateDrawer = ref(false);
+const roomList = ref([]);
+
+const rate = ref({ total: 0, data: [] });
+const page = ref(0);
+const loading = ref(false);
+const noMoreData = ref(false);
+
+const company = ref({});
+const facilities = ref([]);
+const photos = ref([]);
+
 
 const openRate = () => {
   rateDrawer.value = true;
+  loadRates();
 }
 
+const loadRates = async () => {
+  if (loading.value || noMoreData.value) return; // 防止重複加載
 
-const roomList = ref([]);
+  loading.value = true; // 開始加載
+  try {
+    const res = await getRateAPI({ companyId: company.value.companyId, page: page.value });
+    rate.value.total = res.total;
+    if (res.data.length > 0) {
+      rate.value.data.push(...res.data); // 添加新加載的數據
+      page.value++;
+    } else {
+      noMoreData.value = true; // 沒有更多數據
+    }
+  } catch (error) {
+    ElMessage.error('加載評價失敗');
+  } finally {
+    loading.value = false; // 加載結束
+  }
+};
+
+// 添加 handleScroll 函數
+const handleScroll = (event) => {
+  const { scrollTop, clientHeight, scrollHeight } = event.target;
+  if (scrollTop + clientHeight >= scrollHeight - 5) {
+    loadRates(); // 加載更多評價
+  }
+};
 
 onMounted(async () => {
   const id = route.params.id;
@@ -48,6 +90,15 @@ onMounted(async () => {
 
     roomList.value = res.data;
     // console.log(res);
+
+    const detail = await getCompanyDetailAPI({ companyId: id });
+
+    company.value = detail.data.company;
+    facilities.value = detail.data.facilities;
+    photos.value = detail.data.photos;
+
+
+    await loadRates();
   }
 });
 </script>
@@ -71,10 +122,11 @@ onMounted(async () => {
         </el-anchor-link>
         <el-anchor-link class="a-link" href="#facility"> 設施 </el-anchor-link>
         <el-anchor-link class="a-link" href="#rules"> 住宿規定 </el-anchor-link>
-        <el-anchor-link class="a-link" @click="openRate"> 住客評價(999) </el-anchor-link>
+        <el-anchor-link class="a-link" @click="openRate"> 住客評價({{ rate.total }}) </el-anchor-link>
         <div class="bottom-line"></div>
       </el-anchor>
-      <ProductOverview id="overview" @openRate="openRate" />
+      <ProductOverview :rateData="rate.data" :totalRate="rate.total" :company="company" :facilities="facilities"
+        :photos="photos" id="overview" @openRate="openRate" />
       <el-divider class="divider" />
       <ProductRoomList id="price-info" :roomList="roomList" />
       <el-divider class="divider" />
@@ -84,8 +136,28 @@ onMounted(async () => {
     </div>
   </div>
 
-  <el-drawer v-model="rateDrawer" title="我是住客評價" size="40%" :lock-scroll="true">
-    <div>我是評價列表</div>
+  <el-drawer v-model="rateDrawer" :with-header="false" size="40%" :lock-scroll="true">
+    <div style="height: 93vh; display: flex; flex-direction: column;">
+      <div class="rate-header">
+        <h3 class="rate-title">{{ company.companyName }} 的評價列表</h3>
+        <div class="point">{{ company.score }}</div>
+      </div>
+      <AddComment :companyId="company.companyId" v-if="userStore.userInfo.role === 'user'" />
+      <div class="rate-list" ref="rateList" @scroll="handleScroll"> <!-- 添加 ref 和 @scroll -->
+        <div v-for="(item, index) in rate.data" :key="index" class="rate-item">
+          <div class="rate-meta">
+            <span class="rate-author">{{ item.author }}</span>
+          </div>
+          <div class="rate-comment-wrapper">
+            <p class="rate-comment">{{ item.comment }}</p>
+            <el-rate v-model="item.starRank" :disabled="true" class="rate-stars"></el-rate>
+          </div>
+        </div>
+        <!-- 加載更多提示 -->
+        <div v-if="loading" class="loading">加載中...</div>
+        <div v-if="noMoreData" class="no-more">沒有更多評價了</div>
+      </div>
+    </div>
   </el-drawer>
 </template>
 
@@ -109,6 +181,85 @@ onMounted(async () => {
 </style>
 
 <style lang="scss" scoped>
+.loading,
+.no-more {
+  text-align: center;
+  padding: 10px;
+  color: #999;
+}
+
+.rate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eaeaea;
+  /* 分隔線 */
+}
+
+.rate-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.point {
+  padding: 5px;
+  background-color: $headerFooter;
+  color: #fff;
+  border-radius: 5px;
+  margin-left: 8px;
+}
+
+.rate-list {
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+  }
+}
+
+.rate-item {
+  padding: 15px 0 5px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.rate-comment-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.rate-comment {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.rate-stars {
+  margin-left: 20px;
+}
+
+.rate-meta {
+  text-align: left;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.rate-author {
+  font-weight: bold;
+}
+
 .product-container {
   width: 95%;
   margin: 0 auto;

@@ -6,6 +6,7 @@ import { useUserStore } from '@/stores/user';
 import { ref, defineEmits, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Message } from '@element-plus/icons-vue';
+import { imageUpdateAPI } from '@/apis/image';
 
 
 const userStore = useUserStore();
@@ -71,6 +72,36 @@ actionHandlers.loadMoreMessages = async (chatId) => {
     let lastMessage = chat.getLastMessage();
     const res = await getMessagesAPI(chatId, lastMessage?.value.messageId);
     return res.data;
+}
+
+actionHandlers.updateFile = async (selectedFile) => {
+    console.log(selectedFile);
+
+    const formData = new FormData();
+
+    formData.append('file', selectedFile);
+    formData.append('cacheEnabled', false);
+
+    const res = await imageUpdateAPI(formData);
+    let message = {
+        chatId: chat.getActiveChatId(),
+        senderId: uid,
+        img: {
+            src: res.data
+        }
+    }
+
+    if (webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify({
+            chatId: message.chatId,
+            action: 'send-message',
+            content: JSON.stringify(message)
+        }));
+    } else {
+        webSocket.addEventListener('open', () => {
+            actionHandlers.sendMessage(message);
+        }, { once: true });
+    }
 }
 
 actionHandlers.filterPinned = async () => {

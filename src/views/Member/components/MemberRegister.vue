@@ -99,8 +99,8 @@ const register = async (e) => {
     <div class="form_container container">
         <h2>註冊會員</h2>
         <div class="storeregister">
-            <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto" style="max-width: 600px"
-                :status-icon="true" :scroll-to-error="true">
+            <el-form :model="form" :rules="rules" ref="ruleFormRef" label-width="auto"
+                style="max-width: 600px; margin-left: -100px;" :status-icon="true" :scroll-to-error="true">
 
                 <div class="name">
                     <el-form-item label="姓名" prop="firstName" class="firstName">
@@ -171,6 +171,9 @@ const register = async (e) => {
 }
 
 .storeregister {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     .name {
         display: flex;

@@ -137,6 +137,22 @@ const roomCount = (products) => {
     }
 }
 
+const calculateDaysDifference = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const diffTime = end - start;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    return diffDays;
+};
+
+const formatScore = (score) => {
+    const limitedScore = Math.max(0, Math.min(10, score));
+
+    return limitedScore.toFixed(1);
+};
+
 onMounted(async () => {
     const orderId = route.params.id;
     const res = await getOrderByIdAPI(orderId);
@@ -156,17 +172,13 @@ onMounted(async () => {
                 <h2>{{ orderData.hotelName }}</h2>
                 <p>{{ orderData.hotelAddress }}</p>
                 <div class="flex">
-                    <div class="number">{{ orderData.hotelScore }}</div>
-                    <div class="desc">很讚 - 9,999則評語</div>
+                    <div class="number">{{ formatScore(orderData.hotelScore) }}</div>
+                    <div class="desc">很讚 - {{ orderData.rateCount }}則評語</div>
                 </div>
                 <div class="flex">
-                    <div class="tag">
-                        <i class="bi bi-exclamation-circle"></i>
-                        <span>免費無線網路</span>
-                    </div>
-                    <div class="tag">
-                        <i class="bi bi-exclamation-circle"></i>
-                        <span>停車場</span>
+                    <div class="tag" v-for="(item, index) in orderData.hotelFacilities?.slice(0, 3)" :key="index">
+                        <i class="bi bi-check"></i>
+                        <span>{{ item }}</span>
                     </div>
                 </div>
             </div>
@@ -186,7 +198,7 @@ onMounted(async () => {
                 </div>
                 <div class="total-days">
                     <p>總共入住：</p>
-                    <span>1 晚</span>
+                    <span>{{ calculateDaysDifference(orderData.startDate, orderData.endDate) }} 晚</span>
                 </div>
 
                 <el-divider class="divider" />
@@ -244,7 +256,7 @@ onMounted(async () => {
                                 <PriceTag />
                             </el-icon>
                             <h4>
-                                包含 TWD 188 稅費與其他費用
+                                包含 TWD {{ orderData.tax + orderData.serviceFee }} 稅費與其他費用
                             </h4>
                         </div>
                         <div class="flex">

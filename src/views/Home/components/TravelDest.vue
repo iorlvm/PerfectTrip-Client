@@ -1,11 +1,27 @@
 <script setup>
+import { useSearchStore } from '@/stores/search';
+
 defineProps({
     dest: Object
 })
+
+const searchStore = useSearchStore()
+
+const travelDestSearch = (place) => {
+    searchStore.handleSearch({
+        destination: place,
+        dateRange: searchStore.searchQuery.dateRange,
+        adultCount: searchStore.searchQuery.adultCount,
+        childCount: searchStore.searchQuery.childCount,
+        roomCount: searchStore.searchQuery.roomCount,
+    });
+}
+
+
 </script>
 
 <template>
-    <div class="dest-card" :style="{
+    <div class="dest-card" @click="travelDestSearch(dest.place)" :style="{
         background: `linear-gradient(to bottom, #8c8c8c, rgba(179, 179, 179, 0) 25%), url(${dest.img}) no-repeat center center`,
         backgroundSize: 'cover, cover',
         backgroundBlendMode: 'multiply'
