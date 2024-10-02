@@ -12,10 +12,10 @@ userStore.userInfo
 const currentPhoto = reactive({
   companyPhotos: [],
 });
-
+//introduce computed
 const form = reactive({
     type: [],
-    desc: '',
+    introduce: '',
     companyPhotos: []
 });
 
@@ -30,7 +30,6 @@ const companyUpload = async ({ file }) => {
    
     const companyId = userStore.userInfo.companyId;
     const res = await imageUpdateAPI(formData);
-    
    
     if (res.success) {
       const count = currentPhoto.companyPhotos.length + 1;
@@ -67,7 +66,6 @@ const photoList = ref([]);
 // 刪除圖片
 const removePhoto = (index) => {
     photoList.value.splice(index, 1);
-
 };
 
 
@@ -87,12 +85,13 @@ onMounted(async () => {
  
     // 獲取商家詳細資訊
     const companyId = userStore.userInfo.companyId;
+    const introduce =userStore.userInfo.introduce
     const resCompany = await getCompanyDetailAPI({ companyId });
 
     if (resCompany.success) {
       // 初始化表單數據
       form.type = resCompany.data.facilities.map(facilitiy => facilitiy.facilityId);
-      form.desc = resCompany.data.introduce;
+      form.introduce = userStore.userInfo.introduce;
       currentPhoto.companyPhotos = resCompany.data.photos 
     } else {
       ElMessage.error('無法獲取商家資訊，請重試！');
@@ -128,7 +127,7 @@ const onSubmit = async () => {
     const introduce = form.desc;// 介紹文本
 
     // 打印即將提交的資料
-    console.log('Submit Data:', { companyId, facilityIds, introduce },);
+    console.log('Submit Data:', { companyId, facilityIds, introduce });
     console.log('公司 ID:', companyId);
     console.log('設施 ID:', facilityIds);
     console.log('介紹:', introduce);
@@ -157,7 +156,7 @@ const onSubmit = async () => {
     <el-scrollbar>
         <div class="infoedit">
             <div>
-                <h1>我是旅館顯示頁面設定</h1>
+                <h1>旅館顯示頁面設定</h1>
             </div>
             <br />
             <div class="image">
@@ -190,13 +189,15 @@ const onSubmit = async () => {
                 </div>
 
                 <el-form-item label="旅館介紹">
-                    <el-input v-model="form.desc" type="textarea" rows="5" resize="none" class="textarea"
+                    <el-input v-model="form.introduce"  type="textarea" rows="5" resize="none" class="textarea"
                         style="width: 650px" data-gramm="false" />
+
+                       
                 </el-form-item>
                 <br />
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit">新增</el-button>
-                    <el-button>刪除</el-button>
+                    <el-button type="primary" @click="onSubmit">上傳</el-button>
+                    <!-- <el-button>刪除</el-button> -->
                 </el-form-item>
             </el-form>
         </div>
@@ -204,6 +205,10 @@ const onSubmit = async () => {
 </template>
 
 <style scoped>
+.infoedit{
+  padding: 30px;
+}
+
 .photo-preview {
     display: flex;
     flex-wrap: wrap;
