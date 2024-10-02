@@ -70,7 +70,7 @@ const chatRef = ref(null);
 </script>
 
 <template>
-    <div class="chat-layout" v-if="authStore.isAuth && userStore.userInfo.token">
+    <div class="chat-layout" v-if="authStore.isAuth && userStore.userInfo.role === 'user'">
         <div :class="['floating-button', { 'display-none': isOpen }]" @click="openContact" v-if="routePath.isCompany">
             聯絡我們
         </div>

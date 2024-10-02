@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { userLoginAPI } from '@/apis/user';
 import { companyLoginAPI } from '@/apis/company'
+import { logoutAPI } from '@/apis/auth';
 
 //會員登入//商家登入
 export const useUserStore = defineStore('user', () => {
@@ -20,7 +21,8 @@ export const useUserStore = defineStore('user', () => {
         userInfo.value = updateInfo.data;
     }
 
-    const clearUserInfo = () => {
+    const clearUserInfo = async () => {
+        if (userInfo.value.token) await logoutAPI();
         userInfo.value = {};
     }
 

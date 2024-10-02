@@ -14,18 +14,17 @@ const userStore = useUserStore();
           </router-link>
         </li>
         <li class="grow"></li>
-        <li>
+        <li style="margin-right: 10px;">
           <router-link to="/store">
-            商家註冊
+            註冊為商家
           </router-link>
         </li>
         <li>
-
           <router-link to="/qa"><i class="bi bi-question-circle"></i></router-link>
         </li>
         <template v-if="userStore.userInfo.role !== 'user'">
-          <router-link  to="/register">
-          <li>註冊</li>
+          <router-link to="/register">
+            <li>加入會員</li>
           </router-link>
           <router-link to="/login">
             <li>登入</li>
@@ -39,7 +38,7 @@ const userStore = useUserStore();
           </li>
           <li>
             <router-link to="/member">
-              <i class="bi bi-person-circle"></i>&nbsp;會員名稱
+              <i class="bi bi-person-circle"></i>&nbsp;{{ userStore.userInfo.nickname }}
             </router-link>
           </li>
         </template>

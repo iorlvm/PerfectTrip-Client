@@ -1427,7 +1427,7 @@ export class WeienChat {
             </div>
             <div class="chat-room-overview">
                 <div class="chat-room-header">
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; flex: 1; max-width: calc(100% - 2.5em);">
                         <div class="chat-room-name"></div>
                         <div class="chat-room-participants"></div>
                     </div>

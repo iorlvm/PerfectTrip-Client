@@ -12,10 +12,7 @@ import OrderPay from "@/views/Order/components/OrderPay.vue";
 import OrderCreated from "@/views/Order/components/OrderCreated.vue";
 import Member from "@/views/Member/index.vue";
 import MemberInfo from "@/views/Member/components/MemberInfo.vue";
-import MemberPayment from "@/views/Member/components/MemberPayment.vue";
-import MemberFavorite from "@/views/Member/components/MemberFavorite.vue";
 import MemberBooking from "@/views/Member/components/MemberBooking.vue";
-import MemberSafety from "@/views/Member/components/MemberSafety.vue";
 import StoreIndex from "@/views/StorePage/index.vue";
 import StoreLogin from "@/views/StorePage/components/StoreLogin.vue";
 import StoreWelcome from "@/views/StorePage/components/StoreWelcome.vue";
@@ -96,21 +93,9 @@ const router = createRouter({
               component: MemberInfo,
             },
             {
-              path: "payment",
-              component: MemberPayment,
-            },
-            {
               path: "journey",
               component: MemberBooking,
-            },
-            {
-              path: "favorite",
-              component: MemberFavorite,
-            },
-            {
-              path: "safety",
-              component: MemberSafety,
-            },
+            }
           ],
         },
         {
