@@ -1,14 +1,23 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { User, CreditCard, SuitcaseLine, StarFilled, Lock } from '@element-plus/icons-vue'
+import { useUserStore } from '@/stores/user';
+import { User, SuitcaseLine, Lock } from '@element-plus/icons-vue'
+import router from '@/router';
+
+const userStore = useUserStore();
+
 
 const options = [
     { path: '/member', label: '個人資訊', icon: User },
-    { path: '/member/payment', label: '付款資訊', icon: CreditCard },
     { path: '/member/journey', label: '訂單和旅程', icon: SuitcaseLine },
-    { path: '/member/favorite', label: '我的收藏', icon: StarFilled },
-    { path: '/member/safety', label: '帳號安全', icon: Lock }
+    {
+        path: '', label: '登出', icon: Lock,
+        click: () => {
+            userStore.clearUserInfo();
+            router.push('/')
+        }
+    }
 ]
 
 const route = useRoute()
@@ -32,7 +41,14 @@ onMounted(() => {
         <aside>
             <ul class="aside">
                 <router-link v-for="option in options" :key="option.path" :to="option.path">
-                    <li class="option border-bottom" :class="isActiveRoute(option.path) ? 'link-active' : ''">
+                    <li class="option border-bottom" :class="isActiveRoute(option.path) ? 'link-active' : ''"
+                        v-if="option.click" @click="option.click">
+                        <el-icon :size="20">
+                            <component :is="option.icon"></component>
+                        </el-icon>
+                        <span>{{ option.label }}</span>
+                    </li>
+                    <li class="option border-bottom" :class="isActiveRoute(option.path) ? 'link-active' : ''" v-else>
                         <el-icon :size="20">
                             <component :is="option.icon"></component>
                         </el-icon>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-const selectedPohto = ref(0);
+const selectedPhoto = ref(0);
 const hoverPohto = ref(null);
 
 defineProps([
@@ -11,11 +11,11 @@ const baseUrl = 'http://localhost:8080/'
 
 
 const isIndexMatch = (index) => {
-  return index === selectedPohto.value;
+  return index === selectedPhoto.value;
 }
 
 const selectPhoto = (index) => {
-  selectedPohto.value = index;
+  selectedPhoto.value = index;
   allowMouseHover = false;
 
   setTimeout(() => {
@@ -23,20 +23,21 @@ const selectPhoto = (index) => {
   }, 500);
 }
 
+
 const getOpacity = (index) => {
   if (index === hoverPohto.value) return 1;
-  const diff = Math.abs(index - selectedPohto.value);
+  const diff = Math.abs(index - selectedPhoto.value);
   return 1 - diff * 0.18;
 }
 
 const getFilterBlur = (index) => {
   if (index === hoverPohto.value) return '0px';
-  const diff = Math.abs(index - selectedPohto.value);
+  const diff = Math.abs(index - selectedPhoto.value);
   return diff * 2 + 'px';
 }
 
 const getFlexShrink = (index) => {
-  const diff = Math.abs(index - selectedPohto.value);
+  const diff = Math.abs(index - selectedPhoto.value);
   if (diff === 0) return 0;
   return 1 + diff * 0.05;
 }
@@ -49,6 +50,21 @@ const handleMouseOver = (index) => {
 
 const handleMouseLeave = () => {
   hoverPohto.value = null;
+};
+
+
+// 燈箱相關邏輯，獨立處理
+const dialogVisible = ref(false);
+const selectedDialogPhoto = ref(0); // 獨立管理燈箱中選中的圖片
+
+// 打開燈箱
+const openPhotos = () => {
+  dialogVisible.value = true;
+};
+
+// 切換燈箱內的大圖顯示
+const selectPhotoInDialog = (index) => {
+  selectedDialogPhoto.value = index;
 };
 
 </script>
@@ -72,16 +88,83 @@ const handleMouseLeave = () => {
           </div>
         </template>
         <template v-else>
-          <div class="image more" :style="{ backgroundImage: `url(${baseUrl + photo.photoUrl})` }">
+          <div class="image more" :style="{ backgroundImage: `url(${baseUrl + photo.photoUrl})` }" @click="openPhotos">
             <span>+{{ photos.length - 5 }} 張相片</span>
           </div>
         </template>
       </div>
     </div>
   </div>
+
+  <!-- 燈箱部分，使用獨立的邏輯和變數 -->
+  <el-dialog v-model="dialogVisible" width="60%" :before-close="() => { dialogVisible = false }" center>
+    <div class="lightbox-content">
+      <!-- 左側顯示大圖 -->
+      <div class="main-image-container">
+        <img :src="baseUrl + photos[selectedDialogPhoto].photoUrl" :alt="photos[selectedDialogPhoto].description"
+          class="main-image" />
+      </div>
+
+      <!-- 右側滾動圖片列表 -->
+      <div class="thumbnail-list">
+        <div v-for="(photo, index) in photos" :key="index" class="thumbnail-item" @click="selectPhotoInDialog(index)">
+          <div class="thumbnail-image-wrapper" :class="{ active: selectedDialogPhoto === index }">
+            <img :src="baseUrl + photo.photoUrl" :alt="photo.description" class="thumbnail-image" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
+/* 燈箱樣式 */
+.lightbox-content {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main-image-container {
+  flex: 1;
+  display: flex;
+  max-height: 80vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.thumbnail-list {
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 80vh;
+  gap: 10px;
+  padding-left: 10px;
+}
+
+.thumbnail-item {
+  cursor: pointer;
+}
+
+.thumbnail-image-wrapper {
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+
+
+.thumbnail-image-wrapper.active {
+  border-color: #409eff;
+  box-shadow: 0 0 10px rgba(64, 158, 255, 0.5);
+}
+
+.thumbnail-image {
+  border-radius: 5px;
+}
+
 .album {
   width: 100%;
   height: 500px;

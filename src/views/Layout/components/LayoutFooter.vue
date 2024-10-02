@@ -5,13 +5,13 @@
     <div class="container">
       <el-row :gutter="10">
         <el-col :xs="12" :sm="8" :md="8">
-          <div class="logo">LOGO</div>
+          <!-- <div class="logo">LOGO</div>
           <p>地址：XXX 路，城市，國家</p>
           <p>電話：+123 456 7890</p>
-          <p>電子郵件：info@example.com</p>
+          <p>電子郵件：info@example.com</p> -->
         </el-col>
         <el-col :xs="12" :sm="8" :md="8">
-          <h3>快速連結</h3>
+          <!-- <h3>快速連結</h3>
           <div class="quick-link">
             <p><a href="#">會員中心</a></p>
             <p><a href="#">最新消息</a></p>
@@ -19,11 +19,10 @@
             <p><a href="#">熱門推薦</a></p>
             <p><a href="#">隱私申明</a></p>
             <p><a href="#">聯絡我們</a></p>
-          </div>
+          </div> -->
         </el-col>
         <el-col :xs="0" :sm="8" :md="8">
-          <h3>不知道要幹嘛</h3>
-          <!-- <div class="image"><img src="" alt="" /></div> -->
+          <!-- <h3>不知道要幹嘛</h3> -->
         </el-col>
       </el-row>
       <p class="copyright">

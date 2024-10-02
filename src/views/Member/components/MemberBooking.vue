@@ -59,10 +59,10 @@ onMounted(() => {
   <div class="title">
     <div>
       <h1>訂房紀錄</h1>
-      <p class="sub-title">查看您的訂房紀錄 文案我不太會想 再稍微修改過。</p>
+      <p class="sub-title">查看您的訂房紀錄</p>
     </div>
   </div>
-  <div class="state">
+  <div class="state" v-if="orders.filter(order => !isCompleted(order.startDate)).length > 0">
     <h2 class="desc">即將啟程</h2>
     <el-card v-for="(order, index) in orders.filter(order => !isCompleted(order.startDate))" :key="index">
       <template #header>
@@ -96,7 +96,7 @@ onMounted(() => {
       </template>
     </el-card>
   </div>
-  <div class="state">
+  <div class="state" v-if="orders.filter(order => isCompleted(order.startDate)) > 0">
     <h2 class="desc">歷史訂單</h2>
     <el-card v-for="(order, index) in orders.filter(order => isCompleted(order.startDate))" :key="index">
       <template #header>
@@ -130,15 +130,22 @@ onMounted(() => {
       </div>
     </el-card>
   </div>
-  <div class="page">
+  <div class="page" v-if="pagination.total > 0">
     <el-pagination background layout="prev, pager, next" :current-page="pagination.page" :page-size="pagination.size"
       :total="pagination.total" @current-change="handlePageChange" />
   </div>
-
+  <div class="none-order" v-else>
+    暫無訂房紀錄
+  </div>
 
 </template>
 
 <style lang="scss" scoped>
+.none-order {
+  margin: 20px auto;
+
+}
+
 .page {
   display: flex;
   justify-content: center;

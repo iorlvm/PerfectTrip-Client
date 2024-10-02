@@ -8,3 +8,9 @@ export const authAPI = (token) => {
         }
     });
 }
+
+export const logoutAPI = () => {
+    return httpInstance({
+        url: '/logout'
+    });
+}
