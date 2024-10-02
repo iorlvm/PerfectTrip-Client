@@ -14,7 +14,7 @@ const currentPhoto = reactive({
 });
 //introduce computed
 const form = reactive({
-    type: [],
+    facility: [],
     introduce: '',
     companyPhotos: []
 });
@@ -30,6 +30,7 @@ const companyUpload = async ({ file }) => {
    
     const companyId = userStore.userInfo.companyId;
     const res = await imageUpdateAPI(formData);
+    
    
     if (res.success) {
       const count = currentPhoto.companyPhotos.length + 1;
@@ -85,13 +86,13 @@ onMounted(async () => {
  
     // 獲取商家詳細資訊
     const companyId = userStore.userInfo.companyId;
-    const introduce =userStore.userInfo.introduce
-    const resCompany = await getCompanyDetailAPI({ companyId });
-
+    const introduce = userStore.userInfo.introduce;
+    const resCompany = await getCompanyDetailAPI({ companyId,introduce});
+    
     if (resCompany.success) {
       // 初始化表單數據
-      form.type = resCompany.data.facilities.map(facilitiy => facilitiy.facilityId);
-      form.introduce = userStore.userInfo.introduce;
+      form.facility = resCompany.data.facilities.map(facilitiy => facilitiy.facilityId);
+      form.introduce = resCompany.data.introduce || userStore.userInfo.introduce;
       currentPhoto.companyPhotos = resCompany.data.photos 
     } else {
       ElMessage.error('無法獲取商家資訊，請重試！');
@@ -123,8 +124,8 @@ const onSubmit = async () => {
   try {
  
     const companyId = userStore.userInfo.companyId;  // 假設 companyId 來自 userInfo
-    const facilityIds = form.type;// 設施選項
-    const introduce = form.desc;// 介紹文本
+    const facilityIds = form.facility;// 設施選項
+    const introduce = form.introduce;// 介紹文本
 
     // 打印即將提交的資料
     console.log('Submit Data:', { companyId, facilityIds, introduce });
@@ -179,7 +180,7 @@ const onSubmit = async () => {
             <el-form :model="form" label-width="" >
                 <div class="hot">
                     <el-form-item label="熱門設施">
-                        <el-checkbox-group v-model="form.type"> 
+                        <el-checkbox-group v-model="form.facility"> 
                             <!-- 沒有冒號會視為字串，家冒號才會認變數 -->
                             <el-checkbox :value="facility.facilityId" v-for="(facility) in facilities" :key="facility.facilityId" >
                                 {{facility.facilityName}}</el-checkbox>
@@ -191,8 +192,6 @@ const onSubmit = async () => {
                 <el-form-item label="旅館介紹">
                     <el-input v-model="form.introduce"  type="textarea" rows="5" resize="none" class="textarea"
                         style="width: 650px" data-gramm="false" />
-
-                       
                 </el-form-item>
                 <br />
                 <el-form-item>
