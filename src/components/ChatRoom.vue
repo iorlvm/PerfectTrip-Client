@@ -63,6 +63,7 @@ actionHandlers.getChatMessagesData = async (chatId) => {
 actionHandlers.loadMoreChatRooms = async () => {
     let lastChat = chat.getLastChat();
     const date = new Date(lastChat.value.lastModifiedAt);
+    date.setTime(date.getTime() + (8 * 60 * 60 * 1000)); // 修正時區 
 
     // 日期格式化
     const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
