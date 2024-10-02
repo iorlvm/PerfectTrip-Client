@@ -22,7 +22,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     const clearUserInfo = async () => {
-        await logoutAPI();
+        if (userInfo.value.token) await logoutAPI();
         userInfo.value = {};
     }
 

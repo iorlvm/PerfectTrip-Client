@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { Menu as IconMenu, Message, Setting, List } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
@@ -53,6 +53,10 @@ const navigators = [
         ]
     }
 ]
+
+onBeforeUnmount(() => {
+    userStore.clearUserInfo();
+})
 </script>
 <template>
     <div>
@@ -77,12 +81,12 @@ const navigators = [
 
                             <template v-for="(item, index) in navigator.items" :key="index">
                                 <template v-if="(item.click)">
-                                    <div  class="option-link" @click="item.click">
+                                    <div class="option-link" @click="item.click">
                                         <el-menu-item :index="String(navIndex) + '-' + String(index)">
                                             {{ item.text }}
                                         </el-menu-item>
                                     </div>
-                                
+
                                 </template>
                                 <template v-else>
                                     <router-link :to="item.src" class="option-link">

@@ -60,10 +60,16 @@ actionHandlers.getChatMessagesData = async (chatId) => {
     return res.data;
 }
 
-actionHandlers.loadMoreChatRooms = async (type) => {
+actionHandlers.loadMoreChatRooms = async () => {
     let lastChat = chat.getLastChat();
-    console.log(type, lastChat);
-    const res = await getChatRoomsAPI(20, lastChat.value.lastModifiedAt);
+    const date = new Date(lastChat.value.lastModifiedAt);
+
+    // 日期格式化
+    const formattedDate = date.toISOString().replace('T', ' ').substring(0, 19);
+    const milliseconds = date.getMilliseconds().toString().padStart(3, '0');
+    const finalOutput = `${formattedDate}.${milliseconds}`;
+
+    const res = await getChatRoomsAPI(20, finalOutput);
     // TODO: 可能要檢查有沒有回傳重複的值 (萬一時間完全相同的時候可能會出現問題)
     return res.data;
 }
