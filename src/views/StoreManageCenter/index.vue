@@ -59,7 +59,10 @@ onBeforeUnmount(() => {
                     <router-link to="/">
                         <div class="logo with-underline">PerfectTrip.com</div>
                     </router-link>
-                    <div class="account with-underline">登入商家資訊</div>
+                    <router-link to="/store/manage" class="account with-underline">
+                        <p>{{ userStore.userInfo.companyName }}</p>
+                        <p>商家管理系統</p>
+                    </router-link>
                     <el-menu :default-openeds="defaultOpeneds" :default-active="defaultActive">
                         <template v-for="(navigator, navIndex) in navigators" :key="navIndex">
                             <el-sub-menu :index="String(navIndex)" v-if="navigator.items">
@@ -144,13 +147,20 @@ onBeforeUnmount(() => {
         }
 
         .account {
+            padding: 20px 0;
             color: #fff;
             width: 100%;
-            height: 80px;
             margin: 0 auto;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+
+            p {
+                font-size: 1.1em;
+                margin: 5px 0;
+            }
         }
 
         .el-menu {
