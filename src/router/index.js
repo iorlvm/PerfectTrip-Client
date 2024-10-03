@@ -18,15 +18,11 @@ import StoreLogin from "@/views/StorePage/components/StoreLogin.vue";
 import StoreWelcome from "@/views/StorePage/components/StoreWelcome.vue";
 import StoreManageCenter from "@/views/StoreManageCenter/index.vue";
 import InfoOverview from "@/views/StoreManageCenter/components/InfoOverview.vue";
-import ImportantMessage from "@/views/StoreManageCenter/components/ImportantMessage.vue";
 import CustomerMessage from "@/views/StoreManageCenter/components/CustomerMessage.vue";
-import ContactUs from "@/views/StoreManageCenter/components/ContactUs.vue";
 import OrderList from "@/views/StoreManageCenter/components/OrderList.vue";
-import OrderCalendar from "@/views/StoreManageCenter/components/OrderCalendar.vue";
 import RoomList from "@/views/StoreManageCenter/components/RoomList.vue";
 import RoomDiscount from "@/views/StoreManageCenter/components/RoomDiscount.vue";
 import RoomInventory from "@/views/StoreManageCenter/components/RoomInventory.vue";
-import HotelInfo from "@/views/StoreManageCenter/components/HotelInfo.vue";
 import HotelInfoEdit from "@/views/StoreManageCenter/components/HotelInfoEdit.vue";
 import StoreAccount from "@/views/StoreManageCenter/components/StoreAccount.vue";
 import QA from "@/views/QA/index.vue";
@@ -134,24 +130,12 @@ const router = createRouter({
           component: InfoOverview,
         },
         {
-          path: "message/important",
-          component: ImportantMessage,
-        },
-        {
           path: "message/customer",
           component: CustomerMessage,
         },
         {
-          path: "message/contactus",
-          component: ContactUs,
-        },
-        {
           path: "order/list",
           component: OrderList,
-        },
-        {
-          path: "order/calendar",
-          component: OrderCalendar,
         },
         {
           path: "room/list",
@@ -164,10 +148,6 @@ const router = createRouter({
         {
           path: "room/inventory",
           component: RoomInventory,
-        },
-        {
-          path: "setting/info",
-          component: HotelInfo,
         },
         {
           path: "setting/infoedit",

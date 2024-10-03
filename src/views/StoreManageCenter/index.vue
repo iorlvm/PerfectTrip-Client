@@ -14,19 +14,12 @@ const navigators = [
     {
         icon: Message,
         title: '訊息',
-        items: [
-            { text: '重要通知', src: '/store/manage/message/important' },
-            { text: '客戶訊息', src: '/store/manage/message/customer' },
-            { text: '聯絡平台', src: '/store/manage/message/contactus' },
-        ]
+        src: '/store/manage/message/customer'
     },
     {
         icon: List,
         title: '訂單管理',
-        items: [
-            { text: '訂單列表', src: '/store/manage/order/list' },
-            { text: '行事曆', src: '/store/manage/order/calendar' },
-        ]
+        src: '/store/manage/order/list'
     },
     {
         icon: IconMenu,
@@ -66,38 +59,53 @@ onBeforeUnmount(() => {
                     <router-link to="/">
                         <div class="logo with-underline">PerfectTrip.com</div>
                     </router-link>
-                    <div class="account with-underline">登入商家資訊</div>
+                    <router-link to="/store/manage" class="account with-underline">
+                        <p>{{ userStore.userInfo.companyName }}</p>
+                        <p>商家管理系統</p>
+                    </router-link>
                     <el-menu :default-openeds="defaultOpeneds" :default-active="defaultActive">
-                        <el-sub-menu v-for="(navigator, navIndex) in navigators" :key="navIndex"
-                            :index="String(navIndex)">
-                            <template #title>
-                                <div class="sub-menu-title">
-                                    <el-icon>
-                                        <component :is="navigator.icon"></component>
-                                    </el-icon>
-                                    {{ navigator.title }}
-                                </div>
-                            </template>
-
-                            <template v-for="(item, index) in navigator.items" :key="index">
-                                <template v-if="(item.click)">
-                                    <div class="option-link" @click="item.click">
-                                        <el-menu-item :index="String(navIndex) + '-' + String(index)">
-                                            {{ item.text }}
-                                        </el-menu-item>
+                        <template v-for="(navigator, navIndex) in navigators" :key="navIndex">
+                            <el-sub-menu :index="String(navIndex)" v-if="navigator.items">
+                                <template #title>
+                                    <div class="sub-menu-title">
+                                        <el-icon>
+                                            <component :is="navigator.icon"></component>
+                                        </el-icon>
+                                        {{ navigator.title }}
                                     </div>
-
-                                </template>
-                                <template v-else>
-                                    <router-link :to="item.src" class="option-link">
-                                        <el-menu-item :index="String(navIndex) + '-' + String(index)">
-                                            {{ item.text }}
-                                        </el-menu-item>
-                                    </router-link>
                                 </template>
 
-                            </template>
-                        </el-sub-menu>
+                                <template v-for="(item, index) in navigator.items" :key="index">
+                                    <template v-if="(item.click)">
+                                        <div class="option-link" @click="item.click">
+                                            <el-menu-item :index="String(navIndex) + '-' + String(index)">
+                                                {{ item.text }}
+                                            </el-menu-item>
+                                        </div>
+
+                                    </template>
+                                    <template v-else>
+                                        <router-link :to="item.src" class="option-link">
+                                            <el-menu-item :index="String(navIndex) + '-' + String(index)">
+                                                {{ item.text }}
+                                            </el-menu-item>
+                                        </router-link>
+                                    </template>
+
+                                </template>
+                            </el-sub-menu>
+                            <router-link :to="navigator.src" v-else>
+                                <el-menu-item :index="String(navIndex) + '-' + String(index)">
+                                    <div class="sub-menu-title">
+                                        <el-icon>
+                                            <component :is="navigator.icon"></component>
+                                        </el-icon>
+                                        {{ navigator.title }}
+                                    </div>
+                                </el-menu-item>
+                            </router-link>
+                        </template>
+
                     </el-menu>
                 </el-scrollbar>
             </el-aside>
@@ -139,13 +147,20 @@ onBeforeUnmount(() => {
         }
 
         .account {
+            padding: 20px 0;
             color: #fff;
             width: 100%;
-            height: 80px;
             margin: 0 auto;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            cursor: pointer;
+
+            p {
+                font-size: 1.1em;
+                margin: 5px 0;
+            }
         }
 
         .el-menu {
