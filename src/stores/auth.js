@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
         if (token) {
             const res = await authAPI(token);
             if (res.data.expired) {
-                userStore.clearUserInfo();
+                await userStore.clearUserInfo();
             }
         }
 
