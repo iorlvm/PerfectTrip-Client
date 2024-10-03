@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { companyRegisterAPI } from '@/apis/company';
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 
@@ -82,21 +83,32 @@ const resetForm = () => {
 
 const register = async (e) => {
     e.preventDefault();//阻止表單進行自動刷新或導航到新的頁面
+    try {
+        let companyName = form.value.companyName;
+        let username = form.value.username;
+        let password = form.value.password;
+        let country = form.value.country;
+        let city = form.value.city;
+        let address = form.value.address;
+        let manager = form.value.manager;
+        let telephone = form.value.regionNumber + form.value.telephone;
+        let vatNumber = form.value.vatNumber
+        // console.log({username, password, companyName, vatNumber, address, telephone})
+        const res = await companyRegisterAPI({ username, password, companyName, vatNumber, country, city, address, manager, telephone });
 
-    let companyName = form.value.companyName;
-    let username = form.value.username;
-    let password = form.value.password;
-    let country = form.value.country;
-    let city = form.value.city;
-    let address = form.value.address;
-    let manager = form.value.manager;
-    let telephone = form.value.regionNumber + form.value.telephone;
-    let vatNumber = form.value.vatNumber
-    // console.log({username, password, companyName, vatNumber, address, telephone})
-    await companyRegisterAPI({ username, password, companyName, vatNumber, country, city, address, manager, telephone });
-    // console.log({username, password, companyName, vatNumber, address, telephone})
+        if(res.success){
+            ElMessage.success('商家註冊成功');
+            router.push('/store/manage');//討論導主頁?
+        }else{
+            ElMessage.error('商家註冊失敗,請重試')
+        }
+    }catch(error){
+        console.error('提交表單發生錯誤:', error);
+        ElMessage.error('商家資訊更新失敗，請稍後重試！');
+    }
+    
 
-    router.push('/store/manage');//討論導主頁?
+   
 }
 </script>
 
