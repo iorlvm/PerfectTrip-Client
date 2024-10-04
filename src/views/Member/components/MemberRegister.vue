@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import { userRegisterAPI } from '@/apis/user'
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 
@@ -77,21 +78,32 @@ const resetForm = () => {
 
 const register = async (e) => {
     e.preventDefault();//阻止表單進行自動刷新或導航到新的頁面
+    try {
+        let firstName = form.value.firstName;
+        let lastName = form.value.lastName;
+        let nickname = form.value.nickname;
+        let gender = form.value.gender;
+        let username = form.value.username;
+        let password = form.value.password;
+        let address = form.value.address
+        let phoneNumber = form.value.phoneNumber;
+        let taxId = form.value.taxId;
+        let birthday = form.value.birthday
 
-    let firstName = form.value.firstName;
-    let lastName = form.value.lastName;
-    let nickname = form.value.nickname;
-    let gender = form.value.gender;
-    let username = form.value.username;
-    let password = form.value.password;
-    let address = form.value.address
-    let phoneNumber = form.value.phoneNumber;
-    let taxId = form.value.taxId;
-    let birthday = form.value.birthday
-    console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
-    await userRegisterAPI({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday })
-    console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
-    router.push('/');
+        const res = await userRegisterAPI({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday })
+        if(res.success){
+            ElMessage.success('會員註冊成功');
+             // console.log({ firstName, lastName, nickname, gender, username, password, address, phoneNumber, taxId, birthday });
+             router.push('/');
+        }else{
+            ElMessage.error('會員註冊失敗，請重試')
+        }
+    }catch(error){
+        console.error('會員註冊失敗，請重試:',error);
+    }
+
+   
+   
 }
 </script>
 

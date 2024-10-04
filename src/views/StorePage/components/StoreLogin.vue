@@ -3,7 +3,6 @@ import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { ref } from 'vue';
-// import axios from 'axios';
 
 const companyStore = useUserStore();
 const router = useRouter();
@@ -19,19 +18,19 @@ const login = async (e) => {
   if (formData.value.username === '' || formData.value.password === '') {
     ElMessage({
       type: 'warning',
-      message: "帳號不能是空的"
+      message: "帳號密碼不能是空的"
     });
     return;
   }
-
-
+  
   let username = formData.value.username;
   let password = formData.value.password;
   await companyStore.getCompanyInfo({ username, password });
+  // router.go('/store/manage');
   if (companyStore.userInfo.role) {
-    router.push('/store/manage'); //router.push('/store/manage');也可以唷
+    router.push('/store/manage'); 
   }
-  console.log({ username, password });
+  // console.log({ username, password });
 }
 
 
@@ -48,7 +47,7 @@ const login = async (e) => {
       <input type="password" placeholder="密碼" v-model="formData.password" required>
       <div style="text-align: center;">
         <button type="submit" @click="login">登入</button>
-        <button type="reset">忘記密碼</button>
+        <!-- <button type="reset">忘記密碼</button> -->
       </div>
     </form>
   </div>
