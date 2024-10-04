@@ -104,7 +104,7 @@ const register = async (e) => {
         }
     }catch(error){
         console.error('提交表單發生錯誤:', error);
-        ElMessage.error('商家資訊更新失敗，請稍後重試！');
+        ElMessage.error('商家註冊失敗，請稍後重試！');
     }
     
 
