@@ -58,6 +58,7 @@ const rules = {
 
     phoneNumber: [
         { required: true, message: '請輸入電話/手機', trigger: 'blur' },
+        { pattern: /^\d{10}$/, message: '請輸入正確的手機號碼', trigger: ['blur', 'change'] }
     ],
     //TODO身分證驗證
     taxId: [

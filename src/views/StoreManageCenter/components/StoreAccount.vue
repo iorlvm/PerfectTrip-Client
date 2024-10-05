@@ -126,7 +126,7 @@ const vatNumberClick = (e) => {
                 <div class="column">電子信箱</div>
                 <div class="info">
                     <div> {{ userInfo.username }}</div>
-                    <div class="remind">這是您用來登入的電子信箱，我們也會發送預訂確認函至此信箱。</div>
+                    <div class="remind">電子信箱即為您的登入帳號。</div>
                 </div>
                 <div class="edit">
                     <a href="" @click="mailClick">編輯</a>

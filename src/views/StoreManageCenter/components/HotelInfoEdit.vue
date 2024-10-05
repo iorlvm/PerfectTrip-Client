@@ -86,13 +86,13 @@ onMounted(async () => {
  
     // 獲取商家詳細資訊
     const companyId = userStore.userInfo.companyId;
-    const introduce = userStore.userInfo.introduce;
-    const resCompany = await getCompanyDetailAPI({ companyId,introduce});
+    // const introduce = userStore.userInfo.introduce;
+    const resCompany = await getCompanyDetailAPI({ companyId});
     
     if (resCompany.success) {
       // 初始化表單數據
       form.facility = resCompany.data.facilities.map(facilitiy => facilitiy.facilityId);
-      form.introduce = resCompany.data.introduce || userStore.userInfo.introduce;
+      form.introduce = resCompany.data.company.introduce;
       currentPhoto.companyPhotos = resCompany.data.photos 
     } else {
       ElMessage.error('無法獲取商家資訊，請重試！');
