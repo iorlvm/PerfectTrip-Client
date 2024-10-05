@@ -25,7 +25,7 @@ const userInfo = ref({
 const genderMap = {
     'FEMALE': '女性',
     'MALE': '男性',
-    'LBGT': 'LBGT'
+    'LGBT': 'LGBT'
 };
 
 //TODO 前後端性別轉換
@@ -237,7 +237,7 @@ const handleAvatarUpdate = async (event) => {
                         <el-radio-group v-model="userInfo.gender">
                             <el-radio :value="'FEMALE'">女性</el-radio>
                             <el-radio :value="'MALE'">男性 </el-radio>
-                            <el-radio :value="'LBGT'">LBGT</el-radio>
+                            <el-radio :value="'LGBT'">LGBT</el-radio>
                         </el-radio-group>
                     </div>
                     <div class="edit">
@@ -277,7 +277,7 @@ const handleAvatarUpdate = async (event) => {
                 <div class="column">電子信箱</div>
                 <div class="info">
                     <div> {{ userInfo.username }}</div>
-                    <div class="remind">這是您用來登入的電子信箱，我們也會發送預訂確認函至此信箱。</div>
+                    <div class="remind">這是您用來會員登入的電子信箱。</div>
                 </div>
                 <div class="edit">
                     <a href="" @click="mailClick">編輯</a>

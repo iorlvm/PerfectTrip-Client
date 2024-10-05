@@ -137,7 +137,7 @@ const register = async (e) => {
                         <el-select v-model="form.gender" placeholder="選擇性別" clearable>
                             <el-option label="男姓" value="MALE" />
                             <el-option label="女性" value="FEMALE" />
-                            <el-option label="LBGT" value="LBGT" />
+                            <el-option label="LGBT" value="LGBT" />
                         </el-select>
                     </el-form-item>
                 </div>
