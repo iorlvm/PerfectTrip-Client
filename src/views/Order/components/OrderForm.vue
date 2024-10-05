@@ -42,7 +42,29 @@ const formData = ref({
     arrivalTime: '15:00'
 });
 
-const regions = ['USA', 'Canada', 'China', 'Japan', 'Australia'];
+const regions = [
+    '台灣',  // Taiwan (Chinese Traditional)
+    'United States',  // USA (English)
+    'Canada',  // Canada (English / French also possible)
+    '中国',  // China (Simplified Chinese)
+    '日本',  // Japan (Japanese)
+    'Australia',  // Australia (English)
+    'Deutschland',  // Germany (German)
+    'France',  // France (French)
+    'Россия',  // Russia (Russian)
+    '한국',  // South Korea (Korean)
+    'Italia',  // Italy (Italian)
+    'España',  // Spain (Spanish)
+    'Brasil',  // Brazil (Portuguese)
+    'México',  // Mexico (Spanish)
+    'India',  // India (Hindi is also widely spoken, but English is official)
+    'المملكة العربية السعودية',  // Saudi Arabia (Arabic)
+    'United Kingdom',  // UK (English)
+    'Sverige',  // Sweden (Swedish)
+    'Norge',  // Norway (Norwegian)
+    'Suomi',  // Finland (Finnish)
+    'Türkiye',  // Turkey (Turkish)
+];
 
 
 
