@@ -107,7 +107,7 @@ export const useSearchStore = defineStore('Search', () => {
             orderBy: orderBy.value
         })
 
-        resultList.value.push(res.data);
+        resultList.value.push(...res.data);
 
         total.value = res.total;
         hasMore = resultList.value.length < total.value;
