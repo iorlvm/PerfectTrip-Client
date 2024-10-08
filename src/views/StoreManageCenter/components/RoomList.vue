@@ -55,7 +55,7 @@ const totalPages = computed(() => {
 
 const filteredProducts = computed(() => {
   if (filterType.value) {
-    return products.value.filter(product => product.productName === filterType.value);
+    return products.value.filter(product => product.productName.toLowerCase().includes(filterType.value.toLowerCase()));
   }
   return products.value;
 });
@@ -63,7 +63,7 @@ const filteredProducts = computed(() => {
 const baseURL = 'http://localhost:8080/';
 const photoList = computed(() => {
   return currentProduct.productPhotos.map(photo => ({
-    name: photo.description,
+    name: photo.photoId,
     url: baseURL + photo.photoUrl,
   })) || [];
 })
@@ -89,9 +89,13 @@ const customUpload = async ({ file }) => {
   )
 };
 
-const handleRemove = (uploadFile, uploadFiles) => {
-  console.log(uploadFile, uploadFiles)
-}
+const handleRemove = (file, fileList) => {
+  const photoIndex = currentProduct.productPhotos.findIndex(photo => photo.photoUrl === file.url);
+  if (photoIndex !== -1) {
+    currentProduct.productPhotos.splice(photoIndex, 1);
+  }
+  console.log('照片已移除:', file.name);
+};
 
 const paginatedProducts = computed(() => {
   const start = (currentPage.value - 1) * productsPerPage;
@@ -134,7 +138,7 @@ const updateProduct = async () => {
       maxOccupancy: currentProduct.maxOccupancy,
       price: currentProduct.price,
       stock: currentProduct.stock,
-      productPhotos: currentProduct.productPhotos,
+      productPhotos: currentProduct.productPhotos, // 傳送最新的照片列表
       productFacilities: facilityCheckList.value.map(value => ({ facilityId: value })),
       productDetails: currentProduct.productDetails
     });
@@ -225,28 +229,25 @@ const deleteProduct = async (productId) => {
 <template>
   <el-Scrollbar>
     <header class="header">
-      <h2>現存商品列表</h2>
+      <h2>現有商品列表</h2>
       <button @click="showModal = true" class="add-room-btn">新增一個商品</button>
     </header>
 
     <div class="filter-section">
-      <label for="filterType">商品名稱篩選器</label>
-      <select v-model="filterType" id="filterType">
-        <option value="">篩選中...</option>
-        <option v-for="type in productTypes" :key="type" :value="type">{{ type }}</option>
-      </select>
-      <button @click="clearFilter" class="filter-btn">清除篩選</button>
-    </div>
+  <label for="filterType">商品名稱篩選器</label>
+  <input v-model="filterType" id="filterType" type="text" placeholder="輸入商品名稱進行篩選" />
+  <button @click="clearFilter" class="filter-btn">清除篩選</button>
+</div>
 
     <table>
       <thead>
         <tr>
           <th>ID</th>
-          <th>Product Name</th>
-          <th>Max Occupancy</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Action</th>
+          <th>商品名稱</th>
+          <th>最大住宿人數</th>
+          <th>價格</th>
+          <th>庫存</th>
+          <th>方法</th>
         </tr>
       </thead>
       <tbody>
@@ -257,8 +258,8 @@ const deleteProduct = async (productId) => {
           <td>{{ product.price }}</td>
           <td>{{ product.stock }}</td>
           <td>
-            <button @click="editProduct(product)" class="edit-btn">View/Edit</button>
-            <button @click="deleteProduct(product.productId)" class="delete-btn">Delete</button>
+            <button @click="editProduct(product)" class="edit-btn">查詢/修改</button>
+            <button @click="deleteProduct(product.productId)" class="delete-btn">刪除</button>
           </td>
         </tr>
       </tbody>
@@ -275,16 +276,20 @@ const deleteProduct = async (productId) => {
     <div v-if="showModal" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
-        <h2>{{ isEditing ? 'Edit Product' : 'Add a New Product' }}</h2>
+        <h2>{{ isEditing ? '修改商品' : '新增商品' }}</h2>
         <form class="form" @submit.prevent="isEditing ? updateProduct() : addProduct()">
           <div class="form-group full">
             <label for="productName">商品照片</label>
-            <el-upload v-model:file-list="photoList" :http-request="customUpload" list-type="picture-card"
-              :on-remove="handleRemove">
-              <el-icon>
-                <Plus />
-              </el-icon>
-            </el-upload>
+            <el-upload
+            v-model:file-list="photoList"
+            :http-request="customUpload"
+            list-type="picture-card"
+            :on-remove="handleRemove"
+            >
+            <el-icon>
+              <Plus />
+            </el-icon>
+          </el-upload>
           </div>
           <div class="form-group half">
             <label for="productName">商品名稱</label>
@@ -318,7 +323,7 @@ const deleteProduct = async (productId) => {
               <el-checkbox label="可退款" v-model="currentProduct.productDetails.isRefundable" size="small" />
             </div>
           </div>
-          <button type="submit" class="save-btn">{{ isEditing ? 'Update Product' : 'Save Product' }}</button>
+          <button type="submit" class="save-btn">{{ isEditing ? '更新商品' : 'Save Product' }}</button>
         </form>
       </div>
     </div>
@@ -326,8 +331,30 @@ const deleteProduct = async (productId) => {
 </template>
 
 <style scoped>
+.filter-section {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-section label {
+  margin-right: 10px; /* Adds space between label and input */
+  font-weight: 600;
+}
+
+.filter-section input {
+  margin-right: 10px; /* Adds space between input and button */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  font-size: 16px;
+  color: #495057;
+}
+
 .el-scrollbar {
   padding: 10px;
+  width: 66.67%; 
+  margin: 0 auto; 
 }
 
 .flex {

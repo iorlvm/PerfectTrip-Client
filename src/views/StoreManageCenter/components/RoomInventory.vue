@@ -1,27 +1,25 @@
 <script setup>
 import ManageToolbar from './ManageToolbar.vue';
+import { getAllProductsAPI, updateInventoryAPI, deleteInventoryAPI, getInventoryByStatusAPI } from '@/apis/Inventory';
+import { ElDatePicker } from 'element-plus';
 
-
-function addInventory() {
-    // 添加庫存
-}
+let selectedStartDate = null;
 
 function editInventory(id) {
-    // 編輯庫存
+    
 }
 
 function deleteInventory(id) {
-    // 刪除庫存
+    // 確認後刪除指定的房型庫存
 }
 
+function onDateChange(date) {
+    selectedStartDate = date;
+    
+}
 </script>
 
 <template>
-    <ManageToolbar>
-        <li>左選項1</li>
-        <li>左選項2</li>
-    </ManageToolbar>
-
     <el-scrollbar>
         <div class="body">
             <div class="inventory-management">
@@ -29,8 +27,20 @@ function deleteInventory(id) {
                     <h1>房間庫存管理</h1>
                 </header>
 
+                <!-- 日期選擇器 -->
+                <section class="date-selection">
+                    <el-date-picker
+                        v-model="selectedStartDate"
+                        type="date"
+                        placeholder="選擇開始日期"
+                        @change="onDateChange"
+                    />
+                    <p>選擇的日期範圍: {{ selectedStartDate }} ~ {{ selectedStartDate ? selectedStartDate + 1 : '' }}</p>
+                </section>
+
+                <!-- 篩選與搜索 -->
                 <section class="filter-search">
-                    <input type="text" class="search-query" placeholder="搜索房型或房間">
+                    <input type="text" class="search-query" placeholder="搜索房型或房間" />
                     <select class="filter-status">
                         <option value="">所有狀態</option>
                         <option value="available">可用</option>
@@ -38,21 +48,28 @@ function deleteInventory(id) {
                     </select>
                 </section>
 
+                <!-- 庫存列表 -->
                 <section class="inventory-list">
                     <h2>房間庫存列表</h2>
-                    <button class="add-button" @click="addInventory()">添加庫存</button>
                     <ul>
-                        <li>
-                            <p>房間號碼：101</p>
-                            <p>房型：標準房</p>
-                            <p>狀態: <span class="status available"></span></p>
+                        <li v-for="product in products" :key="product.id">
+                            <p>房間號碼：{{ product.roomNumber }}</p>
+                            <p>房型：{{ product.roomType }}</p>
+                            <p>價格：{{ product.price }} 元</p>
+                            <p>狀態: <span :class="['status', product.status]">{{ product.statusText }}</span></p>
                             <div class="actions">
-                                <button @click="editInventory()">編輯</button>
-                                <button @click="deleteInventory()">刪除</button>
+                                <button @click="editInventory(product.id)">編輯</button>
+                                <button @click="deleteInventory(product.id)">刪除</button>
                             </div>
                         </li>
-                        <!-- 可添加更多庫存項目 -->
                     </ul>
+                </section>
+                
+                <section class="inventory-summary">
+                    <h2>庫存統計</h2>
+                    <p>可用房型總數：{{ availableRoomsCount }}</p>
+                    <p>已訂房型數量：{{ bookedRoomsCount }}</p>
+                    <p>剩餘房型數量：{{ remainingRoomsCount }}</p>
                 </section>
 
                 <footer>
@@ -94,6 +111,12 @@ $confirm-color: #28a745;
             font-size: 24px;
             color: #333;
         }
+    }
+
+    .date-selection {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
     }
 
     .filter-search {
@@ -192,6 +215,19 @@ $confirm-color: #28a745;
             &:hover {
                 background-color: darken($primary-color, 10%);
             }
+        }
+    }
+
+    .inventory-summary {
+        margin-top: 20px;
+
+        h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        p {
+            margin: 5px 0;
         }
     }
 

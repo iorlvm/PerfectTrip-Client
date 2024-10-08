@@ -1,25 +1,21 @@
 <script setup>
 import { ref } from 'vue';
-
 import { onMounted } from 'vue';
 import { addDiscountAPI, getDiscountsAPI, updateDiscountAPI, deleteDiscountAPI } from '@/apis/discount';
 import { useUserStore } from '@/stores/user';
 const userStore = useUserStore();
 
-// 表單欄位
+
 const discountTitle = ref('');
 const discountRate = ref(0);
 const startDate = ref('');
 const endDate = ref('');
 
-// 控制編輯模式的狀態
 const isEditing = ref(false);
 const editingDiscountId = ref(null);
 
-// 折扣列表
 const discounts = ref([]);
 
-// 取得已有的折扣
 async function fetchDiscounts() {
     const response = await getDiscountsAPI(userStore.userInfo.companyId);
     // console.log(response);
@@ -27,18 +23,17 @@ async function fetchDiscounts() {
 
 }
 
-// 打開編輯視窗
+
 function editDiscount(discount) {
     isEditing.value = true;
     editingDiscountId.value = discount.productDiscountId;
-    // 填充表單資料
     discountTitle.value = discount.discountTitle;
     discountRate.value = discount.discountRate;
     startDate.value = new Date(discount.startDateTime).toISOString().substring(0, 10);
     endDate.value = new Date(discount.endDateTime).toISOString().substring(0, 10);
 }
 
-// 保存編輯後的折扣
+
 const saveEditedDiscount = async () => {
     const updatedDiscount = {
         discountTitle: discountTitle.value,
@@ -57,7 +52,7 @@ const saveEditedDiscount = async () => {
     }
 };
 
-// 清空表單
+
 function clearForm() {
     discountTitle.value = '';
     discountRate.value = 0;
@@ -65,7 +60,7 @@ function clearForm() {
     endDate.value = '';
 }
 
-// 刪除折扣
+
 const deleteDiscount = async (id) => {
     try {
         await deleteDiscountAPI(id);
@@ -90,9 +85,9 @@ const addDiscount = async () => {
     }
 };
 
-// 初始化時取得已有的折扣
+
 onMounted(() => {
-    fetchDiscounts();  // 組件載入後自動調用此函數來取得資料
+    fetchDiscounts();  
 });
 fetchDiscounts();
 </script>
@@ -103,7 +98,6 @@ fetchDiscounts();
             <h1>房型折扣管理</h1>
         </div>
 
-        <!-- 現有折扣列表 -->
         <section class="discount-list">
             <h2>現有折扣</h2>
             <table>
@@ -132,7 +126,6 @@ fetchDiscounts();
             </table>
         </section>
 
-        <!-- 添加新折扣或編輯折扣 -->
         <section class="add-discount">
             <h2 v-if="isEditing">編輯折扣</h2>
             <h2 v-else>添加新折扣</h2>
@@ -160,8 +153,11 @@ fetchDiscounts();
 
 
 <style scoped>
+
 .discount-management {
-    min-width: 800px;
+    width: 66.67%; /* 佔據頁面 2/3 寬度 */
+    max-width: 1200px; /* 設定最大寬度，防止過寬 */
+    margin: 0 auto; /* 水平居中 */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -176,7 +172,7 @@ fetchDiscounts();
 
         h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             color: #333;
         }
     }
@@ -188,7 +184,7 @@ fetchDiscounts();
 
         th,
         td {
-            padding: 10px;
+            padding: 8px 12px;
             border: 1px solid #e7e7e7;
             text-align: left;
         }
@@ -196,10 +192,12 @@ fetchDiscounts();
         th {
             background-color: #007bff;
             color: white;
+            font-size: 14px;
         }
 
         td {
             background-color: #f1f1f1;
+            font-size: 14px;
         }
 
         .actions {
@@ -216,7 +214,6 @@ fetchDiscounts();
 
                 &.edit {
                     background-color: #28a745;
-                    /* confirm color */
                 }
 
                 &.edit:hover {
@@ -225,7 +222,6 @@ fetchDiscounts();
 
                 &.delete {
                     background-color: #dc3545;
-                    /* danger color */
                 }
 
                 &.delete:hover {
@@ -247,16 +243,14 @@ fetchDiscounts();
 
         input {
             padding: 10px;
-            font-size: 16px;
+            font-size: 14px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
 
         button {
-            margin-top: 5px;
-            padding: 12px;
+            padding: 10px;
             background-color: #007bff;
-            /* primary color */
             color: white;
             border: none;
             border-radius: 4px;
@@ -266,7 +260,6 @@ fetchDiscounts();
 
             &:hover {
                 background-color: #0056b3;
-                /* darker primary color */
             }
         }
     }
@@ -274,8 +267,11 @@ fetchDiscounts();
     footer {
         text-align: center;
         margin-top: 20px;
-        font-size: 14px;
+        font-size: 12px;
         color: #666;
     }
 }
+
+
+
 </style>
