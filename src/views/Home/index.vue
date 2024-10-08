@@ -29,7 +29,7 @@ const dests = ref([
     img: '/4.jpg'
   },
   {
-    place: '屏東',
+    place: '新竹',
     img: '/5.jpg'
   },
 ])
