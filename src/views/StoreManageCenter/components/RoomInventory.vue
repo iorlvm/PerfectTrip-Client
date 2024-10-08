@@ -1,6 +1,6 @@
 <script setup>
-import ManageToolbar from './ManageToolbar.vue';
-import { getAllProductsAPI, updateInventoryAPI, deleteInventoryAPI, getInventoryByStatusAPI } from '@/apis/Inventory';
+// import ManageToolbar from './ManageToolbar.vue';
+// import { getAllProductsAPI, updateInventoryAPI, deleteInventoryAPI, getInventoryByStatusAPI } from '@/apis/Inventory';
 import { ElDatePicker } from 'element-plus';
 
 let selectedStartDate = null;
