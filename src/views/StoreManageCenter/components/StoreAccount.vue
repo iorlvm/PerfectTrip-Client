@@ -116,7 +116,7 @@ const vatNumberClick = (e) => {
                         <input class="text" type="text" placeholder="請輸入申請者名稱" v-model="userInfo.companyName" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="companyNameEditClick">完成</a>
+                        <a href="" @click="companyNameEditClick">暫存</a>
                     </div>
                 </div>
             </template>
@@ -139,7 +139,7 @@ const vatNumberClick = (e) => {
                         <input class="text1" type="text" placeholder="請輸入電子信箱" v-model="userInfo.username" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="mailClick">完成</a>
+                        <a href="" @click="mailClick">暫存</a>
                     </div>
                 </div>
             </template>
@@ -165,7 +165,7 @@ const vatNumberClick = (e) => {
                         <input class="text1" type="text" placeholder="請輸入您的地址" v-model="userInfo.address" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="addressClick">完成</a>
+                        <a href="" @click="addressClick">暫存</a>
                     </div>
                 </div>
             </template>
@@ -185,7 +185,7 @@ const vatNumberClick = (e) => {
                         <input class="text" type="text" placeholder="請輸入負責人姓名" v-model="userInfo.manager" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="managerClick">完成</a>
+                        <a href="" @click="managerClick">暫存</a>
                     </div>
                 </div>
             </template>
@@ -209,7 +209,7 @@ const vatNumberClick = (e) => {
                         <input class="text" type="text" placeholder="請輸入電話" v-model="userInfo.telephone" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="telClick">完成</a>
+                        <a href="" @click="telClick">暫存</a>
                     </div>
                 </div>
             </template>
@@ -232,7 +232,7 @@ const vatNumberClick = (e) => {
                         <input class="text" type="text" placeholder="請輸入統一編號" v-model="userInfo.vatNumber" required>
                     </div>
                     <div class="edit">
-                        <a href="" @click="vatNumberClick">完成</a>
+                        <a href="" @click="vatNumberClick">暫存</a>
                     </div>
                 </div>
             </template>
