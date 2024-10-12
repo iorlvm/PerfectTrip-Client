@@ -84,14 +84,14 @@ const vatNumberClick = (e) => {
 </script>
 
 <template>
-    <ManageToolbar>
+   <!-- <ManageToolbar>
         <li>
             左選項1
         </li>
         <li>
             左選項2
         </li>
-    </ManageToolbar>
+    </ManageToolbar>-->
 
     <div class="storeaccount">
         <div class="title">
@@ -248,7 +248,7 @@ const vatNumberClick = (e) => {
 
 <style lang="scss" scoped>
 .storeaccount {
-    padding-left: 3%;
+    padding: 5%;
 
     .title {
         display: flex;

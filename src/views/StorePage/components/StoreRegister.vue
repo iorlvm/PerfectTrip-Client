@@ -57,7 +57,7 @@ const rules = {
         { required: true, message: '請輸入地址', trigger: 'blur' }
     ],
     manager: [
-        { required: true, message: '請輸入負責人', trigger: 'change' }
+        { required: true, message: '請輸入負責人', trigger:  ['blur', 'change'] }
     ],
 
     telephone: [
