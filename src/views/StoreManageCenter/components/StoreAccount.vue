@@ -96,7 +96,7 @@ const vatNumberClick = (e) => {
     <div class="storeaccount">
         <div class="title">
             <div>
-                <h1>帳號管理頁面</h1>
+                <h1>商家資訊管理頁面</h1>
             </div>
 
         </div>
@@ -248,7 +248,7 @@ const vatNumberClick = (e) => {
 
 <style lang="scss" scoped>
 .storeaccount {
-    padding: 5%;
+    padding: 3%;
 
     .title {
         display: flex;

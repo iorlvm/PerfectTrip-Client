@@ -28,7 +28,7 @@ const login = async (e) => {
   await companyStore.getCompanyInfo({ username, password });
   // router.go('/store/manage');
   if (companyStore.userInfo.role) {
-    router.push('/store/manage'); 
+    router.push('/store/manage/setting/account'); 
   }
   // console.log({ username, password });
 }
