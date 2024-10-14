@@ -275,7 +275,7 @@ const activeChat = async (chatId) => {
     let token = userStore.userInfo.token;
 
     // 重連 WebSocket
-    webSocket = new WebSocket('ws://localhost:8080/chat?' + token);
+    webSocket = new WebSocket('ws://iorlvm.i234.me:8080/chat?' + token);
 
     webSocket.addEventListener('open', onChatRoomConnected);
     webSocket.addEventListener('message', onMessageReceived);
@@ -292,7 +292,7 @@ onMounted(async () => {
     await chat.init();
 
     let token = userStore.userInfo.token;
-    webSocket = new WebSocket('ws://localhost:8080/chat?' + token);
+    webSocket = new WebSocket('ws://iorlvm.i234.me:8080/chat?' + token);
     webSocket.addEventListener('open', onChatRoomConnected);
 
     webSocket.addEventListener('message', onMessageReceived);

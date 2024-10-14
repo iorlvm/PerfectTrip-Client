@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/user';
 import { updateUserAPI } from '@/apis/user';
 import { imageUpdateAPI } from '@/apis/image';
 
-const baseURL = 'http://localhost:8080/';
+const baseURL = 'http://iorlvm.i234.me:8080/';
 
 const userStore = useUserStore();
 userStore.userInfo

@@ -5,12 +5,9 @@ import { useUserStore } from "@/stores/user";
 // import 'element-plus/theme-chalk/el-message.css';
 import router from '@/router';
 
-// 請求基礎路徑配置 (後端佈署後要更改)
-const baseURL = 'http://localhost:8080/api';
-
 const httpInstance = axios.create(
     {
-        baseURL: baseURL,
+        baseURL: '/api',
         timeout: 5000,
     }
 )

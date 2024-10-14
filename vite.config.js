@@ -31,6 +31,15 @@ export default defineConfig({
       })],
     }),
   ],
+  server: {
+    proxy: {
+      // 以 `/api` 開頭的請求會被代理到後端服務
+      '/api': {
+        target: 'http://iorlvm.i234.me:8080', // 後端服務的地址
+        changeOrigin: true, // 使代理請求的 Host 為後端服務的地址
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

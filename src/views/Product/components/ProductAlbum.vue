@@ -7,7 +7,7 @@ defineProps([
   'photos'
 ])
 
-const baseUrl = 'http://localhost:8080/'
+const baseUrl = 'http://iorlvm.i234.me:8080/'
 
 
 const isIndexMatch = (index) => {

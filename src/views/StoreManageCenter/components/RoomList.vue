@@ -60,7 +60,7 @@ const filteredProducts = computed(() => {
   return products.value;
 });
 
-const baseURL = 'http://localhost:8080/';
+const baseURL = 'http://iorlvm.i234.me:8080/';
 const photoList = computed(() => {
   return currentProduct.productPhotos.map(photo => ({
     name: photo.photoId,
@@ -234,10 +234,10 @@ const deleteProduct = async (productId) => {
     </header>
 
     <div class="filter-section">
-  <label for="filterType">商品名稱篩選器</label>
-  <input v-model="filterType" id="filterType" type="text" placeholder="輸入商品名稱進行篩選" />
-  <button @click="clearFilter" class="filter-btn">清除篩選</button>
-</div>
+      <label for="filterType">商品名稱篩選器</label>
+      <input v-model="filterType" id="filterType" type="text" placeholder="輸入商品名稱進行篩選" />
+      <button @click="clearFilter" class="filter-btn">清除篩選</button>
+    </div>
 
     <table>
       <thead>
@@ -280,16 +280,12 @@ const deleteProduct = async (productId) => {
         <form class="form" @submit.prevent="isEditing ? updateProduct() : addProduct()">
           <div class="form-group full">
             <label for="productName">商品照片</label>
-            <el-upload
-            v-model:file-list="photoList"
-            :http-request="customUpload"
-            list-type="picture-card"
-            :on-remove="handleRemove"
-            >
-            <el-icon>
-              <Plus />
-            </el-icon>
-          </el-upload>
+            <el-upload v-model:file-list="photoList" :http-request="customUpload" list-type="picture-card"
+              :on-remove="handleRemove">
+              <el-icon>
+                <Plus />
+              </el-icon>
+            </el-upload>
           </div>
           <div class="form-group half">
             <label for="productName">商品名稱</label>
@@ -338,12 +334,14 @@ const deleteProduct = async (productId) => {
 }
 
 .filter-section label {
-  margin-right: 10px; /* Adds space between label and input */
+  margin-right: 10px;
+  /* Adds space between label and input */
   font-weight: 600;
 }
 
 .filter-section input {
-  margin-right: 10px; /* Adds space between input and button */
+  margin-right: 10px;
+  /* Adds space between input and button */
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ced4da;
@@ -353,8 +351,8 @@ const deleteProduct = async (productId) => {
 
 .el-scrollbar {
   padding: 10px;
-  width: 66.67%; 
-  margin: 0 auto; 
+  width: 66.67%;
+  margin: 0 auto;
 }
 
 .flex {

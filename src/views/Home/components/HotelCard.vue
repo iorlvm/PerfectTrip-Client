@@ -1,7 +1,7 @@
 <script setup>
 import router from '@/router';
 
-const baseURL = 'http://localhost:8080/';
+const baseURL = 'http://iorlvm.i234.me:8080/';
 
 defineProps([
     'item'
