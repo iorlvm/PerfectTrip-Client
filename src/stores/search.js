@@ -5,6 +5,13 @@ import router from "@/router";
 import { useRoute } from 'vue-router';
 
 export const useSearchStore = defineStore('Search', () => {
+    // 獲取明天和後天的日期
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const dayAfterTomorrow = new Date(today);
+    dayAfterTomorrow.setDate(today.getDate() + 2);
+
     /**
      * destination : 目的地
      * dateRange : (陣列)開始時間跟結束時間
@@ -13,12 +20,37 @@ export const useSearchStore = defineStore('Search', () => {
      * roomCount : 房間數量
      */
     const searchQuery = ref({
-        destination: '',
-        dateRange: [],
+        destination: '台北',
+        dateRange: [
+            tomorrow.toISOString().split('T')[0], // 明天的日期
+            dayAfterTomorrow.toISOString().split('T')[0] // 後天的日期
+        ],
         adultCount: 2,
         childCount: 0,
         roomCount: 1,
     });
+
+    // 檢查和設置日期範圍
+    const validateDateRange = () => {
+        const tomorrowDate = new Date(tomorrow);
+        const dayAfterTomorrowDate = new Date(dayAfterTomorrow);
+
+        // 取得當前日期範圍
+        const [startDate, endDate] = searchQuery.value.dateRange.map(date => new Date(date));
+
+        // 如果第一個日期小於明天，設置為明天
+        if (startDate < tomorrowDate) {
+            searchQuery.value.dateRange[0] = tomorrow.toISOString().split('T')[0];
+        }
+
+        // 如果第二個日期小於後天，設置為後天
+        if (endDate < dayAfterTomorrowDate) {
+            searchQuery.value.dateRange[1] = dayAfterTomorrow.toISOString().split('T')[0];
+        }
+    };
+
+    // 在 store 初始化時進行檢查
+    validateDateRange();
 
 
     const resultList = ref([]);
