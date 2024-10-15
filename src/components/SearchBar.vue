@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useSearchStore } from "@/stores/search";
 
 const searchStore = useSearchStore();
@@ -69,6 +69,38 @@ const loadLocations = () => {
   ];
 };
 
+// 計算日期
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(today.getDate() + 1);
+const dayAfterTomorrow = new Date(today);
+dayAfterTomorrow.setDate(today.getDate() + 2);
+
+// 禁用早於今天的日期
+const disabledDate = (date) => {
+  return date < today;
+};
+
+// 在組件初始化時檢查日期範圍
+const validateDateRange = () => {
+  const [startDate, endDate] = searchStore.searchQuery.dateRange.map(date => new Date(date));
+
+  // 如果開始日期小於明天，設置為明天
+  if (startDate < tomorrow) {
+    searchStore.searchQuery.dateRange[0] = tomorrow.toISOString().split('T')[0];
+  }
+
+  // 如果結束日期小於開始日期，設置為後天
+  if (endDate < startDate) {
+    searchStore.searchQuery.dateRange[1] = dayAfterTomorrow.toISOString().split('T')[0];
+  }
+};
+
+// 使用 watch 監控 searchQuery.dateRange 的變化
+watch(() => searchStore.searchQuery.dateRange, () => {
+  validateDateRange();
+}, { immediate: true });
+
 onMounted(() => {
   locations.value = loadLocations();
 });
@@ -96,7 +128,7 @@ onMounted(() => {
           <el-col :span="6">
             <div class="flex">
               <el-date-picker v-model="searchQuery.dateRange" type="daterange" start-placeholder="入住日期"
-                end-placeholder="退房日期" />
+                end-placeholder="退房日期" :disabled-date="disabledDate" />
             </div>
           </el-col>
           <el-col :span="6">
