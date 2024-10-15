@@ -33,7 +33,9 @@ const login = async (e) => {
   // console.log({ username, password });
 }
 
-
+const register = async () => {
+  router.push('/store/register')
+}
 
 
 </script>
@@ -47,7 +49,7 @@ const login = async (e) => {
       <input type="password" placeholder="密碼" v-model="formData.password" required>
       <div style="text-align: center;">
         <button type="submit" @click="login">登入</button>
-        <!-- <button type="reset">忘記密碼</button> -->
+        <button type="reset" style="text-decoration: underline;" @click="register">現在就註冊</button> 
       </div>
     </form>
   </div>
