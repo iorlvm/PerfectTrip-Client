@@ -216,5 +216,5 @@ export const useSearchStore = defineStore('Search', () => {
     }
 }
     , {
-        persist: true
+        // persist: true
     })

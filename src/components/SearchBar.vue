@@ -91,7 +91,7 @@ const validateDateRange = () => {
   }
 
   // 如果結束日期小於開始日期，設置為後天
-  if (endDate < startDate) {
+  if (endDate <= startDate) {
     searchStore.searchQuery.dateRange[1] = dayAfterTomorrow.toISOString().split('T')[0];
   }
 };
